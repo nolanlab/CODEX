@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.imagej:ij1-patcher:0.12.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/imagej/ij1-patcher/0.12.2/ij1-patcher-0.12.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/net/imagej/ij1-patcher/0.12.2/ij1-patcher-0.12.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/imagej/ij1-patcher/0.12.2/ij1-patcher-0.12.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

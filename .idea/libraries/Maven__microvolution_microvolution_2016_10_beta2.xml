@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: microvolution:microvolution:2016.10-beta2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/microvolution/microvolution/2016.10-beta2/microvolution-2016.10-beta2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/microvolution/microvolution/2016.10-beta2/microvolution-2016.10-beta2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/microvolution/microvolution/2016.10-beta2/microvolution-2016.10-beta2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
