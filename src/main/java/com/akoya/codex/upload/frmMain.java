@@ -17,10 +17,14 @@ import java.io.*;
  */
 public class frmMain extends javax.swing.JFrame {
 
+    private JTextArea textArea = new JTextArea(15,30);
+    private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "");
+
     /**
      * Creates new form frmMain
      */
     public frmMain() {
+        System.setOut(new PrintStream(taOutputStream));
         initComponents();
         experimentView.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -54,9 +58,15 @@ public class frmMain extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("CODEXuploader v1.4");
+
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.PAGE_AXIS));
         getContentPane().add(experimentView);
         getContentPane().add(uploadOptionsView);
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        getContentPane().add(scrollPane);
 
         prg.setMaximumSize(new java.awt.Dimension(320, 20));
         prg.setMinimumSize(new java.awt.Dimension(10, 20));
@@ -84,128 +94,133 @@ public class frmMain extends javax.swing.JFrame {
 
     private void cmdStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
 
-        try {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+            try {
+                File dir = new File(experimentView.getPath());
 
-            File dir = new File(experimentView.getPath());
+                Experiment exp = experimentView.getExperiment();
 
-            Experiment exp = experimentView.getExperiment();
+                String experimentJS = exp.toJSON();
 
-            String experimentJS = exp.toJSON();
+                exp.saveToFile(new File(dir + File.separator + "Experiment.json"));
 
-            exp.saveToFile(new File(dir + File.separator + "Experiment.json"));
+                File poFile = new File(dir + File.separator + "processingOptions.json");
 
-            File poFile = new File(dir + File.separator + "processingOptions.json");
+                ProcessingOptions po = uploadOptionsView.getUploadOptions();
+                boolean doUpload = po.doUpload();
 
-            ProcessingOptions po = uploadOptionsView.getUploadOptions();
-            boolean doUpload = po.doUpload();
+                po.saveToFile(poFile);
 
-            po.saveToFile(poFile);
+                Uploader upl = doUpload ? new Uploader(po.getDestinationUrl(), po.getNumThreads()) : null;
 
-            Uploader upl = doUpload ? new Uploader(po.getDestinationUrl(), po.getNumThreads()) : null;
-
-            if (doUpload) {
-                log("\nAuthorizing...");
-            }
-            final String token = doUpload ? upl.sendAuthRequest(po.getUsername(), po.getPassword()) : null;
-            if (doUpload) {
-                log("\nCreating new experiment...");
-            }
-            Uploader.FileShareAccess fsa = doUpload ? upl.sendExpCreateRequest(token, experimentJS) : null;
-            if (doUpload) {
-                log("\nStarting upload...");
-            }
-
-            log("Verifying names...");
-
-            for (File f : dir.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File file) {
-                    return file.isDirectory() && file.getName().startsWith("Cyc");
+                if (doUpload) {
+                    log("\nAuthorizing...");
                 }
-            })) {
-                String name = f.getName();
-                String[] s = name.split("_");
-                if (s.length > 2) {
-                    f.renameTo(new File(dir + File.separator + s[0] + "_" + s[1]));
+                final String token = doUpload ? upl.sendAuthRequest(po.getUsername(), po.getPassword()) : null;
+                if (doUpload) {
+                    log("\nCreating new experiment...");
                 }
-            }
-
-            File f = new File(".\\");
-
-            f.getAbsolutePath();
-
-            boolean chNamesUpl = true;
-
-            if (doUpload) {
-                File chNames = new File(experimentView.getPath() + File.separator + "channelNames.txt");
-                if (!chNames.exists()) {
-                    JOptionPane.showMessageDialog(this, "channelNames.txt file does not exist in the experiment source folder. please make sure to put it there. \nFormat of the file:"
-                            + "single-column text file with names of each channel over cycles");
-                    throw new IllegalStateException("");
+                Uploader.FileShareAccess fsa = doUpload ? upl.sendExpCreateRequest(token, experimentJS) : null;
+                if (doUpload) {
+                    log("\nStarting upload...");
                 }
-            }
 
-            int totalCount = exp.region_names.length * exp.region_width * exp.region_height;
+                log("Verifying names...");
 
-            prg.setMaximum(totalCount);
-
-            int currCnt = 1;
-
-            for (int reg : exp.regIdx) {
-                for (int tile = 1; tile <= exp.region_height * exp.region_width; tile++) {
-
-                    File d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
-                    int numTrial = 0;
-                    while (!d.exists() && numTrial < 3) {
-                        numTrial++;
-
-                        ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx48G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile)); //new ProcessBuilder("cmd", "/C", "start", "/B", "/belownormal", cmd);
-                        pb.redirectErrorStream(true);
-                        
-                        log("Starting process: " + pb.command().toString());
-                        Process proc = pb.start();
-                        
-
-                        waitAndPrint(proc);
-                        log("Driffta done");
+                for (File f : dir.listFiles(new FileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        return file.isDirectory() && file.getName().startsWith("Cyc");
                     }
-
-                    if (!d.exists()) {
-                        log("Tile processing failed 3 times in a row: " + d.getName());
+                })) {
+                    String name = f.getName();
+                    String[] s = name.split("_");
+                    if (s.length > 2) {
+                        f.renameTo(new File(dir + File.separator + s[0] + "_" + s[1]));
                     }
+                }
+                File f = new File(".\\");
 
-                    if (doUpload) {
-                        d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
+                f.getAbsolutePath();
+
+                boolean chNamesUpl = true;
+
+                if (doUpload) {
+                    File chNames = new File(experimentView.getPath() + File.separator + "channelNames.txt");
+                    if (!chNames.exists()) {
+                        JOptionPane.showMessageDialog(frmMain.this, "channelNames.txt file does not exist in the experiment source folder. please make sure to put it there. \nFormat of the file:"
+                                + "single-column text file with names of each channel over cycles");
+                        throw new IllegalStateException("");
+                    }
+                }
+
+                int totalCount = exp.region_names.length * exp.region_width * exp.region_height;
+
+                prg.setMaximum(totalCount);
+
+                int currCnt = 1;
+
+                for (int reg : exp.regIdx) {
+                    for (int tile = 1; tile <= exp.region_height * exp.region_width; tile++) {
+
+                        File d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
+                        int numTrial = 0;
+                        while (!d.exists() && numTrial < 3) {
+                            numTrial++;
+
+                            ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx48G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile)); //new ProcessBuilder("cmd", "/C", "start", "/B", "/belownormal", cmd);
+                            pb.redirectErrorStream(true);
+
+                            log("Starting process: " + pb.command().toString());
+                            Process proc = pb.start();
+
+
+                            waitAndPrint(proc);
+                            log("Driffta done");
+                        }
+
                         if (!d.exists()) {
-                            throw new IllegalStateException("Driftcompensation completed, but the result file does not exist:" + d.getPath());
-                        } else {
-                            logger.print("File exists:" + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
-                            upl.uploadFilesMultith(d, fsa, reg, tile, token, 1);
-                            if (chNamesUpl) {
-                                upl.uploadFilesMultith(new File(experimentView.getPath() + File.separator + "channelNames.txt"), fsa, 0, 0, token, 1);
-                                chNamesUpl = false;
+                            log("Tile processing failed 3 times in a row: " + d.getName());
+                        }
+
+                        if (doUpload) {
+                            d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
+                            if (!d.exists()) {
+                                throw new IllegalStateException("Driftcompensation completed, but the result file does not exist:" + d.getPath());
+                            } else {
+                                logger.print("File exists:" + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
+                                upl.uploadFilesMultith(d, fsa, reg, tile, token, 1);
+                                if (chNamesUpl) {
+                                    upl.uploadFilesMultith(new File(experimentView.getPath() + File.separator + "channelNames.txt"), fsa, 0, 0, token, 1);
+                                    chNamesUpl = false;
+                                }
                             }
                         }
-                    }
 
-                    prg.setValue(currCnt++);
-                    this.repaint();
+                        prg.setValue(currCnt++);
+                        frmMain.this.repaint();
+
+                    }
 
                 }
 
-            }
+                log("Creating montages");
 
-            log("Creating montages");
+                ProcessBuilder pb = new ProcessBuilder("cmd", "/C start /B /belownormal java -Xms5G -Xmx48G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
+                log("Starting process: " + pb.command().toString());
+                pb.redirectErrorStream(true);
+                Process proc = pb.start();
+                waitAndPrint(proc);
 
-            ProcessBuilder pb = new ProcessBuilder("cmd", "/C start /B /belownormal java -Xms5G -Xmx48G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
-            log("Starting process: " + pb.command().toString());
-            pb.redirectErrorStream(true);
-            Process proc = pb.start();
-            waitAndPrint(proc);
-          
-        } catch (Exception e) {
+            } catch (Exception e) {
             throw new Error(e);
         }
+
+            }
+        }).start();
+
     }//GEN-LAST:event_cmdStartActionPerformed
 
     public static void waitAndPrint(Process proc) throws IOException {
@@ -268,7 +283,6 @@ public class frmMain extends javax.swing.JFrame {
             public void run() {
                 try {
                     frmMain frm = new frmMain();
-
                     frm.setBounds((Toolkit.getDefaultToolkit().getScreenSize().width - frm.getWidth()) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - frm.getHeight()) / 2, frm.getWidth(), frm.getHeight());
                     frm.setVisible(true);
                 } catch (Throwable e) {
