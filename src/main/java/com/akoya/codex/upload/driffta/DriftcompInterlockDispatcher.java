@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class DriftcompInterlockDispatcher {
 
-    private static File f = new File("driftcompLock.lck");
+    private static File f = new File(System.getProperty("java.io.tmpdir")+"driftcompLock.lck");
     
     private static boolean hasLck;
     

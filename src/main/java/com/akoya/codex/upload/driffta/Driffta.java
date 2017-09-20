@@ -198,7 +198,7 @@ public class Driffta {
 
                         final String destFileName = tmpDestDir + File.separator + "Cyc" + cycle + "_reg" + region + "_" + exp.getSourceFileName(sourceDir, exp.microscope, tile, zSlice, chIdxF);
 
-                        final String cmd = "./lib/tiffcp -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
+                        final String cmd = "./tiffcp -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
 
                         if (new File(destFileName).exists()) {
                             if (new File(destFileName).length() > 10000) {

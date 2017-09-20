@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class DeconvolutionInterlockDispatcher {
 
-    private static File f = new File("deconvolutionLock.lck");
+    private static File f = new File(System.getProperty("java.io.tmpdir")+"deconvolutionLock.lck");
     
     private static boolean hasLck;
     
