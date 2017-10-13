@@ -12,8 +12,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 /**
  *
@@ -206,6 +205,7 @@ public class ExperimentView extends javax.swing.JPanel {
             }
         });
         jPanel4.add(val8);
+
 
         val9.setInputVerifier(integerVerifier);
         val9.setMaximumSize(new java.awt.Dimension(3000, 20));
@@ -721,6 +721,9 @@ public class ExperimentView extends javax.swing.JPanel {
 
             txtDir.setText(jfc.getSelectedFile().getAbsolutePath());
 
+            //Include the name of the experiment to be set as folder name
+            val1.setText(jfc.getSelectedFile().getName());
+
             fireStateChanged();
 
         }
@@ -741,7 +744,42 @@ public class ExperimentView extends javax.swing.JPanel {
         return buildExperiment();
     }
 
-    private String guessValues(File dir) {
+    /*
+    Method to check if the product of Region Size X and Y is equal to the total number of tiles
+    @return returns true if equal
+     */
+    public boolean isTilesAProductOfRegionXAndY(File dir) {
+        if(dir != null) {
+            for (File cyc : dir.listFiles()) {
+                if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
+                    File[] cycFiles = cyc.listFiles();
+                    Arrays.sort(cycFiles, Collections.reverseOrder());
+                    for (File tif : cycFiles) {
+                        if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
+                            int lastZIndex = tif.getName().lastIndexOf("Z");
+                            String regXYNumber = tif.getName().substring(lastZIndex-5, lastZIndex-1);
+                            if (regXYNumber != null) {
+                                int regXYIndex = Integer.parseInt(regXYNumber);
+                                if (regXYIndex == Integer.parseInt(val17.getText()) * Integer.parseInt(val18.getText())) {
+                                    return true;
+                                }
+                                else {
+                                    return false;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    //break outer loop
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+
+
+        private String guessValues(File dir) {
 
         StringBuilder err = new StringBuilder();
 
@@ -842,9 +880,100 @@ public class ExperimentView extends javax.swing.JPanel {
         val14.setText(regTxt);
         val15.setText(regNames);
 
+        guessZSlices(dir);
+        guessChannelNamesAndWavelength(dir);
+
         return err.length() == 0 ? "" : ("Following errors were found in the experiment:\n" + err.toString());
     }
 
+    /*
+        Set the number of Z-indices after reading it from the experiment folder
+     */
+    private void guessZSlices(File dir) {
+
+        if(dir != null) {
+            for (File cyc : dir.listFiles()) {
+                if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
+                    File[] cycFiles = cyc.listFiles();
+                    Arrays.sort(cycFiles, Collections.reverseOrder());
+                    for (File tif : cycFiles) {
+                        if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
+                            int lastZIndex = tif.getName().lastIndexOf("Z");
+                            String zNumber = tif.getName().substring(lastZIndex+1, lastZIndex+4);
+                            if (zNumber != null) {
+                                int zIndex = Integer.parseInt(zNumber);
+                                zNumber = String.valueOf(zIndex);
+                            }
+                            val9.setText(zNumber);
+                            break;
+                        }
+                    }
+                    //break outer loop
+                    break;
+                }
+            }
+        }
+    }
+
+    /*
+        Set the channel names after reading from experiment folder
+        TO DO - The guess should also support different kinds of microscope.
+        Create an interface for guess all these values using the methods and make diffrent micscrope classses
+        implement this interface so that it could be reusable.
+     */
+    private void guessChannelNamesAndWavelength(File dir) {
+        if(dir != null) {
+            for (File cyc : dir.listFiles()) {
+                if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
+                    File[] cycFiles = cyc.listFiles();
+                    Arrays.sort(cycFiles, Collections.reverseOrder());
+                    HashMap<String, Boolean> chVsBool = new HashMap<String, Boolean>();
+                    chVsBool.put("CH1", false);
+                    chVsBool.put("CH2", false);
+                    chVsBool.put("CH3", false);
+                    chVsBool.put("CH4", false);
+                    for (File tif : cycFiles) {
+                        if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
+                            int last_Index = tif.getName().lastIndexOf("_");
+                            String chNumber = tif.getName().substring(last_Index+1, last_Index+4);
+                            if (chNumber != null) {
+                                if(chVsBool.containsKey(chNumber)){
+                                    chVsBool.put(chNumber, true);
+                                }
+                            }
+                        }
+                    }
+                    HashMap<String, String> chVsWavelength = new HashMap<String, String>();
+                    chVsWavelength.put("CH1","425");
+                    chVsWavelength.put("CH2","525");
+                    chVsWavelength.put("CH3","595");
+                    chVsWavelength.put("CH4","670");
+
+                    String ch="";
+                    String waveL="";
+
+                    boolean first = true;
+                    for (String key: chVsBool.keySet()) {
+                        if (!first && chVsBool.get(key)) {
+                            ch += ";"+key;
+                            waveL += ";"+chVsWavelength.get(key);
+                        }
+                        else {
+                            if(chVsBool.get(key)) {
+                                first = false;
+                                ch += key;
+                                waveL += chVsWavelength.get(key);
+                            }
+                        }
+                    }
+                    val11.setText(ch);
+                    val21.setText(waveL);
+                    //break outer loop
+                    break;
+                }
+            }
+        }
+    }
     private void load(Experiment exp) throws FileNotFoundException {
         val1.setText(exp.name);
         val2.setText(exp.codex_instrument);

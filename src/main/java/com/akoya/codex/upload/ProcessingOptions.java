@@ -22,7 +22,6 @@ public class ProcessingOptions {
     private File tempDir;
     private boolean useBleachMinimizingCrop;
     private boolean useBlindDeconvolution;
-    private int numGPUs;
     private URL destinationUrl;
     private String username;
     private String password;
@@ -47,11 +46,10 @@ public class ProcessingOptions {
 
     
     
-    public ProcessingOptions(File tempDir, boolean useBleachMinimizingCrop, boolean useBlindDeconvolution, int numGPUs, int numThreads, URL destinationUrl, String username, String password, boolean doUpload) {
+    public ProcessingOptions(File tempDir, boolean useBleachMinimizingCrop, boolean useBlindDeconvolution, int numThreads, URL destinationUrl, String username, String password, boolean doUpload) {
         this.tempDir = tempDir;
         this.useBleachMinimizingCrop = useBleachMinimizingCrop;
         this.useBlindDeconvolution = useBlindDeconvolution;
-        this.numGPUs = numGPUs;
         this.numThreads = numThreads;
         this.destinationUrl = destinationUrl;
         this.username = username;
@@ -62,10 +60,6 @@ public class ProcessingOptions {
 
     public URL getDestinationUrl() {
         return destinationUrl;
-    }
-
-    public int getNumGPUs() {
-        return numGPUs;
     }
 
     public boolean doProcessing() {
@@ -106,5 +100,4 @@ public class ProcessingOptions {
         bw.flush();
         bw.close();
     }
-
 }

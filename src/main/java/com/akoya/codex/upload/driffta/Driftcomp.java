@@ -13,6 +13,7 @@ import mpicbg.imglib.algorithm.fft.PhaseCorrelation;
 import mpicbg.imglib.image.ImagePlusAdapter;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +26,7 @@ import static com.akoya.codex.upload.driffta.Driffta.log;
  */
 public class Driftcomp {
     
-    public static void compensateDrift(ImagePlus decStacks, final int zeroBasedDriftCompChannel) {
+    public static void compensateDrift(ImagePlus decStacks, int[] bestZPlanes, final int zeroBasedDriftCompChannel) {
         ImagePlus[][] stacks = new ImagePlus[decStacks.getNFrames()][decStacks.getNChannels()];
         
         Duplicator dup = new Duplicator();
@@ -43,7 +44,11 @@ public class Driftcomp {
                 for (int ch = 0; ch < stacks[0].length; ch++) {
                     stacks[idx][ch] = dup.run(decStacks, ch + 1, ch + 1, 1, decStacks.getNSlices(), idx + 1, idx + 1);
                 }
-                int[] shift = computeShift(stacks[0][zeroBasedDriftCompChannel], stacks[idx][zeroBasedDriftCompChannel]);
+
+                int firstBestFocus = bestZPlanes[0];
+                ImagePlus singlePlane = dup.run(stacks[0][zeroBasedDriftCompChannel], 1, 1, firstBestFocus, firstBestFocus, 1, 1);
+
+                int[] shift = computeShift(firstBestFocus, singlePlane, stacks[idx][zeroBasedDriftCompChannel], bestZPlanes, idx);
                 for (int ch = 0; ch < stacks[0].length; ch++) {
                     stacks[idx][ch] = applyShift3D(shift, stacks[idx][ch]);
                     for (int slice = 1; slice <= stacks[idx][ch].getNSlices(); slice++) {
@@ -61,15 +66,20 @@ public class Driftcomp {
         }
     }
     
-    private static int[] computeShift(ImagePlus imp1, ImagePlus imp2) {
-        imp1 = new ImagePlus(imp1.getTitle()+"crop", imp1.getImageStack().crop(imp1.getWidth()/4, imp1.getHeight()/4,0, imp1.getWidth()/2,imp1.getWidth()/2, imp1.getStackSize()));
-        imp2 = new ImagePlus(imp2.getTitle()+"crop", imp2.getImageStack().crop(imp2.getWidth()/4, imp2.getHeight()/4,0, imp2.getWidth()/2,imp2.getWidth()/2, imp2.getStackSize()));
-        PhaseCorrelation phc = new PhaseCorrelation(ImagePlusAdapter.wrap(imp1), ImagePlusAdapter.wrap(imp2), 1, true);
+    private static int[] computeShift(int bestFocusForFirst, ImagePlus imp1, ImagePlus imp2, int[] bestZPlanes, int idx) {
+        Duplicator dup = new Duplicator();
+        int sliceBestFocus = bestZPlanes[idx];
+        ImagePlus singlePlane = dup.run(imp2, 1, 1, sliceBestFocus, sliceBestFocus, 1, 1);
+
+        int z = bestFocusForFirst - sliceBestFocus;
+        PhaseCorrelation phc = new PhaseCorrelation(ImagePlusAdapter.wrap(imp1), ImagePlusAdapter.wrap(singlePlane), 1, true);
         phc.setNumThreads(Runtime.getRuntime().availableProcessors());
         phc.setComputeFFTinParalell(true);
         phc.process();
         int[] p = phc.getShift().getPosition();
-        log("Phase corr: " + Arrays.toString(p));
+        p = Arrays.copyOf(p,p.length+1);
+        p[p.length-1]=z;
+        log("Phase correlation: " + Arrays.toString(p));
         return p;
     }
     

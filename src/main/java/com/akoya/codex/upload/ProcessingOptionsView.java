@@ -35,7 +35,6 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
                 new File(txtTempDir.getText()),
                 chkTrueCrop.isSelected(),
                 chkBlind.isSelected(),
-                (Integer) spinGPU.getValue(),
                 (Integer) spinThreads.getValue(),
                 new URL(txtURL.getText()),
                 txtUsrname.getText(),
@@ -62,8 +61,6 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
         jLabel26 = new javax.swing.JLabel();
         rbProcessing = new javax.swing.JRadioButton();
         rbBoth = new javax.swing.JRadioButton();
-        jLabel30 = new javax.swing.JLabel();
-        spinGPU = new javax.swing.JSpinner();
         chkBlind = new javax.swing.JCheckBox();
         chkTrueCrop = new javax.swing.JCheckBox();
         jLabel7 = new javax.swing.JLabel();
@@ -105,11 +102,6 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
 
         buttonGroup1.add(rbBoth);
         rbBoth.setText("Processing and upload");
-
-        jLabel30.setText("Number of GPUs:");
-
-        spinGPU.setModel(new javax.swing.SpinnerNumberModel(4, 1, 200, 1));
-
         chkBlind.setText("use Blind deconvolution (must have license)");
 
         chkTrueCrop.setText("use bleach-minimizing cropping (incompatible with CODEXweb)");
@@ -166,9 +158,7 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(spinThreads, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel30)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(spinGPU, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(chkBlind)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -183,8 +173,6 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
                 .addGap(1, 1, 1)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel30)
-                        .addComponent(spinGPU, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(chkBlind)
                         .addComponent(chkTrueCrop))
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -227,9 +215,8 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
 
     public void load(ProcessingOptions opt) {
         chkBlind.setSelected(opt.isUseBlindDeconvolution());
-        spinGPU.setValue(opt.getNumGPUs());
         spinThreads.setValue(opt.getNumThreads());
-        chkTrueCrop.setSelected(opt.isUseBlindDeconvolution());
+        chkTrueCrop.setSelected(opt.isUseBleachMinimizingCrop());
         txtPwd.setText(opt.getPassword());
         txtUsrname.setText(opt.getUsername());
         txtTempDir.setText(opt.getTempDir().getPath());
@@ -274,6 +261,21 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
         }
     };
 
+    public JRadioButton getRbProcessing() {
+        return rbProcessing;
+    }
+    public void setRbProcessing(JRadioButton rbProcessing) {
+        this.rbProcessing = rbProcessing;
+    }
+
+    public JRadioButton getRbBoth() {
+        return rbBoth;
+    }
+
+    public void setRbBoth(JRadioButton rbBoth) {
+        this.rbBoth = rbBoth;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JCheckBox chkBlind;
@@ -282,12 +284,10 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel26;
-    private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JRadioButton rbBoth;
     private javax.swing.JRadioButton rbProcessing;
-    private javax.swing.JSpinner spinGPU;
     private javax.swing.JSpinner spinThreads;
     private javax.swing.JPasswordField txtPwd;
     private JTextField txtTempDir;

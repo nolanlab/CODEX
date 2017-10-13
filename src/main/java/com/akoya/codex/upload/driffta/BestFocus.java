@@ -22,8 +22,8 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import java.awt.*;
 import java.io.File;
 import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.Collections;
+
+import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
@@ -37,7 +37,140 @@ import java.util.concurrent.Future;
  */
 public class BestFocus {
 
-    public static ImagePlus createBestFocusStackFromHyperstack(ImagePlus imp, int focusChannel) {
+    public static int[] computeBestFocusIndices(ImagePlus imp, int focusChannel) {
+        logger.print("Best focus on stack: " + imp.getTitle());
+        ImagePlus[] stack = new ImagePlus[imp.getNFrames()];
+        int[] bestFocusPlanes = new int[imp.getNFrames()];
+        ExecutorService es = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors());
+
+        List<Callable<Entry<Integer, Integer>>> fut = new ArrayList<>();
+        Duplicator dup = new Duplicator();
+        for (int frame = 1; frame <= imp.getNFrames(); frame++) {
+            final int fr = frame;
+            final ImagePlus tp = dup.run(imp, 1, imp.getNChannels(), 1, imp.getNSlices(), fr, fr);
+            fut.add(new Callable<Entry<Integer, Integer>>() {
+                @Override
+                public Entry<Integer, Integer> call() throws Exception {
+                    int z = findBestFocusStackFromSingleTimepoint(tp, focusChannel);
+                    z = Math.max(1, z);
+                    return new AbstractMap.SimpleEntry<Integer, Integer>(fr-1,z);
+                }
+            });
+        }
+
+        try {
+            List<Future<Entry<Integer, Integer>>> lst = es.invokeAll(fut);
+            for (Future<Entry<Integer, Integer>> f : lst) {
+                Entry<Integer, Integer> e = f.get();
+                bestFocusPlanes[e.getKey()] = e.getValue();
+            }
+        } catch (Exception e) {
+            logger.print(e);
+            e.printStackTrace();
+            return null;
+        }
+
+        return bestFocusPlanes;
+    }
+
+    /*
+    Method to compute bestFocus Z slices and the indices based on the mean absolute deviation.
+    Find the dot product and use it to find eucledian distance
+     */
+    public static int[] computeBestFocusIndicesBasedOnDotProduct(ImagePlus imp, int focusChannel) {
+        int[] bestFocusPlanes = new int[imp.getNFrames()];
+        ExecutorService es = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors());
+        Duplicator dup = new Duplicator();
+
+        ImagePlus rp = dup.run(imp, focusChannel, focusChannel, 1, imp.getNSlices(), 1, 1);
+        int refZ = findBestFocusStackFromSingleTimepoint(rp, focusChannel);
+        refZ = Math.max(1, refZ);
+        bestFocusPlanes[0] = refZ;
+
+        ImagePlus refImp = dup.run(imp, focusChannel, focusChannel, refZ, refZ, 1, 1);
+
+        double refImpEucLen = Math.sqrt(calculateDotProduct(refImp, refImp));
+
+        List<Callable<Entry<Integer, Integer>>> fut = new ArrayList<>();
+
+        for(int frame = 2; frame <= imp.getNFrames(); frame++) {
+            final int fr = frame;
+            fut.add(new Callable<Entry<Integer, Integer>>() {
+                @Override
+                public Entry<Integer, Integer> call() throws Exception {
+                    double minDist = Double.POSITIVE_INFINITY;
+                    int bestIdx = -1;
+                    for (int z = 1; z <= imp.getNSlices(); z++) {
+                        final ImagePlus calcImp = dup.run(imp, focusChannel, focusChannel, z, z, fr, fr);
+                        double dist = findMedianAbsoluteDeviation(refImp, calcImp, refImpEucLen);
+                        if (dist < minDist) {
+                            bestIdx = z;
+                            minDist = dist;
+                        }
+                    }
+                    return new AbstractMap.SimpleEntry<Integer, Integer>(fr - 1, bestIdx);
+                    //bestFocusPlanes[frame - 1] = bestIdx;
+                }
+            });
+        }
+
+        try {
+            List<Future<Entry<Integer, Integer>>> lst = es.invokeAll(fut);
+            for (Future<Entry<Integer, Integer>> f : lst) {
+                Entry<Integer, Integer> e = f.get();
+                bestFocusPlanes[e.getKey()] = e.getValue();
+            }
+        } catch (Exception e) {
+            logger.print(e);
+            e.printStackTrace();
+            return null;
+        }
+        return bestFocusPlanes;
+    }
+
+    /*
+    Method to find the median absolute deviation for the 2 images using eucledian distance.
+     */
+    public static double findMedianAbsoluteDeviation(ImagePlus refImp, ImagePlus calcImp,  double refImpEuclLen) {
+        double dist = 0.0;
+        if(calcImp.getWidth()!=refImp.getWidth() || calcImp.getHeight()!=refImp.getHeight()) throw new IllegalArgumentException("Image dimensions don't match");
+        if(calcImp.getStackSize()!=1) throw new IllegalArgumentException("imp image contains more than one plane");
+        if(refImp.getStackSize()!=1) throw new IllegalArgumentException("refImp image contains more than one plane");
+
+        short [] refImpArr = (short[])refImp.getProcessor().getPixels();
+        short [] calcImpArr = (short[])calcImp.getProcessor().getPixels();
+
+        double calcImpEucLen= Math.sqrt(calculateDotProduct(calcImp, calcImp));
+        double [] MAD = new double[refImpArr.length];
+
+        for (int i = 0; i < refImpArr.length; i++) {
+            MAD[i] = Math.abs(calcImpArr[i]/calcImpEucLen-refImpArr[i]/refImpEuclLen);
+        }
+        Arrays.sort(MAD);
+        return MAD[MAD.length/2];
+    }
+
+    /*
+    Calculate dot product between 2 images - reference image and the image to be computed with.
+     */
+    public static double calculateDotProduct(ImagePlus refImp, ImagePlus calcImp) {
+        double dotP = 0.0;
+
+        if(calcImp.getWidth()!=refImp.getWidth() || calcImp.getHeight()!=refImp.getHeight()) throw new IllegalArgumentException("Image dimensions don't match");
+        if(calcImp.getStackSize()!=1) throw new IllegalArgumentException("imp image contains more than one plane");
+        if(refImp.getStackSize()!=1) throw new IllegalArgumentException("refImp image contains more than one plane");
+
+        short [] refImpArr = (short[])refImp.getProcessor().getPixels();
+        short [] calcImpArr = (short[])calcImp.getProcessor().getPixels();
+
+        for (int i = 0; i < refImpArr.length; i++) {
+            dotP +=  calcImpArr[i]*refImpArr[i];
+        }
+
+        return dotP;
+    }
+
+    public static ImagePlus createBestFocusStackFromHyperstack(ImagePlus imp, int[] bestFocusZIndices, int focusChannel) {
 
         logger.print("Best focus on stack: " + imp.getTitle());
 
@@ -50,44 +183,21 @@ public class BestFocus {
         for (int frame = 1; frame <= imp.getNFrames(); frame++) {
             final int fr = frame;
             final ImagePlus tp = dup.run(imp, 1, imp.getNChannels(), 1, imp.getNSlices(), fr, fr);
-            fut.add(new Callable<Entry<Integer, ImagePlus>>() {
-                @Override
-                public Entry<Integer, ImagePlus> call() throws Exception {
-                    int z = findBestFocusStackFromSingleTimepoint(tp, focusChannel);
-                    if (z == 0) {
+            int z= bestFocusZIndices[fr-1];
+            stack[fr-1] = retrieveFocusedPlane(tp, z);
 
-                    }
-                    z = Math.max(1, z);
-                    ImagePlus focus = retrieveFocusedPlane(tp, z);
-                    return new ImmutablePair<>(fr - 1, focus);
-                }
-            });
         }
 
-        try {
-
-            List<Future<Entry<Integer, ImagePlus>>> lst = es.invokeAll(fut);
-
-            for (Future<Entry<Integer, ImagePlus>> f : lst) {
-                Entry<Integer, ImagePlus> e = f.get();
-                stack[e.getKey()] = e.getValue();
-            }
-
-            ImagePlus focused = new Concatenator().concatenate(stack, false);
-            ImagePlus hyp = HyperStackConverter.toHyperStack(focused, imp.getNChannels(), 1, imp.getNFrames(), "xyczt", "composite");
-            if (hyp.getNChannels() == 4) {
-                ((CompositeImage) hyp).setLuts(new LUT[]{LUT.createLutFromColor(Color.WHITE), LUT.createLutFromColor(Color.RED), LUT.createLutFromColor(Color.GREEN), LUT.createLutFromColor(new Color(0, 70, 255))});
-            }
-            return hyp;
-        } catch (Exception e) {
-            logger.print(e);
-            e.printStackTrace();
-            return null;
+        ImagePlus focused = new Concatenator().concatenate(stack, false);
+        ImagePlus hyp = HyperStackConverter.toHyperStack(focused, imp.getNChannels(), 1, imp.getNFrames(), "xyczt", "composite");
+        if (hyp.getNChannels() == 4) {
+            ((CompositeImage) hyp).setLuts(new LUT[]{LUT.createLutFromColor(Color.WHITE), LUT.createLutFromColor(Color.RED), LUT.createLutFromColor(Color.GREEN), LUT.createLutFromColor(new Color(0, 70, 255))});
         }
+        return hyp;
 
     }
 
-    private static int findBestFocusStackFromSingleTimepoint(ImagePlus imp, int focusChannel) {
+    public static int findBestFocusStackFromSingleTimepoint(ImagePlus imp, int focusChannel) {
         Find_focused_slices plg = new Find_focused_slices();
         ImageStack ch = ChannelSplitter.getChannel(imp, focusChannel);
 
@@ -150,7 +260,7 @@ public class BestFocus {
         return bestSlice;
     }
 
-    private static ImagePlus retrieveFocusedPlane(ImagePlus imp, int z) {
+    public static ImagePlus retrieveFocusedPlane(ImagePlus imp, int z) {
         ImageStack out = new ImageStack(imp.getWidth(), imp.getHeight());
         for (int i = 1; i <= imp.getNChannels(); i++) {
             ImageStack s = ChannelSplitter.getChannel(imp, i);
@@ -181,7 +291,8 @@ public class BestFocus {
             File destFile = new File(outDir.getAbsolutePath() + File.separator + f.getName());
             if (!destFile.exists()) {
                 ImagePlus in = IJ.openImage(f.getAbsolutePath());
-                ImagePlus out = createBestFocusStackFromHyperstack(in, 1);
+                int[] zPlanes = computeBestFocusIndicesBasedOnDotProduct(in, 1);
+                ImagePlus out = createBestFocusStackFromHyperstack(in, zPlanes,1);
                 IJ.save(out, outDir.getAbsolutePath() + File.separator + f.getName());
             }
         }

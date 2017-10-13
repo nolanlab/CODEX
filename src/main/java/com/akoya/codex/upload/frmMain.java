@@ -5,11 +5,21 @@
  */
 package com.akoya.codex.upload;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -32,13 +42,14 @@ public class frmMain extends javax.swing.JFrame {
                 File dir = new File(experimentView.getPath());
                 File poFile = new File(dir + File.separator + "processingOptions.json");
                 try {
-                    uploadOptionsView.load(ProcessingOptions.load(poFile));
+                    //Directly replace ProcessionOptions content
+                    ProcessingOptions po = ProcessingOptions.load(poFile);
+                    uploadOptionsView.load(po);
                 } catch (Exception e) {
                     log("Failed to load processingOptions.json file");
                 }
             }
-        }
-        );
+        });
     }
 
     /**
@@ -49,6 +60,16 @@ public class frmMain extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        File dir = new File(".");
+
+        try {
+            File in = new File(dir.getCanonicalPath() + File.separator + "config.txt");
+            if(in != null && !in.isDirectory() && !in.exists()) {
+                numberOfGpuDialog();
+            }
+        } catch (Exception e) {
+            logger.showException(e);
+        }
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         experimentView = new com.akoya.codex.upload.ExperimentView();
@@ -74,7 +95,27 @@ public class frmMain extends javax.swing.JFrame {
         prg.setPreferredSize(new java.awt.Dimension(146, 20));
         getContentPane().add(prg);
 
-        cmdStart.setText("Start the upload");
+        String upload = "Start the upload";
+        String processing = "Start the processing";
+
+        //default
+        cmdStart.setText(processing);
+        JRadioButton rbProcessing = uploadOptionsView.getRbProcessing();
+
+        //Item listener to capture the state of the radio button to display the text
+        ItemListener itl = new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                int state = itemEvent.getStateChange();
+                if (state == ItemEvent.SELECTED) {
+                    cmdStart.setText(processing);
+                }  else {
+                    cmdStart.setText(upload);
+                }
+            }
+        };
+        rbProcessing.addItemListener(itl);
+
+
         cmdStart.setAlignmentX(0.5F);
         cmdStart.setAlignmentY(0.0F);
         cmdStart.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -91,6 +132,90 @@ public class frmMain extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Mouseevent to open the filechooser option to specify config.txt TMP_SSD_DRIVE content.
+     * @param evt
+     */
+    private void configFieldDirMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtDirMouseReleased
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            if(jfc.getSelectedFile() != null) {
+                configField.setText(jfc.getSelectedFile().getAbsolutePath());
+            }
+        }
+        fireStateChanged();
+    }
+
+    private void configFieldDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDirActionPerformed
+    }
+
+    private void fireStateChanged() {
+        PropertyChangeListener[] chl = this.getListeners(PropertyChangeListener.class);
+        for (PropertyChangeListener c : chl) {
+            c.propertyChange(new PropertyChangeEvent(this, "dir", "...", configField.getText()));
+        }
+    }
+
+    /*
+        Method to create a new dialog box to be input at the start-up of the application, when it is run
+        on the machine the first time.
+     */
+    public void numberOfGpuDialog() {
+
+        JPanel gpuPanel = new JPanel();
+        gpuPanel.setLayout(new BoxLayout(gpuPanel, BoxLayout.Y_AXIS));
+        gpuPanel.add(new JLabel("Enter number of GPUs"));
+        gpuPanel.add(spinGPU);
+        spinGPU.setModel(new javax.swing.SpinnerNumberModel(4, 1, 200, 1));
+        gpuPanel.add(new JLabel("\nTMP_SSD_DRIVE"));
+        gpuPanel.add(configField);
+
+        configField.setText("...");
+        configField.setEnabled(false);
+        configField.setMaximumSize(new java.awt.Dimension(3000, 20));
+        configField.setMinimumSize(new java.awt.Dimension(300, 20));
+        configField.setPreferredSize(new java.awt.Dimension(3000, 20));
+        configField.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                configFieldDirMouseReleased(evt);
+            }
+        });
+        configField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                configFieldDirActionPerformed(evt);
+            }
+        });
+
+        int result = JOptionPane.showConfirmDialog(null, gpuPanel,
+                "Specify configuration", JOptionPane.OK_CANCEL_OPTION);
+        if(result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
+            System.exit(0);
+        }
+        else {
+            //Add content to config.txt
+            try {
+                File dir = new File(".");
+                if(configField.getText().equals(null) || configField.getText().equalsIgnoreCase("...")) {
+                    JOptionPane.showMessageDialog(this,"Could not save config.txt file, please specify directory for TMP_SSD_DRIVE");
+                    System.exit(0);
+                }
+                if(StringUtils.isBlank(spinGPU.getValue().toString())) {
+                    JOptionPane.showMessageDialog(this,"Could not save config.txt file, please enter value for number of GPUs");
+                    System.exit(0);
+                }
+                String str = configField.getText().replaceAll("\\\\",File.separator);
+                List<String> lines = Arrays.asList("TMP_SSD_DRIVE="+str, "numGPU="+spinGPU.getValue());
+                Path file = Paths.get(dir.getCanonicalPath() + File.separator + "config.txt");
+                Files.write(file, lines, Charset.forName("UTF-8"));
+            }
+            catch(IOException e) {
+               logger.showException(e);
+               JOptionPane.showMessageDialog(this,"Could not save the config.txt file");
+            }
+        }
+    }
 
     private void cmdStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
 
@@ -104,19 +229,24 @@ public class frmMain extends javax.swing.JFrame {
 
                 String experimentJS = exp.toJSON();
 
-                exp.saveToFile(new File(dir + File.separator + "Experiment.json"));
-
+                //Included a feature to check if the product of region size X and Y is equal to the number of tiles
+                if (experimentView.isTilesAProductOfRegionXAndY(dir)) {
+                    exp.saveToFile(new File(dir + File.separator + "Experiment.json"));
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Check the values of Region Size X and Y!");
+                    return;
+                }
                 File poFile = new File(dir + File.separator + "processingOptions.json");
 
                 ProcessingOptions po = uploadOptionsView.getUploadOptions();
                 boolean doUpload = po.doUpload();
-
                 po.saveToFile(poFile);
 
                 Uploader upl = doUpload ? new Uploader(po.getDestinationUrl(), po.getNumThreads()) : null;
 
                 if (doUpload) {
-                    log("\nAuthorizing...");
+                    log("\nAuthorizing..."); 
                 }
                 final String token = doUpload ? upl.sendAuthRequest(po.getUsername(), po.getPassword()) : null;
                 if (doUpload) {
@@ -299,5 +429,12 @@ public class frmMain extends javax.swing.JFrame {
     private com.akoya.codex.upload.ExperimentView experimentView;
     private javax.swing.JProgressBar prg;
     private com.akoya.codex.upload.ProcessingOptionsView uploadOptionsView;
+    private JSpinner spinGPU = new JSpinner();
+    private JTextField configField = new JTextField(5);
+
+    public JSpinner getSpinGPU() {
+        return spinGPU;
+    }
+
     // End of variables declaration//GEN-END:variables
 }

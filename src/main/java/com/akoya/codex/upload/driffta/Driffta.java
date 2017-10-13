@@ -22,10 +22,8 @@ import org.scijava.util.FileUtils;
 
 import java.awt.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.*;
 
 //Those dependenceis are unused but necessary for driftcomp to work
@@ -43,7 +41,6 @@ public class Driffta {
 
     private static final boolean copy = false;
     private static boolean color = false;
-
     // Define the path to a local file.
     /**
      * @param args the command line arguments
@@ -58,6 +55,7 @@ public class Driffta {
         config.load(new FileInputStream("config.txt"));
 
         final String TMP_SSD_DRIVE = config.get("TMP_SSD_DRIVE").toString();
+        final String numGPUs = config.get("numGPU").toString();
 
         try {
             log("Starting drift compensation. Version " + version);
@@ -79,12 +77,12 @@ public class Driffta {
 
             File expFile = new File(baseDir + File.separator + "Experiment.json");
             if (!expFile.exists()) {
-                throw new IllegalStateException("Config file not found: " + expFile);
+                throw new IllegalStateException("Experiment JSON file not found: " + expFile);
             }
 
             File propFile = new File(baseDir + File.separator + "processingOptions.json");
             if (!propFile.exists()) {
-                throw new IllegalStateException("Config file not found: " + propFile);
+                throw new IllegalStateException("Processing Options JSON file not found: " + propFile);
             }
 
             final Experiment exp = Experiment.loadFromJSON(expFile);
@@ -96,8 +94,7 @@ public class Driffta {
             if (!exp.deconvolution.equals("Microvolution")) {
                 log("Deconvolution disabled based on Experiment.json");
             }
-
-            final int numDeconvolutionDevices = po.getNumGPUs();
+            final int numDeconvolutionDevices = ((org.apache.commons.lang3.StringUtils.isBlank(numGPUs))? Integer.parseInt(numGPUs) : 0);
 
             File chNamesFile = new File(baseDir + File.separator + "channelNames.txt");
 
@@ -198,7 +195,8 @@ public class Driffta {
 
                         final String destFileName = tmpDestDir + File.separator + "Cyc" + cycle + "_reg" + region + "_" + exp.getSourceFileName(sourceDir, exp.microscope, tile, zSlice, chIdxF);
 
-                        final String cmd = "./tiffcp -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
+                        //final String cmd = "C:\\Users\\Nikolay\\IdeaProjects\\CODEX\\lib\\tiffcp.exe -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
+                        final String cmd = "./lib/tiffcp -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
 
                         if (new File(destFileName).exists()) {
                             if (new File(destFileName).length() > 10000) {
@@ -249,9 +247,9 @@ public class Driffta {
             }
 
             log("Submitting file opening jobs");
+            log("Working on it...");
 
             List<Future<String>> lst = es.invokeAll(alR);
-
             log("All file opening jobs submitted");
 
             for (Future<String> future : lst) {
@@ -399,12 +397,15 @@ public class Driffta {
 
             imp = null;
 
+            //run best focus
+            int[] bestZPlanes = BestFocus.computeBestFocusIndicesBasedOnDotProduct(hyp, exp.drift_comp_channel);
+            log("The bestZplane arrays: "+ Arrays.toString(bestZPlanes));
+
             log("Drift compensation");
             log("Waiting for driftcomp interlock");
             DriftcompInterlockDispatcher.gainLock();
             log("Interlock acquired");
-
-            Driftcomp.compensateDrift(hyp, exp.drift_comp_channel - 1);
+            Driftcomp.compensateDrift(hyp, bestZPlanes, exp.drift_comp_channel - 1);
 
             DriftcompInterlockDispatcher.releaseLock();
 
@@ -467,13 +468,10 @@ public class Driffta {
             }
             
             log("Running best focus");
-            
-            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(hyp, exp.drift_comp_channel);
-           
+            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(hyp, bestZPlanes, exp.drift_comp_channel);
             log("Saving the focused tiff");
             fs = new FileSaver(focused);
             fs.saveAsTiff(bestFocus + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width));
-
             /*
             Duplicator dup = new Duplicator();
             for (int fr = 1; fr <= focused.getNFrames(); fr++) {
