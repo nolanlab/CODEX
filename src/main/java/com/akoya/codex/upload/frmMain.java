@@ -205,7 +205,7 @@ public class frmMain extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this,"Could not save config.txt file, please enter value for number of GPUs");
                     System.exit(0);
                 }
-                String str = configField.getText().replaceAll("\\\\",File.separator);
+                String str = configField.getText().replaceAll("\\\\", "/");
                 List<String> lines = Arrays.asList("TMP_SSD_DRIVE="+str, "numGPU="+spinGPU.getValue());
                 Path file = Paths.get(dir.getCanonicalPath() + File.separator + "config.txt");
                 Files.write(file, lines, Charset.forName("UTF-8"));
