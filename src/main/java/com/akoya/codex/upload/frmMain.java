@@ -213,6 +213,7 @@ public class frmMain extends javax.swing.JFrame {
             catch(IOException e) {
                logger.showException(e);
                JOptionPane.showMessageDialog(this,"Could not save the config.txt file");
+               System.exit(0);
             }
         }
     }
