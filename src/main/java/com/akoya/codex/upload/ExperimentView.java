@@ -6,6 +6,7 @@
 package com.akoya.codex.upload;
 
 import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -352,6 +353,7 @@ public class ExperimentView extends javax.swing.JPanel {
         rb_HandE_yes.setText("Yes");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
         jPanel1.add(rb_HandE_yes, gridBagConstraints);
 
         buttonGroup1.add(jRadioButton2);
@@ -359,6 +361,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jRadioButton2.setText("No");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
         gridBagConstraints.weightx = 1.0;
         jPanel1.add(jRadioButton2, gridBagConstraints);
 
@@ -373,6 +376,7 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(jLabel17, gridBagConstraints);
 
@@ -385,6 +389,7 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(jLabel24, gridBagConstraints);
 
@@ -397,6 +402,7 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(jLabel9, gridBagConstraints);
 
@@ -778,6 +784,14 @@ public class ExperimentView extends javax.swing.JPanel {
         return false;
     }
 
+    /*
+    Method to check if channelNames.txt file is present in the experiment folder
+     */
+    public boolean isChannelNamesPresent(File dir) {
+        File chNames = new File(dir + File.separator + "channelNames.txt");
+        return chNames == null ? false : (!chNames.isDirectory() && chNames.exists());
+    }
+
 
         private String guessValues(File dir) {
 
@@ -1039,6 +1053,7 @@ public class ExperimentView extends javax.swing.JPanel {
 
         if (val3.getSelectedItem().toString().startsWith("Keyence")) {
             if (subdir.length == 0) {
+                System.out.println("Directory does not contain a single folder starting with 'Cyc...'. Please try again!");
                 throw new IllegalStateException("Directory" + dir.getAbsolutePath() + " does not contain a single folder starting with 'Cyc...'");
             }
 

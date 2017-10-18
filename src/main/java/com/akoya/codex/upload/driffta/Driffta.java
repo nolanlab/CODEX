@@ -52,7 +52,7 @@ public class Driffta {
         //args = new String[]{"H:\\3-7-17_Pfizer_tissue_10_multicycle", "H:\\processed_Pfizer_tissue10_withH&E", "1", "1"};
         Properties config = new Properties();
 
-        config.load(new FileInputStream("config.txt"));
+        config.load(new FileInputStream(System.getProperty("user.home")+File.separator+"config.txt"));
 
         final String TMP_SSD_DRIVE = config.get("TMP_SSD_DRIVE").toString();
         final String numGPUs = config.get("numGPU").toString();

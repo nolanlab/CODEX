@@ -60,7 +60,7 @@ public class frmMain extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        File dir = new File(".");
+        File dir = new File(System.getProperty("user.home"));
 
         try {
             File in = new File(dir.getCanonicalPath() + File.separator + "config.txt");
@@ -69,6 +69,7 @@ public class frmMain extends javax.swing.JFrame {
             }
         } catch (Exception e) {
             logger.showException(e);
+            System.exit(0);
         }
 
         buttonGroup1 = new javax.swing.ButtonGroup();
@@ -114,7 +115,6 @@ public class frmMain extends javax.swing.JFrame {
             }
         };
         rbProcessing.addItemListener(itl);
-
 
         cmdStart.setAlignmentX(0.5F);
         cmdStart.setAlignmentY(0.0F);
@@ -196,7 +196,7 @@ public class frmMain extends javax.swing.JFrame {
         else {
             //Add content to config.txt
             try {
-                File dir = new File(".");
+                File dir = new File(System.getProperty("user.home"));
                 if(configField.getText().equals(null) || configField.getText().equalsIgnoreCase("...")) {
                     JOptionPane.showMessageDialog(this,"Could not save config.txt file, please specify directory for TMP_SSD_DRIVE");
                     System.exit(0);
@@ -226,6 +226,10 @@ public class frmMain extends javax.swing.JFrame {
             try {
                 File dir = new File(experimentView.getPath());
 
+                if(dir == null || dir.getName().equals("...")) {
+                    log("Please select an experiment folder and try again!");
+                }
+
                 Experiment exp = experimentView.getExperiment();
 
                 String experimentJS = exp.toJSON();
@@ -235,14 +239,21 @@ public class frmMain extends javax.swing.JFrame {
                     exp.saveToFile(new File(dir + File.separator + "Experiment.json"));
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "Check the values of Region Size X and Y!");
+                    JOptionPane.showMessageDialog(null, "Check the values of Region Size X and Y and then try again!");
                     return;
                 }
+
                 File poFile = new File(dir + File.separator + "processingOptions.json");
 
                 ProcessingOptions po = uploadOptionsView.getUploadOptions();
                 boolean doUpload = po.doUpload();
                 po.saveToFile(poFile);
+
+                //Included a feature to check if the channelNames.txt file is present
+                if (!experimentView.isChannelNamesPresent(dir)) {
+                    JOptionPane.showMessageDialog(null, "ChannelNames.txt file is not present in the experiment folder. Please check and try again!");
+                    return;
+                }
 
                 Uploader upl = doUpload ? new Uploader(po.getDestinationUrl(), po.getNumThreads()) : null;
 
@@ -277,15 +288,6 @@ public class frmMain extends javax.swing.JFrame {
                 f.getAbsolutePath();
 
                 boolean chNamesUpl = true;
-
-                if (doUpload) {
-                    File chNames = new File(experimentView.getPath() + File.separator + "channelNames.txt");
-                    if (!chNames.exists()) {
-                        JOptionPane.showMessageDialog(frmMain.this, "channelNames.txt file does not exist in the experiment source folder. please make sure to put it there. \nFormat of the file:"
-                                + "single-column text file with names of each channel over cycles");
-                        throw new IllegalStateException("");
-                    }
-                }
 
                 int totalCount = exp.region_names.length * exp.region_width * exp.region_height;
 
@@ -346,7 +348,7 @@ public class frmMain extends javax.swing.JFrame {
                 waitAndPrint(proc);
 
             } catch (Exception e) {
-            throw new Error(e);
+                throw new Error(e);
         }
 
             }

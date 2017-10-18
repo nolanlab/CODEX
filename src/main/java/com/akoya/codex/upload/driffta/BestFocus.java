@@ -132,7 +132,7 @@ public class BestFocus {
     Method to find the median absolute deviation for the 2 images using eucledian distance.
      */
     public static double findMedianAbsoluteDeviation(ImagePlus refImp, ImagePlus calcImp,  double refImpEuclLen) {
-        double dist = 0.0;
+
         if(calcImp.getWidth()!=refImp.getWidth() || calcImp.getHeight()!=refImp.getHeight()) throw new IllegalArgumentException("Image dimensions don't match");
         if(calcImp.getStackSize()!=1) throw new IllegalArgumentException("imp image contains more than one plane");
         if(refImp.getStackSize()!=1) throw new IllegalArgumentException("refImp image contains more than one plane");
