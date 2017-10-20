@@ -81,20 +81,57 @@ public class frmMain extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("CODEXuploader v1.4");
 
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.PAGE_AXIS));
-        getContentPane().add(experimentView);
-        getContentPane().add(uploadOptionsView);
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        JPanel newPanel = new JPanel();
+        GridBagLayout gridBag = new GridBagLayout();
+        newPanel.setLayout(gridBag);
+        GridBagConstraints c = new GridBagConstraints();
+
+        c.gridx=0;
+        c.gridy=0;
+        c.fill  = GridBagConstraints.BOTH;
+        c.weightx =1;
+        c.weighty =0;
+        newPanel.add(experimentView, c);
+
+        c = new GridBagConstraints();
+
+        c.gridx=0;
+        c.gridy=1;
+        c.weightx =1;
+        c.fill  = GridBagConstraints.HORIZONTAL;
+        newPanel.add(uploadOptionsView, c);
+
+        JScrollPane pane = new JScrollPane(newPanel);
+        pane.setLayout(new ScrollPaneLayout());
+        pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         JScrollPane scrollPane = new JScrollPane(textArea);
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        getContentPane().add(scrollPane);
+        scrollPane.setPreferredSize(new Dimension(980,200));
+        c = new GridBagConstraints();
+
+        c.gridx=0;
+        c.gridy=2;
+        c.weightx =1;
+        c.fill  = GridBagConstraints.HORIZONTAL;
+        newPanel.add(scrollPane, c);
 
         prg.setMaximumSize(new java.awt.Dimension(320, 20));
         prg.setMinimumSize(new java.awt.Dimension(10, 20));
         prg.setName(""); // NOI18N
-        prg.setPreferredSize(new java.awt.Dimension(146, 20));
-        getContentPane().add(prg);
+        prg.setPreferredSize(new java.awt.Dimension(300, 20));
+        c = new GridBagConstraints();
+
+        c.gridx=0;
+        c.gridy=3;
+        c.weightx =0;
+        c.fill  = GridBagConstraints.NONE;
+
+        newPanel.add(prg, c);
 
         String upload = "Start the upload";
         String processing = "Start the processing";
@@ -127,7 +164,20 @@ public class frmMain extends javax.swing.JFrame {
                 cmdStartActionPerformed(evt);
             }
         });
-        getContentPane().add(cmdStart);
+        c = new GridBagConstraints();
+
+        c.gridx=0;
+        c.gridy=4;
+        c.weighty = 1;
+        c.anchor = GridBagConstraints.NORTH;
+        c.fill  = GridBagConstraints.NONE;
+
+        newPanel.add(cmdStart, c);
+
+        pane.setMaximumSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
+
+        mainPanel.add(pane, BorderLayout.CENTER);
+        getContentPane().add(mainPanel);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -166,7 +216,7 @@ public class frmMain extends javax.swing.JFrame {
 
         JPanel gpuPanel = new JPanel();
         gpuPanel.setLayout(new BoxLayout(gpuPanel, BoxLayout.Y_AXIS));
-        gpuPanel.add(new JLabel("Enter number of GPUs"));
+        gpuPanel.add(new JLabel("Number of GPUs"));
         gpuPanel.add(spinGPU);
         spinGPU.setModel(new javax.swing.SpinnerNumberModel(4, 1, 200, 1));
         gpuPanel.add(new JLabel("\nTMP_SSD_DRIVE"));
