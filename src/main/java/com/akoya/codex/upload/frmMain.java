@@ -79,7 +79,19 @@ public class frmMain extends javax.swing.JFrame {
         cmdStart = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("CODEXuploader v1.4");
+        setTitle("CODEXuploader");
+
+        try {
+            File workingDir = new File(".");
+            if(workingDir != null) {
+                ImageIcon img = new ImageIcon(workingDir.getCanonicalPath() + File.separator + "codexlogo.png");
+                if (img != null) {
+                    setIconImage(img.getImage());
+                }
+            }
+        } catch(Exception e) {
+            logger.showException(e);
+        }
 
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.PAGE_AXIS));
         JPanel mainPanel = new JPanel();
@@ -215,18 +227,36 @@ public class frmMain extends javax.swing.JFrame {
     public void numberOfGpuDialog() {
 
         JPanel gpuPanel = new JPanel();
-        gpuPanel.setLayout(new BoxLayout(gpuPanel, BoxLayout.Y_AXIS));
-        gpuPanel.add(new JLabel("Number of GPUs"));
-        gpuPanel.add(spinGPU);
+        GridBagLayout gridBag = new GridBagLayout();
+        gpuPanel.setLayout(gridBag);
+        GridBagConstraints c = new GridBagConstraints();
+
+        c.gridx=0;
+        c.gridy=0;
+        gpuPanel.add(new JLabel("Number of GPUs: \t"), c);
+
+
+        c= new GridBagConstraints();
+        c.gridx=1;
+        c.gridy=0;
+        gpuPanel.add(spinGPU, c);
         spinGPU.setModel(new javax.swing.SpinnerNumberModel(4, 1, 200, 1));
-        gpuPanel.add(new JLabel("\nTMP_SSD_DRIVE"));
-        gpuPanel.add(configField);
+
+        c= new GridBagConstraints();
+        c.gridx=0;
+        c.gridy=1;
+        gpuPanel.add(new JLabel("\nTMP_SSD_DRIVE: \t"), c);
+
+        c= new GridBagConstraints();
+        c.gridx=1;
+        c.gridy=1;
+        gpuPanel.add(configField, c);
 
         configField.setText("...");
         configField.setEnabled(false);
         configField.setMaximumSize(new java.awt.Dimension(3000, 20));
         configField.setMinimumSize(new java.awt.Dimension(300, 20));
-        configField.setPreferredSize(new java.awt.Dimension(3000, 20));
+        configField.setPreferredSize(new java.awt.Dimension(300, 20));
         configField.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 configFieldDirMouseReleased(evt);
