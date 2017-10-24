@@ -52,7 +52,7 @@ public class MaximaFinder3D {
         final AtomicInteger xGlobal = new AtomicInteger(-1);
         final int w = in.getWidth();
         final int h = in.getHeight();
-        final int d = in.getStackSize();
+        final int d = in.getNSlices();
 
         final Point3D[][][] linkMatrix = new Point3D[w][h][d];
         final int[][][] maximaMatrix = new int[w][h][d];
@@ -80,7 +80,7 @@ public class MaximaFinder3D {
 
         ExecutorService es = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors() * 2);
 
-        for (int xGlob = 1; xGlob < w - 1; xGlob++) {
+        for (int xGlob = 0; xGlob < w; xGlob++) {
             final int i = xGlob;
             es.execute(new Runnable() {
                 @Override
@@ -90,7 +90,7 @@ public class MaximaFinder3D {
                         System.out.println("Quick-Shift: " + i);
                     }
 
-                    for (int j = 1; j < h - 1; j++) {
+                    for (int j = 0; j < h; j++) {
                         for (int k = 0; k < d; k++) {
 
                             if (linkMatrix[i][j][k] != null) {
@@ -113,20 +113,21 @@ public class MaximaFinder3D {
 
                                         Point3D otherPoint = new Point3D(i + x, j + y, k + z);
 
-                                        double currIntens = is.getVoxel(otherPoint.x, otherPoint.y, otherPoint.z);
+                                        if (otherPoint.x >= 0 && otherPoint.x < w && otherPoint.y >= 0 && otherPoint.y < h && otherPoint.z >= 0 && otherPoint.z < d) {
+                                            double currIntens = is.getVoxel(otherPoint.x, otherPoint.y, otherPoint.z);
 
-                                        if (currIntens <= lo_pass_ths) {
-                                            continue;
-                                        }
-
-                                        if (currIntens > maxIntensity) {
-                                            maxIntensity = currIntens;
-                                            linkMatrix[i][j][k] = otherPoint;
-                                        } else if (currIntens == maxIntensity) {
-                                            if (x >= 0 && y >= 0 && z >= 0) {
-                                                linkMatrix[i][j][k] = otherPoint;
+                                            if (currIntens <= lo_pass_ths) {
+                                                continue;
                                             }
 
+                                            if (currIntens > maxIntensity) {
+                                                maxIntensity = currIntens;
+                                                linkMatrix[i][j][k] = otherPoint;
+                                            } else if (currIntens == maxIntensity) {
+                                                if (x >= 0 && y >= 0 && z >= 0) {
+                                                    linkMatrix[i][j][k] = otherPoint;
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -137,7 +138,6 @@ public class MaximaFinder3D {
                             }
                         }
                     }
-
                 }
             });
         }
