@@ -29,6 +29,7 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
 
     private ProcessingOptions buildProcessingOptions() throws MalformedURLException {
         if (txtTempDir.getText().equals("...")) {
+            System.out.println("Please specify the Temporary storage location in upload options and try again!");
             throw new IllegalStateException("Temp directory not set");
         }
         return new ProcessingOptions(
