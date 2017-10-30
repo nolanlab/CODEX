@@ -202,6 +202,24 @@ public class Experiment {
         }
     }
 
+    public static String getDestStackFileNameWithZIndex(final String tilingMode, final int tile, final int region, final int region_width, final int zIndex) {
+        final int zbTile = tile - 1;
+        switch (tilingMode) {
+            case "snake":
+                int X = zbTile % region_width;
+                int Y = zbTile / region_width;
+                if (Y % 2 == 1) {
+                    X = region_width - X;
+                    X--;
+                }
+                X++;
+                Y++;
+                return String.format("reg%03d_X%02d_Y%02d_Z%02d", region, X, Y, zIndex) + ".tif";
+            default:
+                throw new IllegalArgumentException("Unsupported tiling mode: " + tilingMode);
+        }
+    }
+
     public static String getDestPNGFileName(final String tilingMode, final int tile, final int region, final int region_width, int cycle) {
         final int zbTile = tile - 1;
         switch (tilingMode) {

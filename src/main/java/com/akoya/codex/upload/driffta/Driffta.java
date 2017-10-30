@@ -25,6 +25,7 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
+import org.apache.commons.lang3.StringUtils;
 
 //Those dependenceis are unused but necessary for driftcomp to work
 //imagescience-3.0.0.jar, legacy-imglib1-1-5, vecmath-scijava
@@ -94,7 +95,7 @@ public class Driffta {
             if (!exp.deconvolution.equals("Microvolution")) {
                 log("Deconvolution disabled based on Experiment.json");
             }
-            final int numDeconvolutionDevices = ((org.apache.commons.lang3.StringUtils.isBlank(numGPUs))? Integer.parseInt(numGPUs) : 0);
+            final int numDeconvolutionDevices = (!StringUtils.isBlank(numGPUs)? Integer.parseInt(numGPUs) : 0);
 
             File chNamesFile = new File(baseDir + File.separator + "channelNames.txt");
 
@@ -466,12 +467,15 @@ public class Driffta {
             if (!bfFile.exists()) {
                 bfFile.mkdirs();
             }
+
+            int [] singleBestFocusPlane = new int[bestZPlanes.length];
+            Arrays.fill(singleBestFocusPlane, bestZPlanes[0]);
             
             log("Running best focus");
-            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(hyp, bestZPlanes, exp.drift_comp_channel);
+            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(hyp, singleBestFocusPlane, exp.drift_comp_channel);
             log("Saving the focused tiff");
             fs = new FileSaver(focused);
-            fs.saveAsTiff(bestFocus + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width));
+            fs.saveAsTiff(bestFocus + File.separator + Experiment.getDestStackFileNameWithZIndex(exp.tiling_mode, tile, region, exp.region_width, singleBestFocusPlane[0]));
             /*
             Duplicator dup = new Duplicator();
             for (int fr = 1; fr <= focused.getNFrames(); fr++) {

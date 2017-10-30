@@ -270,7 +270,7 @@ public class BestFocus {
         ImagePlus hyp = HyperStackConverter.toHyperStack(ret, imp.getNChannels(), 1, 1, "xyczt", "composite");
         return hyp;
     }
-
+/*
     public static void main(String[] args) {
 
         if (args.length == 0) {
@@ -297,5 +297,5 @@ public class BestFocus {
             }
         }
 
-    }
+    }*/
 }
