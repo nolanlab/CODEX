@@ -8,12 +8,13 @@ package com.akoya.codex.upload.driffta;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.plugin.Duplicator;
+import ij.plugin.ZProjector;
 import ij.process.ImageProcessor;
+import ij.process.StackProcessor;
 import mpicbg.imglib.algorithm.fft.PhaseCorrelation;
 import mpicbg.imglib.image.ImagePlusAdapter;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -26,38 +27,71 @@ import static com.akoya.codex.upload.driffta.Driffta.log;
  */
 public class Driftcomp {
     
-    public static void compensateDrift(ImagePlus decStacks, int[] bestZPlanes, final int zeroBasedDriftCompChannel) {
+    public static void compensateDrift(ImagePlus decStacks, final int zeroBasedDriftCompChannel) {
         ImagePlus[][] stacks = new ImagePlus[decStacks.getNFrames()][decStacks.getNChannels()];
-        
         Duplicator dup = new Duplicator();
-        
-        for (int ch = 0; ch < stacks[0].length; ch++) {
-            stacks[0][ch] = dup.run(decStacks, ch + 1, ch + 1, 1, decStacks.getNSlices(), 1, 1);
+        int factor = 4;
+        ImagePlus [] zProj = new ImagePlus[decStacks.getNFrames()];
+        ImagePlus[] downsampledStacks = new ImagePlus[zProj.length];
+
+        for (int i = 0; i < decStacks.getNFrames(); i++) {
+            for (int ch = 0; ch < stacks[0].length; ch++) {
+                stacks[i][ch] = dup.run(decStacks, ch + 1, ch + 1, 1, decStacks.getNSlices(), i+1, i+1);
+            }
+
         }
-        
+
+        ImageStack is =  stacks[0][zeroBasedDriftCompChannel].getImageStack().duplicate();
+        StackProcessor sp = new StackProcessor(is);
+        downsampledStacks[0] = new ImagePlus( stacks[0][zeroBasedDriftCompChannel].getTitle(), sp.resize(is.getWidth() / factor, is.getHeight() / factor, true));
+
+        if(decStacks.getNSlices()>0){
+        ZProjector zp = new ZProjector();
+        zp.setImage(stacks[0][zeroBasedDriftCompChannel]);
+        zp.setMethod(ZProjector.SD_METHOD);
+        zp.doProjection();
+        zProj[0] = zp.getProjection();
+        }else{
+            zProj[0] = stacks[0][zeroBasedDriftCompChannel];
+        }
+
         ExecutorService es = Executors.newWorkStealingPool(stacks.length);
-        
+
         for (int i = 1; i < stacks.length; i++) {
             final int idx = i;
             es.execute(() -> {
                 System.out.println("Driftcompensating cycle: " + idx);
-                for (int ch = 0; ch < stacks[0].length; ch++) {
-                    stacks[idx][ch] = dup.run(decStacks, ch + 1, ch + 1, 1, decStacks.getNSlices(), idx + 1, idx + 1);
-                }
 
-                int firstBestFocus = bestZPlanes[0];
-                ImagePlus singlePlane = dup.run(stacks[0][zeroBasedDriftCompChannel], 1, 1, firstBestFocus, firstBestFocus, 1, 1);
+                        if(decStacks.getNSlices()>0) {
+                            ZProjector zpi = new ZProjector();
+                            zpi.setImage(stacks[idx][zeroBasedDriftCompChannel]);
+                            zpi.setMethod(ZProjector.SD_METHOD);
+                            zpi.doProjection();
+                            zProj[idx] = zpi.getProjection();
+                        }else{
+                            zProj[idx] = stacks[idx][zeroBasedDriftCompChannel];
+                        }
 
-                int[] shift = computeShift(firstBestFocus, singlePlane, stacks[idx][zeroBasedDriftCompChannel], bestZPlanes, idx);
+                ImageStack is2 =  stacks[idx][zeroBasedDriftCompChannel].getImageStack().duplicate();
+
+                StackProcessor sp2 = new StackProcessor(is2);
+
+                downsampledStacks[idx] = new ImagePlus( stacks[idx][zeroBasedDriftCompChannel].getTitle(), sp2.resize(is2.getWidth() / factor, is2.getHeight() / factor));
+
+                int[] shift = computeShift(zProj[0], zProj[idx]);
+
+                shift = Arrays.copyOf(shift,3);
+
+                int[] shift3D = computeShift( downsampledStacks[0], downsampledStacks[idx]);
+                shift[2]=shift3D[2];
                 for (int ch = 0; ch < stacks[0].length; ch++) {
                     stacks[idx][ch] = applyShift3D(shift, stacks[idx][ch]);
                     for (int slice = 1; slice <= stacks[idx][ch].getNSlices(); slice++) {
-                       decStacks.getStack().setProcessor(stacks[idx][ch].getStack().getProcessor(slice), decStacks.getStackIndex(ch+1, slice, idx+1));
+                        decStacks.getStack().setProcessor(stacks[idx][ch].getStack().getProcessor(slice), decStacks.getStackIndex(ch+1, slice, idx+1));
                     }
                 }
             });
         }
-        
         es.shutdown();
         try{
             es.awaitTermination(1, TimeUnit.DAYS);
@@ -66,19 +100,12 @@ public class Driftcomp {
         }
     }
     
-    private static int[] computeShift(int bestFocusForFirst, ImagePlus imp1, ImagePlus imp2, int[] bestZPlanes, int idx) {
-        Duplicator dup = new Duplicator();
-        int sliceBestFocus = bestZPlanes[idx];
-        ImagePlus singlePlane = dup.run(imp2, 1, 1, sliceBestFocus, sliceBestFocus, 1, 1);
-
-        int z = bestFocusForFirst - sliceBestFocus;
-        PhaseCorrelation phc = new PhaseCorrelation(ImagePlusAdapter.wrap(imp1), ImagePlusAdapter.wrap(singlePlane), 1, true);
+    private static int[] computeShift(ImagePlus imp1, ImagePlus imp2) {
+        PhaseCorrelation phc = new PhaseCorrelation(ImagePlusAdapter.wrap(imp1), ImagePlusAdapter.wrap(imp2), 1, true);
         phc.setNumThreads(Runtime.getRuntime().availableProcessors());
         phc.setComputeFFTinParalell(true);
         phc.process();
         int[] p = phc.getShift().getPosition();
-        p = Arrays.copyOf(p,p.length+1);
-        p[p.length-1]=z;
         log("Phase correlation: " + Arrays.toString(p));
         return p;
     }
@@ -122,7 +149,7 @@ public class Driftcomp {
         //imp.show();
         //dc.show();
         ImagePlus dc = new ImagePlus("After Driftcomp", out);
-        System.out.println("Driftcomp.applyShift3D in Z=" + imp.getNSlices() + " out Z=" + dc.getNSlices());
+        //System.out.println("Driftcomp.applyShift3D in Z=" + imp.getNSlices() + " out Z=" + dc.getNSlices());
         return dc;
         
     }

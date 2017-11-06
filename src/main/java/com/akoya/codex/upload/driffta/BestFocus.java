@@ -7,7 +7,6 @@ package com.akoya.codex.upload.driffta;
 
 import com.akoya.codex.upload.logger;
 import ij.CompositeImage;
-import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.plugin.ChannelSplitter;
@@ -17,11 +16,8 @@ import ij.plugin.HyperStackConverter;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 import ij.process.LUT;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileFilter;
 
 import java.util.*;
 import java.util.List;
@@ -73,23 +69,37 @@ public class BestFocus {
         return bestFocusPlanes;
     }
 
-    /*
+    /*public static double computeStackEuclLen(ImagePlus[] stack){
+        double refFrameEucLenTEMP = 0;
+        for (int z = 0; z < stack.length; z++) {
+            refFrameEucLenTEMP += dotProduct(stack[z], stack[z]);
+        }
+        return Math.sqrt(refFrameEucLenTEMP);
+    }
+
+
     Method to compute bestFocus Z slices and the indices based on the mean absolute deviation.
     Find the dot product and use it to find eucledian distance
-     */
+
+
     public static int[] computeBestFocusIndicesBasedOnDotProduct(ImagePlus imp, int focusChannel) {
-        int[] bestFocusPlanes = new int[imp.getNFrames()];
+        final int[] bestFocusPlanes = new int[imp.getNFrames()];
+        final double [] frameEuclLen =  new double[imp.getNFrames()];
         ExecutorService es = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors());
         Duplicator dup = new Duplicator();
 
         ImagePlus rp = dup.run(imp, focusChannel, focusChannel, 1, imp.getNSlices(), 1, 1);
-        int refZ = findBestFocusStackFromSingleTimepoint(rp, focusChannel);
-        refZ = Math.max(1, refZ);
+        int refZ = Math.max(1,findBestFocusStackFromSingleTimepoint(rp, focusChannel));
         bestFocusPlanes[0] = refZ;
 
-        ImagePlus refImp = dup.run(imp, focusChannel, focusChannel, refZ, refZ, 1, 1);
+        ImagePlus[][] iFramesJSlices = new ImagePlus[imp.getNFrames()][imp.getNSlices()];
 
-        double refImpEucLen = Math.sqrt(calculateDotProduct(refImp, refImp));
+        for (int i = 1; i <= imp.getNSlices(); i++) {
+            for (int j = 1; j <= imp.getNFrames(); j++) {
+                iFramesJSlices[i-1][j-1] = dup.run(imp, focusChannel, focusChannel, i, i, j, j);
+            }
+            frameEuclLen[i-1] = computeStackEuclLen(iFramesJSlices[i-1]);
+        }
 
         List<Callable<Entry<Integer, Integer>>> fut = new ArrayList<>();
 
@@ -101,8 +111,10 @@ public class BestFocus {
                     double minDist = Double.POSITIVE_INFINITY;
                     int bestIdx = -1;
                     for (int z = 1; z <= imp.getNSlices(); z++) {
-                        final ImagePlus calcImp = dup.run(imp, focusChannel, focusChannel, z, z, fr, fr);
-                        double dist = findMedianAbsoluteDeviation(refImp, calcImp, refImpEucLen);
+
+                        ImagePlus calcImp = iFramesJSlices[fr-1][z-1];
+                        //double scaleFactor= calcImp.getStatistics().histMax;
+                        double dist = Math.acos(dotProduct(iFramesJSlices[0][refZ-1],calcImp)/( frameEuclLen[0]* frameEuclLen[fr-1]));
                         if (dist < minDist) {
                             bestIdx = z;
                             minDist = dist;
@@ -128,10 +140,10 @@ public class BestFocus {
         return bestFocusPlanes;
     }
 
-    /*
+
     Method to find the median absolute deviation for the 2 images using eucledian distance.
-     */
-    public static double findMedianAbsoluteDeviation(ImagePlus refImp, ImagePlus calcImp,  double refImpEuclLen) {
+
+    public static double findMedianAbsoluteDeviation(ImagePlus refImp, ImagePlus calcImp,  double refStackEuclLen, double calcStackEucLen) {
 
         if(calcImp.getWidth()!=refImp.getWidth() || calcImp.getHeight()!=refImp.getHeight()) throw new IllegalArgumentException("Image dimensions don't match");
         if(calcImp.getStackSize()!=1) throw new IllegalArgumentException("imp image contains more than one plane");
@@ -140,20 +152,20 @@ public class BestFocus {
         short [] refImpArr = (short[])refImp.getProcessor().getPixels();
         short [] calcImpArr = (short[])calcImp.getProcessor().getPixels();
 
-        double calcImpEucLen= Math.sqrt(calculateDotProduct(calcImp, calcImp));
+        double calcImpEucLen= Math.sqrt(dotProduct(calcImp, calcImp));
         double [] MAD = new double[refImpArr.length];
 
         for (int i = 0; i < refImpArr.length; i++) {
-            MAD[i] = Math.abs(calcImpArr[i]/calcImpEucLen-refImpArr[i]/refImpEuclLen);
+            MAD[i] = Math.abs(calcImpArr[i]/calcStackEucLen-refImpArr[i]/refStackEuclLen);
         }
         Arrays.sort(MAD);
         return MAD[MAD.length/2];
     }
 
-    /*
+
     Calculate dot product between 2 images - reference image and the image to be computed with.
-     */
-    public static double calculateDotProduct(ImagePlus refImp, ImagePlus calcImp) {
+
+    public static double dotProduct(ImagePlus refImp, ImagePlus calcImp) {
         double dotP = 0.0;
 
         if(calcImp.getWidth()!=refImp.getWidth() || calcImp.getHeight()!=refImp.getHeight()) throw new IllegalArgumentException("Image dimensions don't match");
@@ -169,6 +181,7 @@ public class BestFocus {
 
         return dotP;
     }
+    */
 
     public static ImagePlus createBestFocusStackFromHyperstack(ImagePlus imp, int[] bestFocusZIndices, int focusChannel) {
 

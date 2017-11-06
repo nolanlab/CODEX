@@ -14,6 +14,7 @@ import ij.WindowManager;
 import ij.io.FileSaver;
 import ij.io.Opener;
 import ij.plugin.Concatenator;
+import ij.plugin.Duplicator;
 import ij.plugin.HyperStackConverter;
 import ij.plugin.ZProjector;
 import ij.process.ImageConverter;
@@ -36,7 +37,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class Driffta {
 
-    private static final int version = 11;
+    private static final int version = 12;
     
     private static Deconvolve_mult dec;
 
@@ -399,14 +400,21 @@ public class Driffta {
             imp = null;
 
             //run best focus
-            int[] bestZPlanes = BestFocus.computeBestFocusIndicesBasedOnDotProduct(hyp, exp.drift_comp_channel);
-            log("The bestZplane arrays: "+ Arrays.toString(bestZPlanes));
+            Duplicator dup = new Duplicator();
+            //log("Value of hyp: " + hyp);
+            int[] bestFocusPlanes = new int[hyp.getNFrames()];
+            ImagePlus rp = dup.run(hyp, exp.drift_comp_channel, exp.drift_comp_channel, 1, hyp.getNSlices(), 1, 1);
+            final int refZ = Math.max(1,BestFocus.findBestFocusStackFromSingleTimepoint(rp, exp.drift_comp_channel));
+            Arrays.fill(bestFocusPlanes, refZ);
+
+            //int[] bestZPlanes = BestFocus.computeBestFocusIndicesBasedOnDotProduct(hyp, exp.drift_comp_channel);
+            //log("The bestZ plane: "+ refZ);
 
             log("Drift compensation");
             log("Waiting for driftcomp interlock");
             DriftcompInterlockDispatcher.gainLock();
             log("Interlock acquired");
-            Driftcomp.compensateDrift(hyp, bestZPlanes, exp.drift_comp_channel - 1);
+            Driftcomp.compensateDrift(hyp, exp.drift_comp_channel - 1);
 
             DriftcompInterlockDispatcher.releaseLock();
 
@@ -468,14 +476,12 @@ public class Driffta {
                 bfFile.mkdirs();
             }
 
-            int [] singleBestFocusPlane = new int[bestZPlanes.length];
-            Arrays.fill(singleBestFocusPlane, bestZPlanes[0]);
             
             log("Running best focus");
-            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(hyp, singleBestFocusPlane, exp.drift_comp_channel);
+            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(hyp, bestFocusPlanes, exp.drift_comp_channel);
             log("Saving the focused tiff");
             fs = new FileSaver(focused);
-            fs.saveAsTiff(bestFocus + File.separator + Experiment.getDestStackFileNameWithZIndex(exp.tiling_mode, tile, region, exp.region_width, singleBestFocusPlane[0]));
+            fs.saveAsTiff(bestFocus + File.separator + Experiment.getDestStackFileNameWithZIndex(exp.tiling_mode, tile, region, exp.region_width, bestFocusPlanes[0]));
             /*
             Duplicator dup = new Duplicator();
             for (int fr = 1; fr <= focused.getNFrames(); fr++) {
