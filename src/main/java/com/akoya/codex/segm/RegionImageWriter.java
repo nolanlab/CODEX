@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 public class RegionImageWriter {
 
-    public static void writeRegionImage(Region[] reg, ImagePlus segmImage, String srcFileName, File outputDir) throws IOException {
+    public static BufferedImage[] writeRegionImage(Region[] reg, ImagePlus segmImage, String srcFileName, File outputDir) throws IOException {
         if (srcFileName.contains(".")) {
             srcFileName = srcFileName.substring(0, srcFileName.lastIndexOf("."));
         }
@@ -45,7 +45,9 @@ public class RegionImageWriter {
 
         BufferedImage[] bi2 = new BufferedImage[d];
         for (int z = 0; z < d; z++) {
-            bi2[z] = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+            bi2[z] = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+            bi[z].getGraphics().setColor(Color.black);
+            bi2[z].getGraphics().fillRect(0,0,w,h);
         }
 
         for (int z = 0; z < d; z++) {
@@ -63,11 +65,17 @@ public class RegionImageWriter {
                         }
                         if (!inner) {
                             bi2[z].setRGB(x, y, col);
+                        }else{
+                            bi2[z].setRGB(x, y, 0);
                         }
+                    }else{
+                            bi2[z].setRGB(x, y, 0);
                     }
-
                 }
             }
+            bi2[z].getGraphics().setColor(Color.black);
+            bi2[z].getGraphics().drawRect(0,0,w-1,h-1);
+            /*
             if (Main.printParams) {
                 Graphics2D gr = bi2[z].createGraphics();
                 gr.setPaint(Color.WHITE);
@@ -76,12 +84,13 @@ public class RegionImageWriter {
                 for (String string : s) {
                     gr.drawString(string, 15, offset += 15);
                 }
-            }
+            }*/
         }
 
         for (int z = 0; z < d; z++) {
-            ImageIO.write(bi2[z], "PNG", new File(outputDir + File.separator + "regions_" + srcFileName + "_Z" + z + ".png"));
+            String fileName = String.format(outputDir + File.separator + "regions_" + srcFileName + "_Z%02d", z);
+            ImageIO.write(bi2[z], "PNG", new File(fileName + ".png"));
         }
-
+    return bi2;
     }
 }

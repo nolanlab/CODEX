@@ -6,19 +6,19 @@ import ij.IJ;
 import ij.ImageJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.gui.ImageRoi;
+import ij.gui.Overlay;
+import ij.io.FileSaver;
 import ij.plugin.Duplicator;
 import ij.plugin.ImageCalculator;
 import ij.process.ImageProcessor;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class Main {
@@ -101,7 +101,6 @@ public class Main {
             System.exit(0);
         }
         else {
-            //Add content to config.txt
             try {
                 if(configField.getText().equals(null) || configField.getText().equalsIgnoreCase("...")) {
                     JOptionPane.showMessageDialog(configPanel,"Please specify directory before proceeding!");
@@ -118,7 +117,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        File inList = null;
+        File rootDir = null;
         File config = null;
         boolean use_membrane = false;
         double maxCutoff = 0.99;
@@ -138,27 +137,26 @@ public class Main {
         boolean showImage = false;
         boolean dont_inverse_memb = false;
         boolean delaunay_graph = true;
-
         int concentricCircles = 0;
         try {
             if(args.length < 2 ){
                 throw new IllegalArgumentException("Invalid number of arguments");
             }
             if (args.length == 3) {
-                inList = new File(args[0]);
+                rootDir = new File(args[0]);
                 printParams = Boolean.parseBoolean(args[2]);
                 showImage = Boolean.parseBoolean(args[1]);
             }
             if (args.length == 2) {
                 numberOfGpuDialog();
-                inList = new File(configField.getText());
+                rootDir = new File(configField.getText());
                 printParams = Boolean.parseBoolean(args[1]);
                 showImage = Boolean.parseBoolean(args[0]);
                 System.out.println("printParams = " + printParams);
             }
 
-            if(inList != null) {
-                config = new File(inList + File.separator + "config.txt");
+            if(rootDir != null) {
+                config = new File(rootDir + File.separator + "config.txt");
                 if (!config.exists()) {
                     throw new IllegalArgumentException("Config file not found:\n" + config.getPath());
                 }
@@ -198,12 +196,12 @@ public class Main {
             System.out.println("Usage: java -jar codex.jar <directory-with-inFiles-and-config.txt> <showSegmentedImage[true,false]> <optional:quantifyMembraneIntensity[true,false]>");
             System.exit(0);
         }
-        if (!inList.exists()) {
+        if (!rootDir.exists()) {
             throw new IllegalArgumentException("Error: Cannot find the input directoty");
         }
         Duplicator dup = new Duplicator();
         int tile = 0;
-        for (File in : inList.listFiles(new FilenameFilter() {
+        for (File currTiff : rootDir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(".tiff") || name.endsWith(".tif");
@@ -212,13 +210,13 @@ public class Main {
             int j;
             int i;
             ++tile;
-            System.out.print("\nprocessing file: " + in.getName() + "\n");
-            if (!in.exists()) {
-                throw new IllegalArgumentException("Error: Cannot find the input file:" + in);
+            System.out.print("\nprocessing file: " + currTiff.getName() + "\n");
+            if (!currTiff.exists()) {
+                throw new IllegalArgumentException("Error: Cannot find the input file:" + currTiff);
             }
-            ImagePlus imp = IJ.openVirtual((String) in.getAbsolutePath());
+            ImagePlus imp = IJ.openImage(currTiff.getAbsolutePath());
             if (imp == null) {
-                throw new IllegalStateException("Couldn't open the image file: " + in);
+                throw new IllegalStateException("Couldn't open the image file: " + currTiff);
             }
             imp.getNFrames();
             ImagePlus nucl = dup.run(imp, nuclearStainChannel, nuclearStainChannel, 1, imp.getNSlices(), nuclearStainCycle, nuclearStainCycle);
@@ -267,12 +265,32 @@ public class Main {
                 }
             }
 
-            RegionImageWriter.writeRegionImage((Region[]) reg, (ImagePlus) mult, (String) in.getName(), (File) in.getParentFile());
+            //Apply overlay to the different Z stacks of the actual tif file based on different masks.
+            BufferedImage[] bi2 = RegionImageWriter.writeRegionImage((Region[]) reg, (ImagePlus) mult, (String) currTiff.getName(), (File) currTiff.getParentFile());
+            ImagePlus copy = IJ.openImage(currTiff.getAbsolutePath());
+            Overlay overlay = new Overlay();
+
+            for(int z = 0; z < bi2.length; z++) {
+                ImagePlus im2 = new ImagePlus("Image Slice: "+z, bi2[z]);
+                ImageRoi imgRoi = new ImageRoi(0, 0, im2.getProcessor());
+                imgRoi.setNonScalable(true);
+                imgRoi.setZeroTransparent(true);
+                imgRoi.setOpacity(1);
+                imgRoi.setPosition(0,z+1,0);
+                overlay.add(imgRoi);
+            }
+            copy.setOverlay(overlay);
+            FileSaver fs = new FileSaver(copy);
+            fs.saveAsTiff(currTiff.getAbsolutePath());
+
+            System.out.println("Applying mask/overlay for bestFocus file: "+FilenameUtils.removeExtension(currTiff.getName()));
+            applyBestFocusOverlay(currTiff , bi2);
+
             int numFrames = imp.getNFrames();
             if (reg.length == 0) {
                 System.out.println("Didn't find any cells here. exiting");
-                BufferedWriter bwUncomp = new BufferedWriter(new FileWriter(in.getPath() + "_Expression_Uncompensated.txt"));
-                BufferedWriter bwComp = new BufferedWriter(new FileWriter(in.getPath() + "_Expression_Compensated.txt"));
+                BufferedWriter bwUncomp = new BufferedWriter(new FileWriter(currTiff.getPath() + "_Expression_Uncompensated.txt"));
+                BufferedWriter bwComp = new BufferedWriter(new FileWriter(currTiff.getPath() + "_Expression_Compensated.txt"));
                 for (BufferedWriter bw : new BufferedWriter[]{bwUncomp, bwComp}) {
                     bw.write("cell_id\ttile_nr\tX\tY\tZ\tsize");
                     for (int i3 = 1; i3 <= numFrames; ++i3) {
@@ -289,7 +307,7 @@ public class Main {
                     }
                     bw.write("\n");
                 }
-                BufferedWriter bwGN = new BufferedWriter(new FileWriter(in.getPath() + "_GabrielGraph.txt"));
+                BufferedWriter bwGN = new BufferedWriter(new FileWriter(currTiff.getPath() + "_GabrielGraph.txt"));
                 bwGN.write("");
                 bwGN.flush();
                 bwGN.close();
@@ -385,8 +403,8 @@ public class Main {
             Cell[] compCellArray = cellsForTile.toArray(new Cell[cellsForTile.size()]);
             adjN = null;
             System.gc();
-            BufferedWriter bwUncomp = new BufferedWriter(new FileWriter(in.getPath() + "_Expression_Uncompensated.txt"));
-            BufferedWriter bwComp = new BufferedWriter(new FileWriter(in.getPath() + "_Expression_Compensated.txt"));
+            BufferedWriter bwUncomp = new BufferedWriter(new FileWriter(currTiff.getPath() + "_Expression_Uncompensated.txt"));
+            BufferedWriter bwComp = new BufferedWriter(new FileWriter(currTiff.getPath() + "_Expression_Compensated.txt"));
             for (BufferedWriter bw22 : new BufferedWriter[]{bwUncomp, bwComp}) {
                 bw22.write("cell_id\ttile_nr\tX\tY\tZ\tsize");
                 for (int i6 = 1; i6 <= numFrames; ++i6) {
@@ -431,7 +449,7 @@ public class Main {
             if (delaunay_graph) {
                 System.out.println("Computing Delaunay graph:");
                 Collection<Cell>[] gn = Neighborhood.findDelaunayNeighbors(cellArr, (int) w, (int) h, (int) d);
-                BufferedWriter bwGN = new BufferedWriter(new FileWriter(in.getPath() + "_DelaunayGraph.txt"));
+                BufferedWriter bwGN = new BufferedWriter(new FileWriter(currTiff.getPath() + "_DelaunayGraph.txt"));
                 for (int i7 = 0; i7 < gn.length; ++i7) {
                     for (Cell cell : gn[i7]) {
                         bwGN.write("" + cellArr[i7].getId() + "\t" + cell.getId() + "\n");
@@ -445,6 +463,70 @@ public class Main {
                 System.gc();
             }
         }
+    }
+
+    /**
+     * Find the best focus folder and apply the overlay to the input tif file
+     * @param in
+     * @param overlays
+     */
+    private static void applyBestFocusOverlay(File in, BufferedImage [] overlays) {
+
+        File rootDir = (in == null)? null : in.getParentFile();
+        File bestFocusDir = new File (rootDir + File.separator + "bestFocus");
+
+        if(!bestFocusDir.exists()) {
+            throw new IllegalStateException("Best focus folder cannot be found: " + bestFocusDir);
+        }
+
+        File[] lst = bestFocusDir.listFiles(tif->(FilenameUtils.removeExtension(tif.getName()).contains(FilenameUtils.removeExtension(in.getName())))&(tif.getName().endsWith(".tif") || tif.getName().endsWith(".tiff")));
+
+        if(lst.length != 1) {
+            throw new IllegalStateException("Found more than one or less than one match for file:" + Arrays.toString(lst));
+        }
+
+        File bestFocusFile = lst[0];
+
+        int tifLastZIndex = bestFocusFile.getName().lastIndexOf("Z");
+        String tifZString = bestFocusFile.getName().substring(tifLastZIndex + 1, tifLastZIndex + 3);
+        int tifZIndex = Integer.parseInt(tifZString);
+
+        BufferedImage bi  = overlays[tifZIndex-1];
+
+        ImagePlus impBf = IJ.openImage(bestFocusFile.getAbsolutePath());
+        if(impBf.getOverlay() != null) {
+            impBf.getOverlay().clear();
+        }
+
+        Overlay overlay = new Overlay();
+
+        ImagePlus im2 = new ImagePlus(bestFocusFile.getName(), bi);
+        ImageRoi imgRoi = new ImageRoi(0, 0, im2.getProcessor());
+        imgRoi.setNonScalable(true);
+        imgRoi.setZeroTransparent(true);
+        imgRoi.setOpacity(1.0);
+        //imgRoi.setPosition(0, zIndex, 0);
+        overlay.add(imgRoi);
+        impBf.setOverlay(overlay);
+
+        FileSaver fs = new FileSaver(impBf);
+        fs.saveAsTiff(bestFocusFile.getAbsolutePath());
+
+        /*
+        if(fileVsImage!=null){
+            ImagePlus im2 = new ImagePlus(tif.getName(), bi);
+            ImageRoi imgRoi = new ImageRoi(0, 0, im2.getProcessor());
+            imgRoi.setNonScalable(true);
+            imgRoi.setZeroTransparent(true);
+            imgRoi.setOpacity(1.0);
+            //imgRoi.setPosition(0, zIndex, 0);
+            overlay.add(imgRoi);
+
+            copy.setOverlay(overlay);
+            FileSaver fs = new FileSaver(copy);
+            fs.saveAsTiff(tif.getAbsolutePath());
+        }
+        */
     }
 
     private void compareWithHuman(ImageStack regionMap) throws IOException {
