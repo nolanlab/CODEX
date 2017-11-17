@@ -5,6 +5,7 @@
  */
 package com.akoya.codex.upload.driffta;
 
+import com.akoya.codex.upload.TileObject;
 import com.akoya.codex.upload.logger;
 import ij.CompositeImage;
 import ij.IJ;
@@ -17,8 +18,9 @@ import ij.process.LUT;
 import ij.process.StackProcessor;
 
 import java.awt.*;
-import java.io.File;
-import java.util.Arrays;
+import java.io.*;
+import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -27,8 +29,7 @@ import java.util.stream.Collectors;
  */
 public class MakeMontage {
 
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws IOException {
         //args = new String[]{"I:\\Nikolay\\4-20-16 Panel test on tonsil\\bestFocus", "2"};
         //args = new String[]{"I:\\Nikolay\\41-parameter 16 cycles melanoma Nikolay 4-18-17\\analysis\\montages\\New folder", "4"};
         if (args.length == 0) {
@@ -50,6 +51,10 @@ public class MakeMontage {
         for (File file1 : tiff) {
             logger.print(file1);
         }
+
+        //Create the regionMap.txt file with the TileObject content here
+        logger.print("Creating tileMap.txt file...");
+        createTileMap(tiff, file);
 
         ImagePlus imp = new Opener().openImage(tiff[0].getAbsolutePath());
 
@@ -127,6 +132,103 @@ public class MakeMontage {
 
         });
 
+    }
+
+    /**
+     * Method to calculate the x and y position/offset of a tile with respect to the region.
+     * @param tiff
+     * @param f
+     * @throws IOException
+     */
+
+    public static void createTileMap(File[] tiff, File f) throws IOException {
+
+        Arrays.sort(tiff);
+        PrintWriter bwTileMap = null;
+        LinkedList<TileObject> tiles = new LinkedList<>();
+
+        for(File aTifFile : tiff) {
+            ImagePlus tiffImp = IJ.openImage(aTifFile.getPath());
+            if (tiffImp != null) {
+                TileObject aTile = new TileObject(tiffImp, aTifFile.getName());
+                tiles.add(aTile);
+            }
+        }
+
+        int xPos = 0;
+        int yPos = 0;
+
+        if(tiles == null || tiles.isEmpty()) {
+            return;
+        }
+        TileObject firstTile = tiles.getFirst();
+
+        List<Integer> xTracker = new LinkedList<>();
+        List<Integer> refList = new LinkedList<>();
+
+        try {
+            if(f == null) {
+                throw new IOException("Output directory to store tileMap.txt not found!");
+            }
+            bwTileMap = new PrintWriter(f.getParent() + File.separator + "tileMap.txt");
+            bwTileMap.write("RegionNumber\tTileX\tTileY\tXposition\tYposition");
+            bwTileMap.println();
+            for (TileObject currentTile : tiles) {
+                if (firstTile.getRegionNumber() != currentTile.getRegionNumber()) {
+                    xPos = 0;
+                    yPos = 0;
+                    firstTile = currentTile;
+                    xTracker = new LinkedList<>();
+                    refList = new LinkedList<>();
+                }
+
+                bwTileMap.write("" + currentTile.getRegionNumber() + "\t");
+                bwTileMap.write("" + currentTile.getXNumber() + "\t");
+                bwTileMap.write("" + currentTile.getYNumber() + "\t");
+                if (firstTile.getXNumber() == currentTile.getXNumber()) {
+                    if (refList.isEmpty()) {
+                        bwTileMap.write("" + xPos + "\t");
+                        bwTileMap.write("" + yPos);
+                        bwTileMap.println();
+                    } else {
+                        xPos = 0;
+                        xPos += refList.get(currentTile.getYNumber() - 1);
+                        bwTileMap.write("" + xPos + "\t");
+                        bwTileMap.write("" + yPos);
+                        bwTileMap.println();
+                    }
+                    xTracker.add(currentTile.getWidth());
+                    yPos += currentTile.getHeight();
+                } else if (firstTile.getXNumber() != currentTile.getXNumber()) {
+                    if (!refList.isEmpty()) {
+                        for (int i = 0; i < refList.size(); i++) {
+                            refList.set(i, refList.get(i)+currentTile.getWidth());
+                        }
+                    }
+                    else {
+                        for (int i = 0; i < xTracker.size(); i++) {
+                            refList.add(xTracker.get(i));
+                        }
+                    }
+                    xTracker.clear();
+                    xTracker.add(currentTile.getWidth());
+                    xPos = 0;
+                    xPos += refList.get(currentTile.getYNumber() - 1);
+                    yPos = 0;
+                    bwTileMap.write("" + xPos + "\t");
+                    bwTileMap.write("" + yPos);
+                    bwTileMap.println();
+                    yPos += currentTile.getHeight();
+                }
+                firstTile = currentTile;
+            }
+        }
+        catch (IOException e) {
+            logger.print(e.getMessage());
+        }
+        finally {
+            bwTileMap.close();
+        }
     }
 
     public static int[] extractXYCoord(File f) {
