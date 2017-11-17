@@ -81,7 +81,7 @@ public class Neighborhood {
         final int[][][] regionMap = new int[w][h][d];
 
         for (int i = 0; i < input.length; i++) {
-            for (Point3D p : input[i].getRegion().getPoints()) {
+            for (Point3D p : input[i].getSegmentedObject().getPoints()) {
                 regionMap[p.x][p.y][p.z] = i + 1;
             }
         }
@@ -201,7 +201,7 @@ public class Neighborhood {
                     if (i1 % 10 == 0) {
                         System.out.println("Delaunay Graph: " + i1);
                     }
-                    Point3D currPoint = input[i1].getRegion().getCenter();
+                    Point3D currPoint = input[i1].getSegmentedObject().getCenter();
                     for (int x = -maxSearchXY; x < maxSearchXY; x++) {
                         int currX = currPoint.x + x;
                         if (currX < 0 || currX >= w) {
@@ -309,8 +309,8 @@ public class Neighborhood {
                         System.out.println("Gabriel graph " + i);
                     }
                     for (int j = i + 1; j < len; j++) {
-                        final Point3D mid = getAverage(input[i].getRegion().getCenter(), input[j].getRegion().getCenter());
-                        Arrays.sort(tmpIn, (Cell o1, Cell o2) -> (int) Math.signum(Segmentation.dist(o1.getRegion().getCenter(), mid) - Segmentation.dist(o2.getRegion().getCenter(), mid)));
+                        final Point3D mid = getAverage(input[i].getSegmentedObject().getCenter(), input[j].getSegmentedObject().getCenter());
+                        Arrays.sort(tmpIn, (Cell o1, Cell o2) -> (int) Math.signum(Segmentation.dist(o1.getSegmentedObject().getCenter(), mid) - Segmentation.dist(o2.getSegmentedObject().getCenter(), mid)));
                         boolean nei = (tmpIn[0].equals(input[i]) && tmpIn[1].equals(input[j])) || (tmpIn[1].equals(input[i]) && tmpIn[0].equals(input[j]));
                         if (nei) {
 

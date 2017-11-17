@@ -13,107 +13,17 @@ import ij.plugin.Duplicator;
 import ij.plugin.ImageCalculator;
 import ij.process.ImageProcessor;
 import org.apache.commons.io.FilenameUtils;
-
 import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 public class Main {
 
     public static boolean printParams = false;
-    public static final String revision = "CODEX-segm rev 11-7-2016";
+    public static final String revision = "CODEX-segm rev 17-NOV-2017";
     public static Properties params;
-    private static JTextField configField = new JTextField(5);
-    private static JPanel configPanel = new JPanel();
-    /**
-     * Mouseevent to open the filechooser option to specify config.txt TMP_SSD_DRIVE content.
-     * @param evt
-     */
-    private static void configFieldDirMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtDirMouseReleased
-        JFileChooser jfc = new JFileChooser();
-        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-        if (jfc.showOpenDialog(configPanel) == JFileChooser.APPROVE_OPTION) {
-            if(jfc.getSelectedFile() != null) {
-                configField.setText(jfc.getSelectedFile().getAbsolutePath());
-            }
-        }
-        fireStateChanged();
-    }
-
-    private static void configFieldDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDirActionPerformed
-    }
-
-    private static void fireStateChanged() {
-        PropertyChangeListener[] chl = configPanel.getListeners(PropertyChangeListener.class);
-        for (PropertyChangeListener c : chl) {
-            c.propertyChange(new PropertyChangeEvent(configPanel, "dir", "...", configField.getText()));
-        }
-    }
-
-
-    /*
-    Method to create a new dialog box to be input at the start-up of the application, when it is run
-    on the machine the first time.
-    */
-    public static void numberOfGpuDialog() {
-
-        try {
-            // Set System L&F
-            UIManager.setLookAndFeel(
-                    UIManager.getSystemLookAndFeelClassName());
-        } catch (UnsupportedLookAndFeelException e) {
-            // handle exception
-        } catch (ClassNotFoundException e) {
-            // handle exception
-        } catch (InstantiationException e) {
-            // handle exception
-        } catch (IllegalAccessException e) {
-            // handle exception
-        }
-
-        configPanel.setLayout(new BoxLayout(configPanel, BoxLayout.X_AXIS));
-        configPanel.add(new JLabel("Select Folder: "));
-        configPanel.add(configField);
-
-        configField.setText("...");
-        configField.setEnabled(false);
-        configField.setMaximumSize(new java.awt.Dimension(3000, 20));
-        configField.setMinimumSize(new java.awt.Dimension(300, 20));
-        configField.setPreferredSize(new java.awt.Dimension(3000, 20));
-        configField.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                configFieldDirMouseReleased(evt);
-            }
-        });
-        configField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                configFieldDirActionPerformed(evt);
-            }
-        });
-
-        int result = JOptionPane.showConfirmDialog(null, configPanel,
-                "Specify configuration", JOptionPane.OK_CANCEL_OPTION);
-        if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
-            System.exit(0);
-        }
-        else {
-            try {
-                if(configField.getText().equals(null) || configField.getText().equalsIgnoreCase("...")) {
-                    JOptionPane.showMessageDialog(configPanel,"Please specify directory before proceeding!");
-                    System.exit(0);
-                }
-            }
-            catch(Exception e) {
-                logger.showException(e);
-                JOptionPane.showMessageDialog(configPanel,"Could not locate directory. Try again!");
-                System.exit(0);
-            }
-        }
-    }
 
     public static void main(String[] args) throws IOException {
 
@@ -144,14 +54,14 @@ public class Main {
             }
             if (args.length == 3) {
                 rootDir = new File(args[0]);
-                printParams = Boolean.parseBoolean(args[2]);
                 showImage = Boolean.parseBoolean(args[1]);
+                printParams = Boolean.parseBoolean(args[2]);
             }
             if (args.length == 2) {
-                numberOfGpuDialog();
-                rootDir = new File(configField.getText());
-                printParams = Boolean.parseBoolean(args[1]);
+                //numberOfGpuDialog();
+                //rootDir = new File(configField.getText());
                 showImage = Boolean.parseBoolean(args[0]);
+                printParams = Boolean.parseBoolean(args[1]);
                 System.out.println("printParams = " + printParams);
             }
 
@@ -246,14 +156,14 @@ public class Main {
             filter.run(mult);
 
             //GaussianBlur3D.blur(mult, radius, radius, radius);
-            Region[] reg = MaximaFinder3D.findRegionsByIntensityGradient((ImagePlus) mult, radius, (double) maxCutoff, (double) minCutoff, (double) relativeCutoff, (boolean) showImage, subtractInnerRing ? 1.0 : inner_ring_size);
+            SegmentedObject[] cellsSegmentedObject = MaximaFinder3D.findCellsByIntensityGradient((ImagePlus) mult, radius, (double) maxCutoff, (double) minCutoff, (double) relativeCutoff, (boolean) showImage, subtractInnerRing ? 1.0 : inner_ring_size);
             if (subtractInnerRing) {
                 use_membrane = false;
             }
-            Region[] innerRings = null;
+            SegmentedObject[] innerRings = null;
 
             if (subtractInnerRing) {
-                innerRings = MaximaFinder3D.findRegionsByIntensityGradient((ImagePlus) mult, radius, (double) maxCutoff, (double) minCutoff, (double) inner_ring_size, (boolean) showImage, 1.0);
+                innerRings = MaximaFinder3D.findCellsByIntensityGradient((ImagePlus) mult, radius, (double) maxCutoff, (double) minCutoff, (double) inner_ring_size, (boolean) showImage, 1.0);
             }
 
             if (showImage) {
@@ -265,8 +175,12 @@ public class Main {
                 }
             }
 
+            //Filter out small sized regions and remove that row from the txt file
+            double sizeCutoff = (radius*radius*radius)*Math.PI*(4.0/3.0);
+            cellsSegmentedObject = Arrays.stream(cellsSegmentedObject).filter(c -> c.getPoints().length >= sizeCutoff).toArray(SegmentedObject[]::new);
+
             //Apply overlay to the different Z stacks of the actual tif file based on different masks.
-            BufferedImage[] bi2 = RegionImageWriter.writeRegionImage((Region[]) reg, (ImagePlus) mult, (String) currTiff.getName(), (File) currTiff.getParentFile());
+            BufferedImage[] bi2 = RegionImageWriter.writeRegionImage((SegmentedObject[]) cellsSegmentedObject, (ImagePlus) mult, (String) currTiff.getName(), (File) currTiff.getParentFile());
             ImagePlus copy = IJ.openImage(currTiff.getAbsolutePath());
             Overlay overlay = new Overlay();
 
@@ -287,7 +201,7 @@ public class Main {
             applyBestFocusOverlay(currTiff , bi2);
 
             int numFrames = imp.getNFrames();
-            if (reg.length == 0) {
+            if (cellsSegmentedObject.length == 0) {
                 System.out.println("Didn't find any cells here. exiting");
                 BufferedWriter bwUncomp = new BufferedWriter(new FileWriter(currTiff.getPath() + "_Expression_Uncompensated.txt"));
                 BufferedWriter bwComp = new BufferedWriter(new FileWriter(currTiff.getPath() + "_Expression_Compensated.txt"));
@@ -320,7 +234,7 @@ public class Main {
             mult = null;
             System.gc();
             System.out.println("Computing region intensities " + (use_membrane ? "by membrane" : "by whole cell"));
-            double[][] regionIntensities = new double[reg.length][(imp.getNFrames() * readoutChannels.length)];
+            double[][] regionIntensities = new double[cellsSegmentedObject.length][(imp.getNFrames() * readoutChannels.length)];
             ImagePlus mem = dup.run(imp, membraneStainChannel, membraneStainChannel, 1, imp.getNSlices(), membraneStainCycle, membraneStainCycle);
             for (int cycle = 1; cycle <= imp.getNFrames(); ++cycle) {
                 for (int ch = 0; ch < readoutChannels.length; ++ch) {
@@ -329,16 +243,16 @@ public class Main {
 
                     double[] intens = null;
                     if (!count_puncta) {
-                        intens = use_membrane ? Segmentation.computeMembraneIntensityOfRegions((ImageStack) readout.getImageStack(), (ImageStack) mem.getImageStack(), (Region[]) reg) : Segmentation.computeMeanIntensityOfRegions((ImageStack) readout.getImageStack(), (Region[]) reg);
+                        intens = use_membrane ? Segmentation.computeMembraneIntensityOfRegions((ImageStack) readout.getImageStack(), (ImageStack) mem.getImageStack(), (SegmentedObject[]) cellsSegmentedObject) : Segmentation.computeMeanIntensityOfRegions((ImageStack) readout.getImageStack(), (SegmentedObject[]) cellsSegmentedObject);
                         if (subtractInnerRing) {
-                            double[] innerRingIntens = Segmentation.computeMeanIntensityOfRegions((ImageStack) readout.getImageStack(), (Region[]) innerRings);
+                            double[] innerRingIntens = Segmentation.computeMeanIntensityOfRegions((ImageStack) readout.getImageStack(), (SegmentedObject[]) innerRings);
                             for (int i4 = 0; i4 < intens.length; ++i4) {
                                 intens[i4] -= innerRingIntens[i4];
                             }
                         }
                     } else {
                         System.out.println("Counting puncta:");
-                        intens = Segmentation.computePunctaCountOfRegions(readout, (Region[]) reg, 100);
+                        intens = Segmentation.computePunctaCountOfRegions(readout, (SegmentedObject[]) cellsSegmentedObject, 100);
                     }
 
                     for (int i4 = 0; i4 < intens.length; ++i4) {
@@ -347,16 +261,16 @@ public class Main {
                 }
             }
 
-            ProfileAverager[][] pa = new ProfileAverager[reg.length][concentricCircles];
+            ProfileAverager[][] pa = new ProfileAverager[cellsSegmentedObject.length][concentricCircles];
 
             System.out.println("Featurizing circles:" + concentricCircles);
             for (int ci = 0; ci < concentricCircles; ci++) {
                 System.out.println("Circle#" + (ci + 1) + ":" + Math.pow((radius * 2), 1 + (ci / 3.0)));
             }
-            for (int r = 0; r < reg.length; ++r) {
-                Point3D cent = reg[r].getCenter();
-                for (int k = 0; k < reg.length; ++k) {
-                    double dist = Segmentation.dist(cent, reg[k].getCenter());
+            for (int r = 0; r < cellsSegmentedObject.length; ++r) {
+                Point3D cent = cellsSegmentedObject[r].getCenter();
+                for (int k = 0; k < cellsSegmentedObject.length; ++k) {
+                    double dist = Segmentation.dist(cent, cellsSegmentedObject[k].getCenter());
                     for (int ci = 0; ci < concentricCircles; ci++) {
                         if (pa[r][ci] == null) {
                             pa[r][ci] = new ProfileAverager();
@@ -368,9 +282,9 @@ public class Main {
                 }
             }
 
-            double[][] featurizedVec = new double[reg.length][0];
+            double[][] featurizedVec = new double[cellsSegmentedObject.length][0];
 
-            for (int r = 0; r < reg.length; ++r) {
+            for (int r = 0; r < cellsSegmentedObject.length; ++r) {
                 for (int ci = 0; ci < concentricCircles; ci++) {
                     double[] avg = pa[r][ci].count > 0 ? pa[r][ci].getAverage() : new double[(imp.getNFrames() * readoutChannels.length)];
                     featurizedVec[r] = MatrixOp.concat(featurizedVec[r], avg);
@@ -382,7 +296,7 @@ public class Main {
             ArrayList<Cell> cellsForTile = new ArrayList<>();
 
             for (i = 0; i < regionIntensities.length; ++i) {
-                Cell c = new Cell(i + 1, reg[i], tile, regionIntensities[i], featurizedVec[i]);
+                Cell c = new Cell(i + 1, cellsSegmentedObject[i], tile, regionIntensities[i], featurizedVec[i]);
                 cellsForTile.add(c);
             }
             regionIntensities = new double[cellsForTile.size()][];
@@ -394,10 +308,10 @@ public class Main {
             double[][] adjN = Neighborhood.buildAdjacencyMatrix((Cell[]) cellArr, (int) w, (int) h, (int) d, (boolean) true);
             cellsForTile.clear();
             System.out.println("Compensating:");
-            double[][] compRegionIntensities = Segmentation.compensatePositionalSpilloverOfExpressionMtx((Region[]) reg, (double[][]) adjN, (double[][]) regionIntensities);
+            double[][] compRegionIntensities = Segmentation.compensatePositionalSpilloverOfExpressionMtx((SegmentedObject[]) cellsSegmentedObject, (double[][]) adjN, (double[][]) regionIntensities);
             for (int dt = 0; dt < compRegionIntensities.length; ++dt) {
                 int id = dt + 1;
-                Cell c = new Cell(id, reg[dt], tile, compRegionIntensities[dt], featurizedVec[dt]);
+                Cell c = new Cell(id, cellsSegmentedObject[dt], tile, compRegionIntensities[dt], featurizedVec[dt]);
                 cellsForTile.add(c);
             }
             Cell[] compCellArray = cellsForTile.toArray(new Cell[cellsForTile.size()]);
@@ -429,10 +343,10 @@ public class Main {
                     Cell c = cells[k];
                     bw.write("" + c.getId() + "\t");
                     bw.write("" + c.getTile() + "\t");
-                    bw.write("" + c.getRegion().getCenter().x + "\t");
-                    bw.write("" + c.getRegion().getCenter().y + "\t");
-                    bw.write("" + c.getRegion().getCenter().z + "\t");
-                    bw.write("" + c.getRegion().getPoints().length + "\t");
+                    bw.write("" + c.getSegmentedObject().getCenter().x + "\t");
+                    bw.write("" + c.getSegmentedObject().getCenter().y + "\t");
+                    bw.write("" + c.getSegmentedObject().getCenter().z + "\t");
+                    bw.write("" + c.getSegmentedObject().getPoints().length + "\t");
                     double[] ri = MatrixOp.concat(c.getExpressionVector(), c.getNeighFeaturizationVec());
                     for (int ch = 0; ch < ri.length; ++ch) {
                         bw.write(String.valueOf(ri[ch]));
@@ -476,7 +390,8 @@ public class Main {
         File bestFocusDir = new File (rootDir + File.separator + "bestFocus");
 
         if(!bestFocusDir.exists()) {
-            throw new IllegalStateException("Best focus folder cannot be found: " + bestFocusDir);
+            logger.print("Best focus folder cannot be found: " + bestFocusDir);
+            return;
         }
 
         File[] lst = bestFocusDir.listFiles(tif->(FilenameUtils.removeExtension(tif.getName()).contains(FilenameUtils.removeExtension(in.getName())))&(tif.getName().endsWith(".tif") || tif.getName().endsWith(".tiff")));
@@ -511,22 +426,6 @@ public class Main {
 
         FileSaver fs = new FileSaver(impBf);
         fs.saveAsTiff(bestFocusFile.getAbsolutePath());
-
-        /*
-        if(fileVsImage!=null){
-            ImagePlus im2 = new ImagePlus(tif.getName(), bi);
-            ImageRoi imgRoi = new ImageRoi(0, 0, im2.getProcessor());
-            imgRoi.setNonScalable(true);
-            imgRoi.setZeroTransparent(true);
-            imgRoi.setOpacity(1.0);
-            //imgRoi.setPosition(0, zIndex, 0);
-            overlay.add(imgRoi);
-
-            copy.setOverlay(overlay);
-            FileSaver fs = new FileSaver(copy);
-            fs.saveAsTiff(tif.getAbsolutePath());
-        }
-        */
     }
 
     private void compareWithHuman(ImageStack regionMap) throws IOException {

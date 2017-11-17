@@ -11,7 +11,7 @@ import java.awt.*;
  *
  * @author Nikolay
  */
-public class Region {
+public class SegmentedObject {
 
     private final Point3D center;
     private final Point3D[] regionPts;
@@ -54,7 +54,7 @@ public class Region {
         return regionPts;
     }
 
-    public Region(Point3D center, Point3D[] regionPts) {
+    public SegmentedObject(Point3D center, Point3D[] regionPts) {
         this.center = center;
         this.regionPts = regionPts;
         c = new Color(100 + (int) (Math.random() * 155), 100 + (int) (Math.random() * 155), 100 + (int) (Math.random() * 155));

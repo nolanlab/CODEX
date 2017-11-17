@@ -20,18 +20,18 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Segmentation {
 
-    public static Region[] getRegionsMahDist(final ImageStack img, final Region[] regions, final double lbound, final double hbound) {
+    public static SegmentedObject[] getRegionsMahDist(final ImageStack img, final SegmentedObject[] segmentedObjects, final double lbound, final double hbound) {
 
-        final MahalonobisDistance[] mh = new MahalonobisDistance[regions.length];
-        final List<Point3D>[] out = new List[regions.length];
-        Region[] ret = new Region[regions.length];
+        final MahalonobisDistance[] mh = new MahalonobisDistance[segmentedObjects.length];
+        final List<Point3D>[] out = new List[segmentedObjects.length];
+        SegmentedObject[] ret = new SegmentedObject[segmentedObjects.length];
 
         final AtomicInteger xGlobal = new AtomicInteger(-1);
         ThreadGroup tg = new ThreadGroup("MDthreads");
         Thread[] t = new Thread[Runtime.getRuntime().availableProcessors()];
 
-        for (int i = 0; i < regions.length; i++) {
-            mh[i] = new MahalonobisDistance(regions[i]);
+        for (int i = 0; i < segmentedObjects.length; i++) {
+            mh[i] = new MahalonobisDistance(segmentedObjects[i]);
             out[i] = new LinkedList<Point3D>();
         }
 
@@ -96,7 +96,7 @@ public class Segmentation {
         } while (tg.activeCount() > 0);
 
         for (int i = 0; i < out.length; i++) {
-            ret[i] = new Region(regions[i].getCenter(), out[i].toArray(new Point3D[out[i].size()]));
+            ret[i] = new SegmentedObject(segmentedObjects[i].getCenter(), out[i].toArray(new Point3D[out[i].size()]));
         }
         return ret;
     }
@@ -108,10 +108,10 @@ public class Segmentation {
         return Math.sqrt(dist);
     }
 
-    public static double[] computeMeanIntensityOfRegions(ImageStack img, Region[] regions) {
-        double[] out = new double[regions.length];
+    public static double[] computeMeanIntensityOfRegions(ImageStack img, SegmentedObject[] segmentedObjects) {
+        double[] out = new double[segmentedObjects.length];
         for (int i = 0; i < out.length; i++) {
-            Region r = regions[i];
+            SegmentedObject r = segmentedObjects[i];
             double cnt = 0;
             for (Point3D p : r.getPoints()) {
                 if (p.color.equals(Color.BLUE)) {
@@ -126,18 +126,18 @@ public class Segmentation {
         return out;
     }
 
-    public static double[] computePunctaCountOfRegions(ImagePlus img, Region[] regions, int tolerance) {
+    public static double[] computePunctaCountOfRegions(ImagePlus img, SegmentedObject[] segmentedObjects, int tolerance) {
         MaximumFinder mf = new MaximumFinder();
 
         final int[][][] maximaMatrix = new int[img.getWidth()][img.getHeight()][img.getNSlices()];
 
-        for (int i = 0; i < regions.length; i++) {
-            for (Point3D p : regions[i].getPoints()) {
+        for (int i = 0; i < segmentedObjects.length; i++) {
+            for (Point3D p : segmentedObjects[i].getPoints()) {
                 maximaMatrix[p.x][p.y][p.z] = i + 1;
             }
         }
 
-        double[] out = new double[regions.length];
+        double[] out = new double[segmentedObjects.length];
 
         int cntPoints = 0;
         for (int z = 1; z <= img.getNSlices(); z++) {
@@ -164,10 +164,10 @@ public class Segmentation {
         return out;
     }
 
-    public static double[] computeMembraneIntensityOfRegions(ImageStack img, ImageStack membraneImg, Region[] regions) {
-        double[] out = new double[regions.length];
+    public static double[] computeMembraneIntensityOfRegions(ImageStack img, ImageStack membraneImg, SegmentedObject[] segmentedObjects) {
+        double[] out = new double[segmentedObjects.length];
         for (int i = 0; i < out.length; i++) {
-            Region r = regions[i];
+            SegmentedObject r = segmentedObjects[i];
             double cnt = 0;
             for (Point3D p : r.getPoints()) {
                 if (p.color.equals(Color.BLUE)) {
@@ -182,7 +182,7 @@ public class Segmentation {
         return out;
     }
 
-    public static double[][] compensatePositionalSpilloverOfExpressionMtx(Region[] regions, double[][] adjMatrix, double[][] expressionMatrix) {
+    public static double[][] compensatePositionalSpilloverOfExpressionMtx(SegmentedObject[] segmentedObjects, double[][] adjMatrix, double[][] expressionMatrix) {
 
         DenseDoubleMatrix2D exp = new DenseDoubleMatrix2D(expressionMatrix);
         DenseDoubleMatrix2D adj = new DenseDoubleMatrix2D(adjMatrix);
@@ -235,10 +235,10 @@ public class Segmentation {
          return Algebra.DEFAULT.transpose(res).toArray();*/
     }
 
-    public static double[] computeQuantileIntensityOfRegions(ImageStack img, Region[] regions, double quantile) {
-        double[] out = new double[regions.length];
+    public static double[] computeQuantileIntensityOfRegions(ImageStack img, SegmentedObject[] segmentedObjects, double quantile) {
+        double[] out = new double[segmentedObjects.length];
         for (int i = 0; i < out.length; i++) {
-            Region r = regions[i];
+            SegmentedObject r = segmentedObjects[i];
             double cnt = 0;
             LinkedList<Double> ll = new LinkedList<>();
             int k = 0;

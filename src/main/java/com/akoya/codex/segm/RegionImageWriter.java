@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 public class RegionImageWriter {
 
-    public static BufferedImage[] writeRegionImage(Region[] reg, ImagePlus segmImage, String srcFileName, File outputDir) throws IOException {
+    public static BufferedImage[] writeRegionImage(SegmentedObject[] reg, ImagePlus segmImage, String srcFileName, File outputDir) throws IOException {
         if (srcFileName.contains(".")) {
             srcFileName = srcFileName.substring(0, srcFileName.lastIndexOf("."));
         }
@@ -32,13 +32,13 @@ public class RegionImageWriter {
             bi[z] = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         }
 
-        for (Region region : reg) {
+        for (SegmentedObject segmentedObject : reg) {
             int r = (int) (Math.random() * 255);
             int g = (int) (Math.random() * 255);
             int b = (int) (Math.random() * 255);
             int a = 255;
             int col = (a << 24) | (r << 16) | (g << 8) | b;
-            for (Point3D pt : region.getPoints()) {
+            for (Point3D pt : segmentedObject.getPoints()) {
                 bi[pt.z].setRGB(pt.x, pt.y, col);
             }
         }

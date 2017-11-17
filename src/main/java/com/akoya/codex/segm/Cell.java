@@ -11,14 +11,14 @@ package com.akoya.codex.segm;
  */
 public class Cell {
 
-    private Region region;
+    private SegmentedObject segmentedObject;
     private int id;
     private double[] expressionVector;
     private int tile;
     private double[] neighFeaturizationVec;
 
-    public Cell(int id, Region region, int tile, double[] expressionVector, double[] neighFeaturizationVec) {
-        this.region = region;
+    public Cell(int id, SegmentedObject segmentedObject, int tile, double[] expressionVector, double[] neighFeaturizationVec) {
+        this.segmentedObject = segmentedObject;
         this.id = id;
         this.expressionVector = expressionVector;
         this.tile = tile;
@@ -48,8 +48,8 @@ public class Cell {
         return id;
     }
 
-    public Region getRegion() {
-        return region;
+    public SegmentedObject getSegmentedObject() {
+        return segmentedObject;
     }
 
     @Override

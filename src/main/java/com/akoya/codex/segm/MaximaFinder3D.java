@@ -48,7 +48,7 @@ public class MaximaFinder3D {
      * will be shown. Setting it to zero makes things faster
      * @return
      */
-    public static Region[] findRegionsByIntensityGradient(final ImagePlus in, int radius, double maxCutoff, double minCutoff, double relativeCutoff, boolean showImage, final double nuclMaskCutoff) {
+    public static SegmentedObject[] findCellsByIntensityGradient(final ImagePlus in, int radius, double maxCutoff, double minCutoff, double relativeCutoff, boolean showImage, final double nuclMaskCutoff) {
         final AtomicInteger xGlobal = new AtomicInteger(-1);
         final int w = in.getWidth();
         final int h = in.getHeight();
@@ -243,7 +243,7 @@ public class MaximaFinder3D {
             System.out.println(e);
         }
 
-        List<Region> out = new ArrayList<>();
+        List<SegmentedObject> out = new ArrayList<>();
         Overlay ovl = new Overlay();
 
         assert (maxima.length == regions.length);
@@ -261,7 +261,7 @@ public class MaximaFinder3D {
         for (int i = 0; i < maxima.length; i++) {
             ConcurrentLinkedQueue<Point3D> region = regions[i];
             Point3D center = maxima[i];//new Point3D((int) cX,
-            out.add(new Region(center, region.toArray(new Point3D[region.size()])));
+            out.add(new SegmentedObject(center, region.toArray(new Point3D[region.size()])));
         }
 
         if (showImage) {
@@ -308,7 +308,7 @@ public class MaximaFinder3D {
             in.setOverlay(ovl);
         }
         System.out.println("Filtered maxima: " + maxima.length);
-        return out.toArray(new Region[out.size()]);
+        return out.toArray(new SegmentedObject[out.size()]);
     }
 
 }

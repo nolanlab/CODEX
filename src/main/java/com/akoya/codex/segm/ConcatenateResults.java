@@ -1,7 +1,12 @@
 package com.akoya.codex.segm;
 
+import com.akoya.codex.upload.TileObject;
+import com.akoya.codex.upload.logger;
+import org.apache.commons.io.FilenameUtils;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -34,9 +39,9 @@ public class ConcatenateResults {
        
         
         System.out.println("Found regions: " + regions.toString());
-        
-        
-        
+        System.out.println("Creating a map to calculate X and Y offsets...");
+        LinkedHashMap<TileObject, ArrayList<Integer>> map = createMapFromTileMap(dir);
+
         for (String reg : regions) {
             
         for (String st : new String[]{"_Expression_Uncompensated.txt", "_Expression_Compensated.txt"}) {
@@ -59,7 +64,27 @@ public class ConcatenateResults {
                     headerLine = s;
                     bw.write("Filename:Filename\t" + headerLine);
                 }
+                TileObject fileTo = new TileObject();
+                fileTo.createTileFromFileNameWithoutImage(FilenameUtils.removeExtension(f.getName()));
+                if(map == null || map.isEmpty()) {
+                    logger.print("The map created from tileMap is empty. Please check the tileMap.txt file!");
+                    return;
+                }
+                List<Integer> a = map.get(fileTo);
+                if(a == null || a.isEmpty()) {
+                    logger.print("The offsets are empty or null. Please check the tileMap.txt file!");
+                }
                 while ((s = br.readLine()) != null) {
+                    String[] sArr = s.split("\\t");
+
+                    int x = Integer.parseInt(sArr[2]);
+                    int y = Integer.parseInt(sArr[3]);
+                    int xOffset = a.get(0) + x;
+                    int yOffset = a.get(1) + y;
+                    sArr[2] = Integer.toString(xOffset);
+                    sArr[3] = Integer.toString(yOffset);
+
+                    s = String.join("\t", sArr);
                     bw.write("\n" + f.getName().split("\\.tif")[0] + "\t" + s);
                 }
             }
@@ -68,5 +93,63 @@ public class ConcatenateResults {
         }
         }
 
+    }
+
+    /**
+     * Compute the offset for each tile to find the position of X and Y in the region
+     */
+    private static LinkedHashMap<TileObject, ArrayList<Integer>> createMapFromTileMap(File dir) throws IOException {
+
+        BufferedReader br = null;
+        String xPos = "";
+        String yPos = "";
+        LinkedHashMap<TileObject, ArrayList<Integer>> tifWithXposYpos = new LinkedHashMap<>();
+        try {
+            br = new BufferedReader(new FileReader(dir + File.separator + "tileMap.txt"));
+            boolean columnName= true;
+            String currentLine;
+            while ((currentLine = br.readLine()) != null) {
+                if (columnName) {
+                    columnName = false;
+                    continue;
+                }
+                String[] aRow = currentLine.split("\\t");
+                if(aRow != null && aRow.length != 0) {
+                    String region = aRow[0];
+                    int regInt = Integer.parseInt(region);
+
+                    String tileX = aRow[1];
+                    int tileXInt = Integer.parseInt(tileX);
+
+                    String tileY = aRow[2];
+                    int tileYInt = Integer.parseInt(tileY);
+
+                    xPos = aRow[3];
+                    yPos = aRow[4];
+
+                    String fileName = String.format("reg%03d_X%02d_Y%02d", regInt, tileXInt, tileYInt);
+                    TileObject to = new TileObject();
+                    to = to.createTileFromFileNameWithoutImage(fileName);
+
+                    //List to hold the X offset and Y offset
+                    ArrayList<Integer> arr = new ArrayList<>();
+                    if(xPos != null && yPos != null) {
+                        arr.add(Integer.parseInt(xPos));
+                        arr.add(Integer.parseInt(yPos));
+                    }
+
+                    if(!tifWithXposYpos.containsKey(fileName)) {
+                        tifWithXposYpos.put(to, arr);
+                    }
+                }
+            }
+        }
+        catch(IOException e) {
+            logger.print(e.getMessage());
+        }
+        finally {
+            br.close();
+        }
+        return tifWithXposYpos;
     }
 }

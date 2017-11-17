@@ -113,7 +113,15 @@ public class MakeFCS {
             java.util.List<String[]> chNamesL = new CSVReader(new FileReader(chNamesF), '\t').readAll();
             chNames = chNamesL.toArray(new String[chNamesL.size()][]);
         } else {
-            throw new IllegalStateException("channelNames file does not exist! exiting");
+            chNamesF = new File(f.getParentFile().getParent() + File.separator + "channelNames.txt");
+            if(chNamesF.exists()) {
+                System.out.println("Found channel names file!");
+                java.util.List<String[]> chNamesL = new CSVReader(new FileReader(chNamesF), '\t').readAll();
+                chNames = chNamesL.toArray(new String[chNamesL.size()][]);
+            }
+            else {
+                throw new IllegalStateException("channelNames.txt file does not exist! Exiting...");
+            }
         }
 
         if (chNames.length < splitHeader.length - offset) {

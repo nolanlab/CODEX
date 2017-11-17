@@ -33,7 +33,7 @@ public class MahalonobisDistance {
                 + covMtx.toString();
     }
 
-    public MahalonobisDistance(Region reg) {
+    public MahalonobisDistance(SegmentedObject reg) {
 
         double[][] dataTable = new double[reg.getPoints().length][];
 

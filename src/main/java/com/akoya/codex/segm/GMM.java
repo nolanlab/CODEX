@@ -37,7 +37,7 @@ public class GMM {
      * will be shown. Setting it to zero makes things faster
      * @return
      */
-    public static Region[] findRegionsByIntensityGradient(final ImagePlus in, int radius, double maxCutoff, double minCutoff, double relativeCutoff, boolean showImage, final double nuclMaskCutoff, final int MAX_OPT_CYCLES) {
+    public static SegmentedObject[] findRegionsByIntensityGradient(final ImagePlus in, int radius, double maxCutoff, double minCutoff, double relativeCutoff, boolean showImage, final double nuclMaskCutoff, final int MAX_OPT_CYCLES) {
         final int w = in.getWidth();
         final int h = in.getHeight();
         final int d = in.getStackSize();
@@ -79,7 +79,7 @@ public class GMM {
         //overall model fitness is calculated using a residue, not likelihood (better penatry for unaccounted intensity)
         //membrane intensity on all channels is taken into the penalty
         //System.out.println("Filtered maxima: " + maxima.length);
-        return null;//out.toArray(new Region[out.size()]);
+        return null;//out.toArray(new SegmentedObject[out.size()]);
     }
 
     private static class CellBubble {
