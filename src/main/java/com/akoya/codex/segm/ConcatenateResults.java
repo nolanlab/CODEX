@@ -138,7 +138,7 @@ public class ConcatenateResults {
                         arr.add(Integer.parseInt(yPos));
                     }
 
-                    if(!tifWithXposYpos.containsKey(fileName)) {
+                    if(!tifWithXposYpos.containsKey(to)) {
                         tifWithXposYpos.put(to, arr);
                     }
                 }
