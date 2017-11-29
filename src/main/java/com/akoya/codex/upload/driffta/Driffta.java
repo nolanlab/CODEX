@@ -414,7 +414,7 @@ public class Driffta {
             log("Waiting for driftcomp interlock");
             DriftcompInterlockDispatcher.gainLock();
             log("Interlock acquired");
-            Driftcomp.compensateDrift(hyp, exp.drift_comp_channel - 1);
+            Driftcomp.compensateDrift(hyp, exp.drift_comp_channel - 1, exp.driftCompReference-1);
 
             DriftcompInterlockDispatcher.releaseLock();
 

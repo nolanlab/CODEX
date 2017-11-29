@@ -51,13 +51,14 @@ public class Experiment {
     public boolean HandEstain;
     public int tile_height;
     public int tile_width;
+    public int driftCompReference;
 
     public final String projName;
 
     public Experiment(String name, String date, String codex_instrument, String microscope,
             String deconvolution, int magnification, double numerical_aperture, double per_pixel_XY_resolution,
             double z_pitch, int num_z_planes, String channel_arrangement, String[] channel_names,
-            int[] channelWavelen, int drift_comp_channel, int num_cycles, int[] regIdx,
+            int[] channelWavelen, int drift_comp_channel, int driftCompReference, int num_cycles, int[] regIdx,
             String[] region_names, String tiling_mode, int region_width,
             int region_height, int tile_overlap_X, int tile_overlap_Y,
             String objectiveType, boolean HandEstain, String projName) {
@@ -74,6 +75,7 @@ public class Experiment {
         this.channel_arrangement = channel_arrangement;
         this.channel_names = channel_names;
         this.drift_comp_channel = drift_comp_channel;
+        this.driftCompReference = driftCompReference;
         this.num_cycles = num_cycles;
         this.regIdx = regIdx;
         this.region_names = region_names;

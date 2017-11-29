@@ -5,6 +5,8 @@
  */
 package com.akoya.codex.upload;
 
+import com.sun.tools.javac.comp.Flow;
+
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -95,10 +97,12 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel21 = new javax.swing.JLabel();
         jLabel29 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        driftReferenceLabel = new JLabel();
+
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Experimental Details"));
 
-        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.PAGE_AXIS));
+        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, BoxLayout.PAGE_AXIS));
 
         txtDir.setText("...");
         txtDir.setEnabled(false);
@@ -259,6 +263,17 @@ public class ExperimentView extends javax.swing.JPanel {
             }
         });
         jPanel4.add(val12);
+
+        driftReference = new JSpinner();
+        driftReference.setModel(new SpinnerNumberModel(1, 1, 200, 1));
+        driftReference.setMaximumSize(new java.awt.Dimension(3000, 20));
+        driftReference.setMinimumSize(new java.awt.Dimension(300, 20));
+        driftReference.setPreferredSize(new java.awt.Dimension(3000, 20));
+        driftReference.setValue(Integer.parseInt("1"));
+        driftReference.setInputVerifier(integerVerifier);
+        ((JSpinner.DefaultEditor)driftReference.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
+        jPanel4.add(driftReference);
+
 
         val13.setText("15");
         val13.setInputVerifier(integerVerifier);
@@ -526,13 +541,25 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(jLabel15, gridBagConstraints);
 
+        driftReferenceLabel.setText("Drift compensation reference");
+        driftReferenceLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
+        driftReferenceLabel.setMinimumSize(new java.awt.Dimension(100, 20));
+        driftReferenceLabel.setPreferredSize(new java.awt.Dimension(500, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 16;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(driftReferenceLabel, gridBagConstraints);
+
         jLabel16.setText("Number of cycles");
         jLabel16.setMaximumSize(new java.awt.Dimension(3000, 20));
         jLabel16.setMinimumSize(new java.awt.Dimension(100, 20));
         jLabel16.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridy = 17;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -544,7 +571,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel18.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 18;
+        gridBagConstraints.gridy = 19;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -556,7 +583,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel20.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 19;
+        gridBagConstraints.gridy = 20;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -568,7 +595,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel19.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 20;
+        gridBagConstraints.gridy = 21;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -580,7 +607,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel22.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 21;
+        gridBagConstraints.gridy = 22;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -592,7 +619,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel23.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 22;
+        gridBagConstraints.gridy = 23;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -604,7 +631,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel25.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 17;
+        gridBagConstraints.gridy = 18;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         jPanel5.add(jLabel25, gridBagConstraints);
 
@@ -625,7 +652,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel28.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 23;
+        gridBagConstraints.gridy = 24;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -637,7 +664,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel21.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 24;
+        gridBagConstraints.gridy = 25;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         jPanel5.add(jLabel21, gridBagConstraints);
@@ -1068,6 +1095,7 @@ public class ExperimentView extends javax.swing.JPanel {
                 val11.getText().split(";"),
                 wavelen,
                 Integer.parseInt(val12.getText()),
+                Integer.parseInt(driftReference.getValue().toString()),
                 Integer.parseInt(val13.getText()),
                 reg,
                 val15.getText().split(";"),
@@ -1233,6 +1261,7 @@ public class ExperimentView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
+    private JLabel driftReferenceLabel;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1269,5 +1298,6 @@ public class ExperimentView extends javax.swing.JPanel {
     private JTextField val7;
     private JTextField val8;
     private JTextField val9;
+    private JSpinner driftReference;
     // End of variables declaration//GEN-END:variables
 }
