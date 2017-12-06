@@ -91,6 +91,21 @@
             <version>0.10.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.nolanlab</groupId>
+            <artifactId>GlassComponents</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+        </dependency>
 
     </dependencies>
     <properties>
@@ -106,7 +121,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.akoya.codex.upload.frmMain</mainClass>
+                            <mainClass>com.akoya.codex.clustering.frmCluster</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

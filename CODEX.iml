@@ -100,5 +100,7 @@
     <orderEntry type="library" name="Maven: com.github.rwl:BTFJ:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.github.rwl:AMDJ:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.github.rwl:COLAMDJ:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.nolanlab:GlassComponents:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:15.0" level="project" />
   </component>
 </module>
