@@ -223,6 +223,7 @@ public class Driffta {
 
                                 Opener o = new Opener();
                                 stack[idx] = o.openImage(destFileName);
+                                new File(destFileName).delete();
 
                                 if (stack[idx] != null) {
                                     if (color || stack[idx].getStack().getSize() != 1) {
@@ -240,7 +241,6 @@ public class Driffta {
                                 } else {
                                     return "Image opening failed: " + sourceFileName;
                                 }
-
                             }
                         });
 
