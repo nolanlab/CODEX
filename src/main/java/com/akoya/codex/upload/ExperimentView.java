@@ -729,7 +729,7 @@ public class ExperimentView extends javax.swing.JPanel {
             } else {
                 String err = guessValues(jfc.getSelectedFile());
                 if (err.length() > 0) {
-                    JOptionPane.showMessageDialog(this, expJS);
+                    JOptionPane.showMessageDialog(this, err);
                     throw new IllegalStateException(err);
                 }
             }
