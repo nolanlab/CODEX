@@ -39,6 +39,8 @@ public class Experiment {
     public final int[] emission_wavelengths;
     public final int drift_comp_channel;
     public final int num_cycles;
+    public final int cycle_upper_limit;
+    public final int cycle_lower_limit;
     public final int[] regIdx;
     public final String[] region_names;
     public final String tiling_mode;
@@ -58,7 +60,7 @@ public class Experiment {
     public Experiment(String name, String date, String codex_instrument, String microscope,
             String deconvolution, int magnification, double numerical_aperture, double per_pixel_XY_resolution,
             double z_pitch, int num_z_planes, String channel_arrangement, String[] channel_names,
-            int[] channelWavelen, int drift_comp_channel, int driftCompReference, int num_cycles, int[] regIdx,
+            int[] channelWavelen, int drift_comp_channel, int driftCompReference, int cycle_lower_limit, int cycle_upper_limit, int[] regIdx,
             String[] region_names, String tiling_mode, int region_width,
             int region_height, int tile_overlap_X, int tile_overlap_Y,
             String objectiveType, boolean HandEstain, String projName) {
@@ -76,7 +78,9 @@ public class Experiment {
         this.channel_names = channel_names;
         this.drift_comp_channel = drift_comp_channel;
         this.driftCompReference = driftCompReference;
-        this.num_cycles = num_cycles;
+        this.cycle_lower_limit = cycle_lower_limit;
+        this.cycle_upper_limit = cycle_upper_limit;
+        this.num_cycles = cycle_upper_limit-cycle_lower_limit+1;
         this.regIdx = regIdx;
         this.region_names = region_names;
         this.tiling_mode = tiling_mode;
@@ -126,7 +130,7 @@ public class Experiment {
                     throw new IllegalStateException("No directory fond for cycle = " + cycle + ", region = " + region + " basedir = " + baseDir);
                 }
                 if(f.size()>1){
-                    throw new IllegalStateException("Multiple directoris fond for cycle = " + cycle + ", region = " + region + " basedir = " + baseDir+ "\nPlease remove duplicate directories before continuing\n"+f.toString()) ;
+                    throw new IllegalStateException("Multiple directories fond for cycle = " + cycle + ", region = " + region + " basedir = " + baseDir+ "\nPlease remove duplicate directories before continuing\n"+f.toString()) ;
                 }
                 name = f.get(0).getName();
                 break;

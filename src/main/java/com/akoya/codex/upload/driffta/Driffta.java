@@ -176,7 +176,7 @@ public class Driffta {
 
             HashSet<Callable<String>> alR = new HashSet<>();
 
-            for (int cycle = 1; cycle <= exp.num_cycles; cycle++) {
+            for (int cycle = exp.cycle_lower_limit; cycle <= exp.cycle_upper_limit; cycle++) {
                 final int cycF = cycle;
                 final String sourceDir = baseDir + File.separator + exp.getDirName(cycle, region, baseDir);
                 for (int chIdx = 0; chIdx < exp.channel_names.length; chIdx++) {
@@ -478,7 +478,7 @@ public class Driffta {
 
             
             log("Running best focus");
-            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(hyp, bestFocusPlanes, exp.drift_comp_channel);
+            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(hyp, bestFocusPlanes, exp.drift_comp_channel); //new field instead of the comp_channel
             log("Saving the focused tiff");
             fs = new FileSaver(focused);
             fs.saveAsTiff(bestFocus + File.separator + Experiment.getDestStackFileNameWithZIndex(exp.tiling_mode, tile, region, exp.region_width, bestFocusPlanes[0]));

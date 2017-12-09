@@ -5,8 +5,7 @@
  */
 package com.akoya.codex.upload;
 
-import com.sun.tools.javac.comp.Flow;
-
+import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -275,8 +274,8 @@ public class ExperimentView extends javax.swing.JPanel {
         jPanel4.add(driftReference);
 
 
-        val13.setText("15");
-        val13.setInputVerifier(integerVerifier);
+        val13.setText("1-15");
+        //val13.setInputVerifier(integerVerifier);
         val13.setMaximumSize(new java.awt.Dimension(3000, 20));
         val13.setMinimumSize(new java.awt.Dimension(300, 20));
         val13.setPreferredSize(new java.awt.Dimension(3000, 20));
@@ -553,7 +552,7 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(driftReferenceLabel, gridBagConstraints);
 
-        jLabel16.setText("Number of cycles");
+        jLabel16.setText("Number of cycles/Range");
         jLabel16.setMaximumSize(new java.awt.Dimension(3000, 20));
         jLabel16.setMinimumSize(new java.awt.Dimension(100, 20));
         jLabel16.setPreferredSize(new java.awt.Dimension(500, 20));
@@ -890,7 +889,8 @@ public class ExperimentView extends javax.swing.JPanel {
 
         rb_HandE_yes.setSelected(hasHandE);
 
-        val13.setText(String.valueOf(maxCycle));
+        //val13.setText(String.valueOf(maxCycle));
+        val13.setText("");
 
         String regTxt = "1";
         String regNames = "Region 1";
@@ -908,6 +908,7 @@ public class ExperimentView extends javax.swing.JPanel {
 
         return err.length() == 0 ? "" : ("Following errors were found in the experiment:\n" + err.toString());
     }
+
 
     /*
         Set the number of Z-indices after reading it from the experiment folder
@@ -1012,7 +1013,12 @@ public class ExperimentView extends javax.swing.JPanel {
         val11.setText(util.concat(exp.channel_names));
         val21.setText(util.concat(exp.emission_wavelengths)); //OUT OF ORDER
         val12.setText(String.valueOf(exp.drift_comp_channel));
-        val13.setText(String.valueOf(exp.num_cycles));
+        if(exp.cycle_upper_limit != exp.cycle_lower_limit) {
+            val13.setText(String.valueOf(exp.cycle_lower_limit) + "-" + String.valueOf(exp.cycle_upper_limit));
+        }
+        else {
+            val13.setText(String.valueOf(exp.cycle_lower_limit));
+        }
         val14.setText(util.concat(exp.regIdx));
         val15.setText(util.concat(exp.region_names));
         val16.setSelectedItem(exp.tiling_mode);
@@ -1081,6 +1087,55 @@ public class ExperimentView extends javax.swing.JPanel {
 
         }
 
+        //New feature to support range for number of cycles
+        String cyc = val13.getText();
+        int count = 0;
+        for( int i=0; i<cyc.length(); i++ ) {
+            if( cyc.charAt(i) == '-' ) {
+                count++;
+            }
+        }
+        int lowerCycLimit = 0;
+        int upperCycLimit = 0;
+        if(count == 0) {
+            lowerCycLimit = StringUtils.isNumeric(val13.getText()) ? Integer.parseInt(val13.getText()) : Integer.MIN_VALUE;
+            upperCycLimit = lowerCycLimit;
+            if(lowerCycLimit == Integer.MIN_VALUE) {
+                JOptionPane.showMessageDialog(this, "The number of cycles is not a number. Please enter a number or range.");
+                throw new IllegalStateException("The number of cycles is not a number. Please enter a number or range.");
+            }
+        }
+        else if(count == 1) {
+            String[] cycLimits = val13.getText().split("-");
+            if(cycLimits != null && cycLimits.length != 0) {
+                lowerCycLimit = StringUtils.isNumeric(cycLimits[0]) ? Integer.parseInt(cycLimits[0]) : Integer.MIN_VALUE;
+                upperCycLimit = StringUtils.isNumeric(cycLimits[1]) ? Integer.parseInt(cycLimits[1]) : Integer.MAX_VALUE;
+            }
+
+            if(lowerCycLimit > upperCycLimit) {
+                JOptionPane.showMessageDialog(this, "The lower limit on the range of number of cycles cannot be greater than the upper limit.");
+                throw new IllegalStateException("The lower limit on the range of number of cycles cannot be greater than the upper limit.");
+            }
+
+            if(lowerCycLimit == upperCycLimit) {
+                JOptionPane.showMessageDialog(this, "The lower limit on the range of number of cycles cannot be equal to the upper limit.");
+                throw new IllegalStateException("The lower limit on the range of number of cycles cannot be equal to the upper limit.");
+            }
+
+            if(lowerCycLimit == Integer.MIN_VALUE) {
+                JOptionPane.showMessageDialog(this, "The lower limit on the range of number of cycles is not a number. Please enter a number.");
+                throw new IllegalStateException("The lower limit on the range of number of cycles is not a number. Please enter a number.");
+            }
+            if(upperCycLimit == Integer.MAX_VALUE) {
+                JOptionPane.showMessageDialog(this, "The upper limit on the range of number of cycles is not a number. Please enter a number.");
+                throw new IllegalStateException("The upper limit on the range of number of cycles is not a number. Please enter a number.");
+            }
+        }
+        else {
+            JOptionPane.showMessageDialog(this, "Please enter a valid number or range for number of cycles.");
+            throw new IllegalStateException("Please enter a valid number or range for number cycles.");
+        }
+
         return new Experiment(val1.getText(),
                 formattedDate,
                 val2.getText(),
@@ -1096,7 +1151,8 @@ public class ExperimentView extends javax.swing.JPanel {
                 wavelen,
                 Integer.parseInt(val12.getText()),
                 Integer.parseInt(driftReference.getValue().toString()),
-                Integer.parseInt(val13.getText()),
+                lowerCycLimit,
+                upperCycLimit,
                 reg,
                 val15.getText().split(";"),
                 (String) val16.getSelectedItem(),

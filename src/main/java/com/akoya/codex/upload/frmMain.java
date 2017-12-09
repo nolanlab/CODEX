@@ -77,6 +77,7 @@ public class frmMain extends javax.swing.JFrame {
         uploadOptionsView = new com.akoya.codex.upload.ProcessingOptionsView();
         prg = new javax.swing.JProgressBar();
         cmdStart = new javax.swing.JButton();
+        cmdStop = new JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("CODEXuploader");
@@ -185,6 +186,30 @@ public class frmMain extends javax.swing.JFrame {
         c.fill  = GridBagConstraints.NONE;
 
         newPanel.add(cmdStart, c);
+
+        //Stop button
+        cmdStop.setText("Stop");
+        cmdStop.setEnabled(false);
+        cmdStop.setAlignmentX(0.5F);
+        cmdStop.setAlignmentY(0.0F);
+        cmdStop.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        cmdStop.setMaximumSize(new java.awt.Dimension(150, 30));
+        cmdStop.setMinimumSize(new java.awt.Dimension(150, 30));
+        cmdStop.setPreferredSize(new java.awt.Dimension(150, 30));
+        cmdStop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdStopActionPerformed(evt);
+            }
+        });
+        c = new GridBagConstraints();
+
+        c.gridx=0;
+        c.gridy=5;
+        c.weighty = 1;
+        c.anchor = GridBagConstraints.NORTH;
+        c.fill  = GridBagConstraints.NONE;
+
+        newPanel.add(cmdStop, c);
 
         pane.setMaximumSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 
@@ -299,7 +324,6 @@ public class frmMain extends javax.swing.JFrame {
     }
 
     private void cmdStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -334,6 +358,9 @@ public class frmMain extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "ChannelNames.txt file is not present in the experiment folder. Please check and try again!");
                     return;
                 }
+
+                cmdStart.setEnabled(false);
+                cmdStop.setEnabled(true);
 
                 Uploader upl = doUpload ? new Uploader(po.getDestinationUrl(), po.getNumThreads()) : null;
 
@@ -383,7 +410,7 @@ public class frmMain extends javax.swing.JFrame {
                         while (!d.exists() && numTrial < 3) {
                             numTrial++;
 
-                            ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx48G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile)); //new ProcessBuilder("cmd", "/C", "start", "/B", "/belownormal", cmd);
+                            ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx48G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
                             pb.redirectErrorStream(true);
 
                             log("Starting process: " + pb.command().toString());
@@ -411,12 +438,9 @@ public class frmMain extends javax.swing.JFrame {
                                 }
                             }
                         }
-
                         prg.setValue(currCnt++);
                         frmMain.this.repaint();
-
                     }
-
                 }
 
                 log("Creating montages");
@@ -429,12 +453,21 @@ public class frmMain extends javax.swing.JFrame {
 
             } catch (Exception e) {
                 throw new Error(e);
-        }
-
             }
+          }
         }).start();
 
     }//GEN-LAST:event_cmdStartActionPerformed
+
+    private void cmdStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
+        new Thread(() -> {
+            cmdStop.setEnabled(false);
+            cmdStart.setEnabled(true);
+            prg.setValue(0);
+            log("Process stopped.");
+            System.exit(0);
+        }).start();
+    }
 
     public static void waitAndPrint(Process proc) throws IOException {
         do {
@@ -513,6 +546,7 @@ public class frmMain extends javax.swing.JFrame {
     private javax.swing.JProgressBar prg;
     private com.akoya.codex.upload.ProcessingOptionsView uploadOptionsView;
     private JSpinner spinGPU = new JSpinner();
+    private JButton cmdStop;
     private JTextField configField = new JTextField(5);
 
     public JSpinner getSpinGPU() {
