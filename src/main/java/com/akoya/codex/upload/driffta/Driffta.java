@@ -403,18 +403,17 @@ public class Driffta {
             Duplicator dup = new Duplicator();
             //log("Value of hyp: " + hyp);
             int[] bestFocusPlanes = new int[hyp.getNFrames()];
-            ImagePlus rp = dup.run(hyp, exp.drift_comp_channel, exp.drift_comp_channel, 1, hyp.getNSlices(), 1, 1);
+
+            ImagePlus rp = dup.run(hyp, exp.best_focus_channel, exp.best_focus_channel, 1, hyp.getNSlices(), exp.bestFocusReferenceCycle,  exp.bestFocusReferenceCycle);
             final int refZ = Math.max(1,BestFocus.findBestFocusStackFromSingleTimepoint(rp, exp.drift_comp_channel));
             Arrays.fill(bestFocusPlanes, refZ);
-
-            //int[] bestZPlanes = BestFocus.computeBestFocusIndicesBasedOnDotProduct(hyp, exp.drift_comp_channel);
             //log("The bestZ plane: "+ refZ);
 
             log("Drift compensation");
             log("Waiting for driftcomp interlock");
             DriftcompInterlockDispatcher.gainLock();
             log("Interlock acquired");
-            Driftcomp.compensateDrift(hyp, exp.drift_comp_channel - 1, exp.driftCompReference-1);
+            Driftcomp.compensateDrift(hyp, exp.drift_comp_channel - 1, exp.driftCompReferenceCycle - 1);
 
             DriftcompInterlockDispatcher.releaseLock();
 
@@ -478,7 +477,7 @@ public class Driffta {
 
             
             log("Running best focus");
-            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(hyp, bestFocusPlanes, exp.drift_comp_channel); //new field instead of the comp_channel
+            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(hyp, bestFocusPlanes);
             log("Saving the focused tiff");
             fs = new FileSaver(focused);
             fs.saveAsTiff(bestFocus + File.separator + Experiment.getDestStackFileNameWithZIndex(exp.tiling_mode, tile, region, exp.region_width, bestFocusPlanes[0]));
@@ -551,5 +550,4 @@ public class Driffta {
         DriftcompInterlockDispatcher.releaseLock();
         DeconvolutionInterlockDispatcher.releaseLock();
     }
-
 }

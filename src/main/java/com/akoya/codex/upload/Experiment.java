@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
  * @author Nikolay
  */
 public class Experiment {
-    //Experiment.json
 
     public final String name;
     public final String date;
@@ -38,6 +37,7 @@ public class Experiment {
     public final String[] channel_names;
     public final int[] emission_wavelengths;
     public final int drift_comp_channel;
+    public final int best_focus_channel;
     public final int num_cycles;
     public final int cycle_upper_limit;
     public final int cycle_lower_limit;
@@ -53,14 +53,15 @@ public class Experiment {
     public boolean HandEstain;
     public int tile_height;
     public int tile_width;
-    public int driftCompReference;
-
+    public int driftCompReferenceCycle;
+    public int bestFocusReferenceCycle;
     public final String projName;
 
     public Experiment(String name, String date, String codex_instrument, String microscope,
             String deconvolution, int magnification, double numerical_aperture, double per_pixel_XY_resolution,
             double z_pitch, int num_z_planes, String channel_arrangement, String[] channel_names,
-            int[] channelWavelen, int drift_comp_channel, int driftCompReference, int cycle_lower_limit, int cycle_upper_limit, int[] regIdx,
+            int[] channelWavelen, int drift_comp_channel, int driftCompReferenceCycle, int bestFocusReferenceCycle, int best_focus_channel,
+            int cycle_lower_limit, int cycle_upper_limit, int[] regIdx,
             String[] region_names, String tiling_mode, int region_width,
             int region_height, int tile_overlap_X, int tile_overlap_Y,
             String objectiveType, boolean HandEstain, String projName) {
@@ -77,7 +78,9 @@ public class Experiment {
         this.channel_arrangement = channel_arrangement;
         this.channel_names = channel_names;
         this.drift_comp_channel = drift_comp_channel;
-        this.driftCompReference = driftCompReference;
+        this.driftCompReferenceCycle = driftCompReferenceCycle;
+        this.bestFocusReferenceCycle = bestFocusReferenceCycle;
+        this.best_focus_channel = best_focus_channel;
         this.cycle_lower_limit = cycle_lower_limit;
         this.cycle_upper_limit = cycle_upper_limit;
         this.num_cycles = cycle_upper_limit-cycle_lower_limit+1;
