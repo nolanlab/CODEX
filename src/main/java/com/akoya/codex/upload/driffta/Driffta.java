@@ -185,7 +185,7 @@ public class Driffta {
                     for (int zSlice = 1; zSlice <= exp.num_z_planes; zSlice++) {
                         final int lz = zSlice;
                         final String sourceFileName = sourceDir + File.separator + exp.getSourceFileName(sourceDir, exp.microscope, tile, zSlice, chIdxF);
-                        final int idx = ((exp.num_z_planes * exp.channel_names.length) * (cycle - 1)) + (exp.channel_names.length * (zSlice - 1)) + chIdx;
+                        final int idx = ((exp.num_z_planes * exp.channel_names.length) * (cycle - exp.cycle_lower_limit)) + (exp.channel_names.length * (zSlice - 1)) + chIdx;
                         //log("Creating file opening job for cycle="+cycle+", chIdx="+chIdx + ", zSlice="+zSlice);
 
                         if (!new File(sourceFileName).exists()) {
@@ -404,8 +404,8 @@ public class Driffta {
             //log("Value of hyp: " + hyp);
             int[] bestFocusPlanes = new int[hyp.getNFrames()];
 
-            ImagePlus rp = dup.run(hyp, exp.best_focus_channel, exp.best_focus_channel, 1, hyp.getNSlices(), exp.bestFocusReferenceCycle,  exp.bestFocusReferenceCycle);
-            final int refZ = Math.max(1,BestFocus.findBestFocusStackFromSingleTimepoint(rp, exp.drift_comp_channel));
+            ImagePlus rp = dup.run(hyp, exp.best_focus_channel, hyp.getNChannels(), 1, hyp.getNSlices(), exp.bestFocusReferenceCycle-exp.cycle_lower_limit+1,  exp.bestFocusReferenceCycle-exp.cycle_lower_limit+1);
+            final int refZ = Math.max(1,BestFocus.findBestFocusStackFromSingleTimepoint(rp, exp.best_focus_channel));
             Arrays.fill(bestFocusPlanes, refZ);
             //log("The bestZ plane: "+ refZ);
 

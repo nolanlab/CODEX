@@ -1063,6 +1063,9 @@ public class ExperimentView extends javax.swing.JPanel {
         val11.setText(util.concat(exp.channel_names));
         val21.setText(util.concat(exp.emission_wavelengths)); //OUT OF ORDER
         val12.setText(String.valueOf(exp.drift_comp_channel));
+        driftReference.setValue(exp.driftCompReferenceCycle);
+        bestFocusChannel.setValue(exp.best_focus_channel);
+        bestFocusCycle.setValue(exp.bestFocusReferenceCycle);
         if(exp.cycle_upper_limit != exp.cycle_lower_limit) {
             val13.setText(String.valueOf(exp.cycle_lower_limit) + "-" + String.valueOf(exp.cycle_upper_limit));
         }
