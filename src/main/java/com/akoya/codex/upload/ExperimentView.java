@@ -22,8 +22,6 @@ import java.util.*;
  */
 public class ExperimentView extends javax.swing.JPanel {
 
-    public static int cycFilesCount = 0;
-
     /**
      * Creates new form ExperimentView
      */
@@ -60,7 +58,7 @@ public class ExperimentView extends javax.swing.JPanel {
         val10 = new javax.swing.JComboBox<>();
         val11 = new JTextField();
         val21 = new JTextField();
-        val12 = new JTextField();
+        val12 = new JSpinner();
         val13 = new JTextField();
         val14 = new JTextField();
         val15 = new JTextField();
@@ -253,17 +251,13 @@ public class ExperimentView extends javax.swing.JPanel {
         });
         jPanel4.add(val21);
 
-        val12.setText("1");
-        val12.setInputVerifier(driftCompChVerifier
-        );
+        val12.setModel(new SpinnerNumberModel(1, 1, 200, 1));
         val12.setMaximumSize(new java.awt.Dimension(3000, 20));
         val12.setMinimumSize(new java.awt.Dimension(300, 20));
         val12.setPreferredSize(new java.awt.Dimension(3000, 20));
-        val12.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                val12ActionPerformed(evt);
-            }
-        });
+        val12.setValue(Integer.parseInt("1"));
+        val12.setInputVerifier(integerVerifier);
+        ((JSpinner.DefaultEditor)val12.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
         jPanel4.add(val12);
 
         driftReference = new JSpinner();
@@ -276,16 +270,6 @@ public class ExperimentView extends javax.swing.JPanel {
         ((JSpinner.DefaultEditor)driftReference.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
         jPanel4.add(driftReference);
 
-        bestFocusCycle = new JSpinner();
-        bestFocusCycle.setModel(new SpinnerNumberModel(1, 1, 200, 1));
-        bestFocusCycle.setMaximumSize(new java.awt.Dimension(3000, 20));
-        bestFocusCycle.setMinimumSize(new java.awt.Dimension(300, 20));
-        bestFocusCycle.setPreferredSize(new java.awt.Dimension(3000, 20));
-        bestFocusCycle.setValue(Integer.parseInt("1"));
-        bestFocusCycle.setInputVerifier(integerVerifier);
-        ((JSpinner.DefaultEditor)bestFocusCycle.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
-        jPanel4.add(bestFocusCycle);
-
         bestFocusChannel = new JSpinner();
         bestFocusChannel.setModel(new SpinnerNumberModel(1, 1, 200, 1));
         bestFocusChannel.setMaximumSize(new java.awt.Dimension(3000, 20));
@@ -296,6 +280,15 @@ public class ExperimentView extends javax.swing.JPanel {
         ((JSpinner.DefaultEditor)bestFocusChannel.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
         jPanel4.add(bestFocusChannel);
 
+        bestFocusCycle = new JSpinner();
+        bestFocusCycle.setModel(new SpinnerNumberModel(1, 1, 200, 1));
+        bestFocusCycle.setMaximumSize(new java.awt.Dimension(3000, 20));
+        bestFocusCycle.setMinimumSize(new java.awt.Dimension(300, 20));
+        bestFocusCycle.setPreferredSize(new java.awt.Dimension(3000, 20));
+        bestFocusCycle.setValue(Integer.parseInt("1"));
+        bestFocusCycle.setInputVerifier(integerVerifier);
+        ((JSpinner.DefaultEditor)bestFocusCycle.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
+        jPanel4.add(bestFocusCycle);
 
         val13.setText("1-15");
         //val13.setInputVerifier(integerVerifier);
@@ -575,29 +568,29 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(driftReferenceLabel, gridBagConstraints);
 
-        bestFocusCycleLabel.setText("Best focus cycle");
-        bestFocusCycleLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
-        bestFocusCycleLabel.setMinimumSize(new java.awt.Dimension(100, 20));
-        bestFocusCycleLabel.setPreferredSize(new java.awt.Dimension(500, 20));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 17;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.weightx = 1.0;
-        jPanel5.add(bestFocusCycleLabel, gridBagConstraints);
-
         bestFocusChannelLabel.setText("Best focus channel");
         bestFocusChannelLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
         bestFocusChannelLabel.setMinimumSize(new java.awt.Dimension(100, 20));
         bestFocusChannelLabel.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 18;
+        gridBagConstraints.gridy = 17;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(bestFocusChannelLabel, gridBagConstraints);
+
+        bestFocusCycleLabel.setText("Best focus cycle");
+        bestFocusCycleLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
+        bestFocusCycleLabel.setMinimumSize(new java.awt.Dimension(100, 20));
+        bestFocusCycleLabel.setPreferredSize(new java.awt.Dimension(500, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 18;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(bestFocusCycleLabel, gridBagConstraints);
 
         jLabel16.setText("Number of cycles/Range");
         jLabel16.setMaximumSize(new java.awt.Dimension(3000, 20));
@@ -807,17 +800,21 @@ public class ExperimentView extends javax.swing.JPanel {
     }
 
     /*
-    Method to calculate the total number of Cycle folders present in the experiment directory.
+    Method to find the total number of Cycle folders present in the experiment directory.
      */
-    public static int getCycFoldersCount(File dir) {
+    public static int getMaxCycNumberFromFolder(File dir) {
+        ArrayList<Integer> cycNumbers = new ArrayList<Integer>();
         if (dir != null) {
             for (File cyc : dir.listFiles()) {
                 if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
-                    return cyc.listFiles() == null ? 0 : cyc.listFiles().length;
+                    String cycFolderName = cyc.getName();
+                    String[] cycVal = cycFolderName.split("_");
+                    cycNumbers.add(Integer.parseInt(cycVal[0].replaceAll("[^0-9]", "")));
                 }
             }
         }
-        return 0;
+        Collections.sort(cycNumbers, Collections.reverseOrder());
+        return cycNumbers == null || cycNumbers.isEmpty() ? 0 : cycNumbers.get(0);
     }
 
     /*
@@ -967,6 +964,7 @@ public class ExperimentView extends javax.swing.JPanel {
 
         guessZSlices(dir);
         guessChannelNamesAndWavelength(dir);
+        guessCycleRange(dir);
 
         return err.length() == 0 ? "" : ("Following errors were found in the experiment:\n" + err.toString());
     }
@@ -1062,6 +1060,20 @@ public class ExperimentView extends javax.swing.JPanel {
     }
 
     /*
+    Set the number of cyles/range field depending upon the content of Experiment folder.
+    */
+    private void guessCycleRange(File dir) {
+        int lowL = 1;
+        int upL = getMaxCycNumberFromFolder(dir);
+        if(upL == 0) {
+            val13.setText(String.valueOf(lowL));
+        }
+        else {
+            val13.setText(String.valueOf(lowL) + "-" + String.valueOf(upL));
+        }
+    }
+
+    /*
     Method to load the values from the JSON file and set it to the Experiment property
      */
     private void load(Experiment exp) throws FileNotFoundException {
@@ -1078,7 +1090,7 @@ public class ExperimentView extends javax.swing.JPanel {
         val10.setSelectedItem(exp.channel_arrangement);
         val11.setText(util.concat(exp.channel_names));
         val21.setText(util.concat(exp.emission_wavelengths)); //OUT OF ORDER
-        val12.setText(String.valueOf(exp.drift_comp_channel));
+        val12.setValue(exp.drift_comp_channel);
         driftReference.setValue(exp.driftCompReferenceCycle);
         bestFocusChannel.setValue(exp.best_focus_channel);
         bestFocusCycle.setValue(exp.bestFocusReferenceCycle);
@@ -1169,9 +1181,21 @@ public class ExperimentView extends javax.swing.JPanel {
         if(count == 0) {
             lowerCycLimit = StringUtils.isNumeric(val13.getText()) ? Integer.parseInt(val13.getText()) : Integer.MIN_VALUE;
             upperCycLimit = lowerCycLimit;
+            if(lowerCycLimit == 0) {
+                JOptionPane.showMessageDialog(this, "The number of cycles/range cannot be 0.");
+                throw new IllegalStateException("The number of cycles/range cannot be 0.");
+            }
             if(lowerCycLimit == Integer.MIN_VALUE) {
                 JOptionPane.showMessageDialog(this, "The number of cycles is not a number. Please enter a number or range.");
                 throw new IllegalStateException("The number of cycles is not a number. Please enter a number or range.");
+            }
+            if(Integer.parseInt(driftReference.getValue().toString()) > lowerCycLimit) {
+                JOptionPane.showMessageDialog(this, "Drift compensation reference cycle is invalid.");
+                throw new IllegalStateException("Drift compensation reference cycle is invalid.");
+            }
+            if(Integer.parseInt(bestFocusCycle.getValue().toString()) > lowerCycLimit) {
+                JOptionPane.showMessageDialog(this, "Best focus cycle is invalid.");
+                throw new IllegalStateException("Best focus cycle is invalid.");
             }
         }
         else if(count == 1) {
@@ -1200,13 +1224,13 @@ public class ExperimentView extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "The lower limit on the range of number of cycles is invalid.");
                 throw new IllegalStateException("The lower limit on the range of number of cycles is invalid.");
             }
-            if(upperCycLimit > getCycFoldersCount(dir)) {
+            if(upperCycLimit > getMaxCycNumberFromFolder(dir)) {
                 JOptionPane.showMessageDialog(this, "The upper limit on the range of number of cycles is invalid.");
                 throw new IllegalStateException("The upper limit on the range of number of cycles is invalid.");
             }
             if(Integer.parseInt(driftReference.getValue().toString()) < lowerCycLimit || Integer.parseInt(driftReference.getValue().toString()) > upperCycLimit) {
-                JOptionPane.showMessageDialog(this, "Drift reference cycle is invalid.");
-                throw new IllegalStateException("Drift reference cycle is invalid.");
+                JOptionPane.showMessageDialog(this, "Drift compensation reference cycle is invalid.");
+                throw new IllegalStateException("Drift compensation reference cycle is invalid.");
             }
             if(Integer.parseInt(bestFocusCycle.getValue().toString()) < lowerCycLimit || Integer.parseInt(bestFocusCycle.getValue().toString()) > upperCycLimit) {
                 JOptionPane.showMessageDialog(this, "Best focus cycle is invalid.");
@@ -1231,7 +1255,7 @@ public class ExperimentView extends javax.swing.JPanel {
                 (String) val10.getSelectedItem(),
                 val11.getText().split(";"),
                 wavelen,
-                Integer.parseInt(val12.getText()),
+                Integer.parseInt(val12.getValue().toString()),
                 Integer.parseInt(driftReference.getValue().toString()),
                 Integer.parseInt(bestFocusCycle.getValue().toString()),
                 Integer.parseInt(bestFocusChannel.getValue().toString()),
@@ -1421,7 +1445,7 @@ public class ExperimentView extends javax.swing.JPanel {
     private JTextField val1;
     private javax.swing.JComboBox<String> val10;
     private JTextField val11;
-    private JTextField val12;
+    private JSpinner val12;
     private JTextField val13;
     private JTextField val14;
     private JTextField val15;
