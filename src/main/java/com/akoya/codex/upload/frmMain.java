@@ -177,15 +177,6 @@ public class frmMain extends javax.swing.JFrame {
                 cmdStartActionPerformed(evt);
             }
         });
-        c = new GridBagConstraints();
-
-        c.gridx=0;
-        c.gridy=4;
-        c.weighty = 1;
-        c.anchor = GridBagConstraints.NORTH;
-        c.fill  = GridBagConstraints.NONE;
-
-        newPanel.add(cmdStart, c);
 
         //Stop button
         cmdStop.setText("Stop");
@@ -201,15 +192,20 @@ public class frmMain extends javax.swing.JFrame {
                 cmdStopActionPerformed(evt);
             }
         });
-        c = new GridBagConstraints();
 
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+        buttonPanel.add(cmdStart);
+        buttonPanel.add(cmdStop);
+
+        c = new GridBagConstraints();
         c.gridx=0;
-        c.gridy=5;
+        c.gridy=4;
         c.weighty = 1;
         c.anchor = GridBagConstraints.NORTH;
         c.fill  = GridBagConstraints.NONE;
 
-        newPanel.add(cmdStop, c);
+        newPanel.add(buttonPanel, c);
 
         pane.setMaximumSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 
@@ -465,7 +461,8 @@ public class frmMain extends javax.swing.JFrame {
             cmdStart.setEnabled(true);
             prg.setValue(0);
             log("Process stopped.");
-            System.exit(0);
+            //System.exit(0);
+            throw new IllegalStateException("Process stopped.");
         }).start();
     }
 

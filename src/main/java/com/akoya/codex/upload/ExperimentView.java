@@ -22,6 +22,8 @@ import java.util.*;
  */
 public class ExperimentView extends javax.swing.JPanel {
 
+    public static int cycFilesCount = 0;
+
     /**
      * Creates new form ExperimentView
      */
@@ -561,7 +563,7 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(jLabel15, gridBagConstraints);
 
-        driftReferenceLabel.setText("Drift compensation reference");
+        driftReferenceLabel.setText("Drift compensation reference cycle");
         driftReferenceLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
         driftReferenceLabel.setMinimumSize(new java.awt.Dimension(100, 20));
         driftReferenceLabel.setPreferredSize(new java.awt.Dimension(500, 20));
@@ -802,6 +804,20 @@ public class ExperimentView extends javax.swing.JPanel {
 
     public Experiment getExperiment() {
         return buildExperiment();
+    }
+
+    /*
+    Method to calculate the total number of Cycle folders present in the experiment directory.
+     */
+    public static int getCycFoldersCount(File dir) {
+        if (dir != null) {
+            for (File cyc : dir.listFiles()) {
+                if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
+                    return cyc.listFiles() == null ? 0 : cyc.listFiles().length;
+                }
+            }
+        }
+        return 0;
     }
 
     /*
@@ -1164,17 +1180,14 @@ public class ExperimentView extends javax.swing.JPanel {
                 lowerCycLimit = StringUtils.isNumeric(cycLimits[0]) ? Integer.parseInt(cycLimits[0]) : Integer.MIN_VALUE;
                 upperCycLimit = StringUtils.isNumeric(cycLimits[1]) ? Integer.parseInt(cycLimits[1]) : Integer.MAX_VALUE;
             }
-
             if(lowerCycLimit > upperCycLimit) {
                 JOptionPane.showMessageDialog(this, "The lower limit on the range of number of cycles cannot be greater than the upper limit.");
                 throw new IllegalStateException("The lower limit on the range of number of cycles cannot be greater than the upper limit.");
             }
-
             if(lowerCycLimit == upperCycLimit) {
                 JOptionPane.showMessageDialog(this, "The lower limit on the range of number of cycles cannot be equal to the upper limit.");
                 throw new IllegalStateException("The lower limit on the range of number of cycles cannot be equal to the upper limit.");
             }
-
             if(lowerCycLimit == Integer.MIN_VALUE) {
                 JOptionPane.showMessageDialog(this, "The lower limit on the range of number of cycles is not a number. Please enter a number.");
                 throw new IllegalStateException("The lower limit on the range of number of cycles is not a number. Please enter a number.");
@@ -1182,6 +1195,22 @@ public class ExperimentView extends javax.swing.JPanel {
             if(upperCycLimit == Integer.MAX_VALUE) {
                 JOptionPane.showMessageDialog(this, "The upper limit on the range of number of cycles is not a number. Please enter a number.");
                 throw new IllegalStateException("The upper limit on the range of number of cycles is not a number. Please enter a number.");
+            }
+            if(lowerCycLimit < 1) {
+                JOptionPane.showMessageDialog(this, "The lower limit on the range of number of cycles is invalid.");
+                throw new IllegalStateException("The lower limit on the range of number of cycles is invalid.");
+            }
+            if(upperCycLimit > getCycFoldersCount(dir)) {
+                JOptionPane.showMessageDialog(this, "The upper limit on the range of number of cycles is invalid.");
+                throw new IllegalStateException("The upper limit on the range of number of cycles is invalid.");
+            }
+            if(Integer.parseInt(driftReference.getValue().toString()) < lowerCycLimit || Integer.parseInt(driftReference.getValue().toString()) > upperCycLimit) {
+                JOptionPane.showMessageDialog(this, "Drift reference cycle is invalid.");
+                throw new IllegalStateException("Drift reference cycle is invalid.");
+            }
+            if(Integer.parseInt(bestFocusCycle.getValue().toString()) < lowerCycLimit || Integer.parseInt(bestFocusCycle.getValue().toString()) > upperCycLimit) {
+                JOptionPane.showMessageDialog(this, "Best focus cycle is invalid.");
+                throw new IllegalStateException("Best focus cycle is invalid.");
             }
         }
         else {
