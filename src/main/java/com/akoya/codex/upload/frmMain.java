@@ -100,8 +100,8 @@ public class frmMain extends javax.swing.JFrame {
         JPanel newPanel = new JPanel();
         GridBagLayout gridBag = new GridBagLayout();
         newPanel.setLayout(gridBag);
-        GridBagConstraints c = new GridBagConstraints();
 
+        GridBagConstraints c = new GridBagConstraints();
         c.gridx=0;
         c.gridy=0;
         c.fill  = GridBagConstraints.BOTH;
@@ -110,9 +110,8 @@ public class frmMain extends javax.swing.JFrame {
         newPanel.add(experimentView, c);
 
         c = new GridBagConstraints();
-
         c.gridx=0;
-        c.gridy=1;
+        c.gridy=2;
         c.weightx =1;
         c.fill  = GridBagConstraints.HORIZONTAL;
         newPanel.add(uploadOptionsView, c);
@@ -128,7 +127,7 @@ public class frmMain extends javax.swing.JFrame {
         c = new GridBagConstraints();
 
         c.gridx=0;
-        c.gridy=2;
+        c.gridy=3;
         c.weightx =1;
         c.fill  = GridBagConstraints.HORIZONTAL;
         newPanel.add(scrollPane, c);
@@ -140,7 +139,7 @@ public class frmMain extends javax.swing.JFrame {
         c = new GridBagConstraints();
 
         c.gridx=0;
-        c.gridy=3;
+        c.gridy=4;
         c.weightx =0;
         c.fill  = GridBagConstraints.NONE;
 
@@ -200,7 +199,7 @@ public class frmMain extends javax.swing.JFrame {
 
         c = new GridBagConstraints();
         c.gridx=0;
-        c.gridy=4;
+        c.gridy=5;
         c.weighty = 1;
         c.anchor = GridBagConstraints.NORTH;
         c.fill  = GridBagConstraints.NONE;

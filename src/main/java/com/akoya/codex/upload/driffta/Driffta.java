@@ -405,7 +405,9 @@ public class Driffta {
             int[] bestFocusPlanes = new int[hyp.getNFrames()];
 
             ImagePlus rp = dup.run(hyp, exp.best_focus_channel, hyp.getNChannels(), 1, hyp.getNSlices(), exp.bestFocusReferenceCycle-exp.cycle_lower_limit+1,  exp.bestFocusReferenceCycle-exp.cycle_lower_limit+1);
-            final int refZ = Math.max(1,BestFocus.findBestFocusStackFromSingleTimepoint(rp, exp.best_focus_channel));
+            int refZ = Math.max(1,BestFocus.findBestFocusStackFromSingleTimepoint(rp, exp.best_focus_channel, exp.optionalFocusFragment));
+            //Add offset here
+            refZ = refZ + exp.focusing_offset;
             Arrays.fill(bestFocusPlanes, refZ);
             //log("The bestZ plane: "+ refZ);
 

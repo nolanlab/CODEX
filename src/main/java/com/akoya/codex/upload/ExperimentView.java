@@ -100,7 +100,6 @@ public class ExperimentView extends javax.swing.JPanel {
         bestFocusChannelLabel = new JLabel();
         driftReferenceLabel = new JLabel();
 
-
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Experimental Details"));
         jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, BoxLayout.PAGE_AXIS));
 
@@ -354,6 +353,7 @@ public class ExperimentView extends javax.swing.JPanel {
 
         val19.setText("576");
         val19.setInputVerifier(integerVerifier);
+        val19.setInputVerifier(integerVerifier);
         val19.setMaximumSize(new java.awt.Dimension(3000, 20));
         val19.setMinimumSize(new java.awt.Dimension(300, 20));
         val19.setPreferredSize(new java.awt.Dimension(3000, 20));
@@ -423,6 +423,16 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(jLabel24, gridBagConstraints);
 
+        jLabel1.setText("Project");
+        jLabel1.setMaximumSize(new java.awt.Dimension(1000, 20));
+        jLabel1.setMinimumSize(new java.awt.Dimension(100, 20));
+        jLabel1.setPreferredSize(new java.awt.Dimension(500, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        jPanel5.add(jLabel1, gridBagConstraints);
+
         jLabel9.setText("CODEX instrument");
         jLabel9.setMaximumSize(new java.awt.Dimension(3000, 20));
         jLabel9.setMinimumSize(new java.awt.Dimension(100, 20));
@@ -459,6 +469,17 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(jLabel4, gridBagConstraints);
+
+        jLabel29.setText("Objective Type");
+        jLabel29.setMaximumSize(new java.awt.Dimension(40, 20));
+        jLabel29.setMinimumSize(new java.awt.Dimension(40, 20));
+        jLabel29.setPreferredSize(new java.awt.Dimension(40, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        jPanel5.add(jLabel29, gridBagConstraints);
 
         jLabel5.setText("Magnification (x)");
         jLabel5.setMaximumSize(new java.awt.Dimension(3000, 20));
@@ -543,6 +564,17 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(jLabel14, gridBagConstraints);
+
+        jLabel27.setText("Emission wavelengths (; del)");
+        jLabel27.setMaximumSize(new java.awt.Dimension(3000, 20));
+        jLabel27.setMinimumSize(new java.awt.Dimension(100, 20));
+        jLabel27.setPreferredSize(new java.awt.Dimension(500, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        jPanel5.add(jLabel27, gridBagConstraints);
 
         jLabel15.setText("Drift compensation channel index");
         jLabel15.setMaximumSize(new java.awt.Dimension(3000, 20));
@@ -698,38 +730,6 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         jPanel5.add(jLabel21, gridBagConstraints);
 
-        jLabel27.setText("Emission wavelengths (; del)");
-        jLabel27.setMaximumSize(new java.awt.Dimension(3000, 20));
-        jLabel27.setMinimumSize(new java.awt.Dimension(100, 20));
-        jLabel27.setPreferredSize(new java.awt.Dimension(500, 20));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 14;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        jPanel5.add(jLabel27, gridBagConstraints);
-
-        jLabel29.setText("Objective Type");
-        jLabel29.setMaximumSize(new java.awt.Dimension(40, 20));
-        jLabel29.setMinimumSize(new java.awt.Dimension(40, 20));
-        jLabel29.setPreferredSize(new java.awt.Dimension(40, 20));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        jPanel5.add(jLabel29, gridBagConstraints);
-
-        jLabel1.setText("Project");
-        jLabel1.setMaximumSize(new java.awt.Dimension(1000, 20));
-        jLabel1.setMinimumSize(new java.awt.Dimension(100, 20));
-        jLabel1.setPreferredSize(new java.awt.Dimension(500, 20));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        jPanel5.add(jLabel1, gridBagConstraints);
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -749,8 +749,76 @@ public class ExperimentView extends javax.swing.JPanel {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
+        optionalFragmentLabel = new JLabel();
+        focussingOffsetLabel = new JLabel();
+
+        optionalPanel = new JPanel();
+        optionalPanel.setBorder(BorderFactory.createTitledBorder("Optional Details for experiment"));
+        optionalPanel.setLayout(new GridBagLayout());
+
+        optionalFragmentLabel.setText("Focusing fragment");
+        optionalFragmentLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
+        optionalFragmentLabel.setMinimumSize(new java.awt.Dimension(100, 20));
+        optionalFragmentLabel.setPreferredSize(new java.awt.Dimension(180, 20));
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+        //gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        optionalPanel.add(optionalFragmentLabel, gridBagConstraints);
+
+        optionalFragmentButton = new JComboBox<String>();
+        optionalFragmentButton.setModel(new DefaultComboBoxModel<>(new String[] { "Yes", "No" }));
+        optionalFragmentButton.setSelectedItem("Yes");
+        optionalFragmentButton.setMaximumSize(new java.awt.Dimension(100, 20));
+        optionalFragmentButton.setMinimumSize(new java.awt.Dimension(40, 20));
+        optionalFragmentButton.setPreferredSize(new java.awt.Dimension(50, 20));
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        optionalPanel.add(optionalFragmentButton, gridBagConstraints);
+
+        focussingOffsetLabel.setText("Focussing offset");
+        optionalFragmentLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
+        optionalFragmentLabel.setMinimumSize(new java.awt.Dimension(100, 20));
+        optionalFragmentLabel.setPreferredSize(new java.awt.Dimension(180, 20));
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+        //gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        optionalPanel.add(focussingOffsetLabel, gridBagConstraints);
+
+        focussingOffset = new JSpinner();
+        focussingOffset.setModel(new SpinnerNumberModel(0, -100, 100, 1));
+        focussingOffset.setMaximumSize(new java.awt.Dimension(100, 20));
+        focussingOffset.setMinimumSize(new java.awt.Dimension(40, 20));
+        focussingOffset.setPreferredSize(new java.awt.Dimension(50, 20));
+        focussingOffset.setValue(Integer.parseInt("0"));
+        focussingOffset.setInputVerifier(integerVerifier);
+        ((JSpinner.DefaultEditor) focussingOffset.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        optionalPanel.add(focussingOffset, gridBagConstraints);
+
+
         this.setLayout(new BorderLayout());
-        this.add(jPanel2);
+        this.add(jPanel2, BorderLayout.PAGE_START);
+        this.add(optionalPanel, BorderLayout.PAGE_END);
+
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtDirMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtDirMouseReleased
@@ -1108,6 +1176,8 @@ public class ExperimentView extends javax.swing.JPanel {
         val19.setText(String.valueOf(exp.tile_overlap_X));
         val20.setText(String.valueOf(exp.tile_overlap_Y));
         rb_HandE_yes.setSelected(exp.HandEstain);
+        optionalFragmentButton.setSelectedItem(Boolean.toString(exp.optionalFocusFragment) == null ? "Yes" : Boolean.toString(exp.optionalFocusFragment).equalsIgnoreCase("true") ? "Yes" : "No");
+        focussingOffset.setValue(exp.focusing_offset);
     }
 
     private Experiment buildExperiment() {
@@ -1270,7 +1340,9 @@ public class ExperimentView extends javax.swing.JPanel {
                 Integer.parseInt(val20.getText()),
                 val23.getSelectedItem().toString(),
                 rb_HandE_yes.isSelected(),
-                projName
+                projName,
+                "Yes".equalsIgnoreCase(optionalFragmentButton.getSelectedItem().toString()),
+                Integer.parseInt(focussingOffset.getValue().toString())
         );
     }
 
@@ -1467,5 +1539,10 @@ public class ExperimentView extends javax.swing.JPanel {
     private JSpinner driftReference;
     private JSpinner bestFocusCycle;
     private JSpinner bestFocusChannel;
+    private JLabel optionalFragmentLabel;
+    private JLabel focussingOffsetLabel;
+    private JComboBox<String> optionalFragmentButton;
+    private JSpinner focussingOffset;
+    private JPanel optionalPanel;
     // End of variables declaration//GEN-END:variables
 }

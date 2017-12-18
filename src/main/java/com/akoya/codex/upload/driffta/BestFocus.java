@@ -58,7 +58,7 @@ public class BestFocus {
         return hyp;
     }
 
-    public static int findBestFocusStackFromSingleTimepoint(ImagePlus imp, int focusChannel) {
+    public static int findBestFocusStackFromSingleTimepoint(ImagePlus imp, int focusChannel, boolean optionalFocusFragment) {
         Find_focused_slices plg = new Find_focused_slices();
         ImageStack ch = ChannelSplitter.getChannel(imp, focusChannel);
         imp = new ImagePlus("ch" + focusChannel, ch);
@@ -73,7 +73,13 @@ public class BestFocus {
                 for (int i = 1; i <= imp.getNSlices(); i++) {
                     ImageProcessor ip = imp.getStack().getProcessor(i);
                     ip.setRoi(x, y, xStep, yStep);
-                    ImageProcessor cropped = ip.crop();
+                    ImageProcessor cropped;
+                    if(optionalFocusFragment) {
+                        cropped = ip.crop();
+                    }
+                    else {
+                        cropped = ip;
+                    }
                     if (out == null) {
                         out = new ImageStack(cropped.getWidth(), cropped.getHeight());
                     }

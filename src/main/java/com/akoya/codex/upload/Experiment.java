@@ -56,6 +56,9 @@ public class Experiment {
     public int driftCompReferenceCycle;
     public int bestFocusReferenceCycle;
     public final String projName;
+    public final boolean optionalFocusFragment;
+    public final int focusing_offset;
+
 
     public Experiment(String name, String date, String codex_instrument, String microscope,
             String deconvolution, int magnification, double numerical_aperture, double per_pixel_XY_resolution,
@@ -64,7 +67,7 @@ public class Experiment {
             int cycle_lower_limit, int cycle_upper_limit, int[] regIdx,
             String[] region_names, String tiling_mode, int region_width,
             int region_height, int tile_overlap_X, int tile_overlap_Y,
-            String objectiveType, boolean HandEstain, String projName) {
+            String objectiveType, boolean HandEstain, String projName, boolean optionalFocusFragment, int focusing_offset) {
         this.name = name;
         this.date = date;
         this.codex_instrument = codex_instrument;
@@ -106,6 +109,8 @@ public class Experiment {
         }
         this.HandEstain = HandEstain;
         this.projName = projName;
+        this.optionalFocusFragment = optionalFocusFragment;
+        this.focusing_offset = focusing_offset;
     }
 
     public String getDirName(int cycle, int region, String baseDir) {
