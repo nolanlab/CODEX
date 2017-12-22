@@ -5,7 +5,14 @@
  */
 package com.akoya.codex.upload;
 
+import com.akoya.codex.upload.driffta.BestFocus;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.io.FileSaver;
+import ij.plugin.Duplicator;
 import org.apache.commons.lang3.StringUtils;
+import java.lang.Object;
+import java.lang.Runtime;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +37,7 @@ public class frmMain extends javax.swing.JFrame {
 
     private JTextArea textArea = new JTextArea(15,30);
     private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "");
+    private ArrayList<Process> allProcess = new ArrayList<>();
 
     /**
      * Creates new form frmMain
@@ -334,7 +343,7 @@ public class frmMain extends javax.swing.JFrame {
                 String experimentJS = exp.toJSON();
 
                 //Included a feature to check if the product of region size X and Y is equal to the number of tiles
-                if (experimentView.isTilesAProductOfRegionXAndY(dir)) {
+                if (experimentView.isTilesAProductOfRegionXAndY(dir, exp)) {
                     exp.saveToFile(new File(dir + File.separator + "Experiment.json"));
                 }
                 else {
@@ -410,6 +419,7 @@ public class frmMain extends javax.swing.JFrame {
 
                             log("Starting process: " + pb.command().toString());
                             Process proc = pb.start();
+                            allProcess.add(proc);
 
 
                             waitAndPrint(proc);
@@ -438,12 +448,42 @@ public class frmMain extends javax.swing.JFrame {
                     }
                 }
 
+                log("Checking if bestFocus folder is present...");
+
+                File bf = new File(po.getTempDir() + File.separator + "bestFocus");
+                if(!bf.exists()) {
+                    log("Best focus folder is not present. Running it for all the tiffs inside the processed folder.");
+                    File processed = new File(po.getTempDir().getPath());
+                    String bestFocus = po.getTempDir() + File.separator + "bestFocus";
+                    File mkBestFocus = new File(bestFocus);
+                    mkBestFocus.mkdir();
+                    if(processed.isDirectory()) {
+                        File[] procTiff = processed.listFiles(fName -> (fName.getName().endsWith(".tiff") || fName.getName().endsWith(".tif")));
+                        for(File aTif : procTiff) {
+                            ImagePlus p = IJ.openImage(aTif.getPath());
+                            int[] bestFocusPlanes = new int[p.getNFrames()];
+                            Duplicator dup = new Duplicator();
+                            ImagePlus rp = dup.run(p, exp.best_focus_channel, exp.best_focus_channel, 1, p.getNSlices(), exp.bestFocusReferenceCycle-exp.cycle_lower_limit+1,  exp.bestFocusReferenceCycle-exp.cycle_lower_limit+1);
+                            int refZ = Math.max(1,BestFocus.findBestFocusStackFromSingleTimepoint(rp, 1, exp.optionalFocusFragment));
+                            //Add offset here
+                            refZ = refZ + exp.focusing_offset;
+                            Arrays.fill(bestFocusPlanes, refZ);
+
+                            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(p, bestFocusPlanes);
+                            log("Saving the focused tiff " + aTif.getName()+ "where Z: " +bestFocusPlanes[0]);
+                            FileSaver fs = new FileSaver(focused);
+                            fs.saveAsTiff(bestFocus + File.separator + Experiment.getDestStackFileNameWithZIndexForTif(exp.tiling_mode, aTif.getName(), bestFocusPlanes[0]));
+                        }
+                    }
+                }
+
                 log("Creating montages");
 
                 ProcessBuilder pb = new ProcessBuilder("cmd", "/C start /B /belownormal java -Xms5G -Xmx48G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
                 log("Starting process: " + pb.command().toString());
                 pb.redirectErrorStream(true);
                 Process proc = pb.start();
+                allProcess.add(proc);
                 waitAndPrint(proc);
 
             } catch (Exception e) {
@@ -459,8 +499,12 @@ public class frmMain extends javax.swing.JFrame {
             cmdStop.setEnabled(false);
             cmdStart.setEnabled(true);
             prg.setValue(0);
-            log("Process stopped.");
-            //System.exit(0);
+            for(Process proc : allProcess) {
+                if(proc != null) {
+                    proc.destroy();
+                }
+            }
+            log("All Processes stopped.");
             throw new IllegalStateException("Process stopped.");
         }).start();
     }

@@ -771,7 +771,7 @@ public class ExperimentView extends javax.swing.JPanel {
 
         optionalFragmentButton = new JComboBox<String>();
         optionalFragmentButton.setModel(new DefaultComboBoxModel<>(new String[] { "Yes", "No" }));
-        optionalFragmentButton.setSelectedItem("Yes");
+        optionalFragmentButton.setSelectedItem("No");
         optionalFragmentButton.setMaximumSize(new java.awt.Dimension(100, 20));
         optionalFragmentButton.setMinimumSize(new java.awt.Dimension(40, 20));
         optionalFragmentButton.setPreferredSize(new java.awt.Dimension(50, 20));
@@ -889,30 +889,58 @@ public class ExperimentView extends javax.swing.JPanel {
     Method to check if the product of Region Size X and Y is equal to the total number of tiles
     @return returns true if equal
      */
-    public boolean isTilesAProductOfRegionXAndY(File dir) {
-        if(dir != null) {
-            for (File cyc : dir.listFiles()) {
-                if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
-                    File[] cycFiles = cyc.listFiles();
-                    Arrays.sort(cycFiles, Collections.reverseOrder());
-                    for (File tif : cycFiles) {
-                        if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
-                            int lastZIndex = tif.getName().lastIndexOf("Z");
-                            String regXYNumber = tif.getName().substring(lastZIndex-5, lastZIndex-1);
-                            if (regXYNumber != null) {
-                                int regXYIndex = Integer.parseInt(regXYNumber);
-                                if (regXYIndex == Integer.parseInt(val17.getText()) * Integer.parseInt(val18.getText())) {
-                                    return true;
+    public boolean isTilesAProductOfRegionXAndY(File dir, Experiment exp) {
+        if(exp.microscope != null && exp.microscope.contains("Keyence")) {
+            if (dir != null) {
+                for (File cyc : dir.listFiles()) {
+                    if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
+                        File[] cycFiles = cyc.listFiles();
+                        Arrays.sort(cycFiles, Collections.reverseOrder());
+                        for (File tif : cycFiles) {
+                            if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
+                                int lastZIndex = tif.getName().lastIndexOf("Z");
+                                String regXYNumber = tif.getName().substring(lastZIndex - 5, lastZIndex - 1);
+                                if (regXYNumber != null) {
+                                    int regXYIndex = Integer.parseInt(regXYNumber);
+                                    if (regXYIndex == Integer.parseInt(val17.getText()) * Integer.parseInt(val18.getText())) {
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
                                 }
-                                else {
-                                    return false;
-                                }
+                                break;
                             }
-                            break;
                         }
+                        //break outer loop
+                        break;
                     }
-                    //break outer loop
-                    break;
+                }
+            }
+        }
+        else { //Zeiss Microscpe
+            if (dir != null) {
+                for (File cyc : dir.listFiles()) {
+                    if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
+                        File[] cycFiles = cyc.listFiles();
+                        Arrays.sort(cycFiles, Collections.reverseOrder());
+                        for (File tif : cycFiles) {
+                            if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
+                                int last_Index = tif.getName().lastIndexOf("_");
+                                String regXYNumber = tif.getName().substring(last_Index - 2, last_Index);
+                                if (regXYNumber != null) {
+                                    int regXYIndex = Integer.parseInt(regXYNumber);
+                                    if (regXYIndex == Integer.parseInt(val17.getText()) * Integer.parseInt(val18.getText())) {
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        //break outer loop
+                        break;
+                    }
                 }
             }
         }
@@ -1079,7 +1107,7 @@ public class ExperimentView extends javax.swing.JPanel {
                 if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
                     File[] cycFiles = cyc.listFiles();
                     Arrays.sort(cycFiles, Collections.reverseOrder());
-                    HashMap<String, Boolean> chVsBool = new HashMap<String, Boolean>();
+                    LinkedHashMap<String, Boolean> chVsBool = new LinkedHashMap<String, Boolean>();
                     chVsBool.put("CH1", false);
                     chVsBool.put("CH2", false);
                     chVsBool.put("CH3", false);
@@ -1095,7 +1123,7 @@ public class ExperimentView extends javax.swing.JPanel {
                             }
                         }
                     }
-                    HashMap<String, String> chVsWavelength = new HashMap<String, String>();
+                    LinkedHashMap<String, String> chVsWavelength = new LinkedHashMap<String, String>();
                     chVsWavelength.put("CH1","425");
                     chVsWavelength.put("CH2","525");
                     chVsWavelength.put("CH3","595");
@@ -1341,7 +1369,7 @@ public class ExperimentView extends javax.swing.JPanel {
                 val23.getSelectedItem().toString(),
                 rb_HandE_yes.isSelected(),
                 projName,
-                "Yes".equalsIgnoreCase(optionalFragmentButton.getSelectedItem().toString()),
+                "No".equalsIgnoreCase(optionalFragmentButton.getSelectedItem().toString()),
                 Integer.parseInt(focussingOffset.getValue().toString())
         );
     }

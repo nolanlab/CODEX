@@ -234,6 +234,19 @@ public class Experiment {
         }
     }
 
+    public static String getDestStackFileNameWithZIndexForTif(final String tilingMode, final String aTifFileName, final int zIndex) {
+        switch (tilingMode) {
+            case "snake":
+                String[] strsplit = aTifFileName.split("_");
+                int region = Integer.parseInt(strsplit[0].replaceAll("[^0-9]", ""));
+                int X = Integer.parseInt(strsplit[1].replaceAll("[^0-9]", ""));
+                int Y = Integer.parseInt(strsplit[2].replaceAll("[^0-9]", ""));
+                return String.format("reg%03d_X%02d_Y%02d_Z%02d", region, X, Y, zIndex) + ".tif";
+            default:
+                throw new IllegalArgumentException("Unsupported tiling mode: " + tilingMode);
+        }
+    }
+
     public static String getDestPNGFileName(final String tilingMode, final int tile, final int region, final int region_width, int cycle) {
         final int zbTile = tile - 1;
         switch (tilingMode) {
