@@ -235,7 +235,10 @@ public class Main {
             System.gc();
             System.out.println("Computing region intensities " + (use_membrane ? "by membrane" : "by whole cell"));
             double[][] regionIntensities = new double[cellsSegmentedObject.length][(imp.getNFrames() * readoutChannels.length)];
-            ImagePlus mem = dup.run(imp, membraneStainChannel, membraneStainChannel, 1, imp.getNSlices(), membraneStainCycle, membraneStainCycle);
+            ImagePlus mem = null;
+            if(use_membrane) {
+                mem = dup.run(imp, membraneStainChannel, membraneStainChannel, 1, imp.getNSlices(), membraneStainCycle, membraneStainCycle);
+            }
             for (int cycle = 1; cycle <= imp.getNFrames(); ++cycle) {
                 for (int ch = 0; ch < readoutChannels.length; ++ch) {
                     System.out.println("Cycle:" + cycle + ", channel" + readoutChannels[ch]);
