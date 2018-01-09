@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 /**
  *
@@ -269,6 +270,9 @@ public class frmMain extends javax.swing.JFrame {
         c.gridx=1;
         c.gridy=0;
         gpuPanel.add(spinGPU, c);
+        spinGPU.setMaximumSize(new java.awt.Dimension(3000, 20));
+        spinGPU.setMinimumSize(new java.awt.Dimension(60, 20));
+        spinGPU.setPreferredSize(new java.awt.Dimension(60, 20));
         spinGPU.setModel(new javax.swing.SpinnerNumberModel(4, 1, 200, 1));
 
         c= new GridBagConstraints();
@@ -279,13 +283,12 @@ public class frmMain extends javax.swing.JFrame {
         c= new GridBagConstraints();
         c.gridx=1;
         c.gridy=1;
-        gpuPanel.add(configField, c);
-
-        configField.setText("...");
-        configField.setEnabled(false);
         configField.setMaximumSize(new java.awt.Dimension(3000, 20));
         configField.setMinimumSize(new java.awt.Dimension(300, 20));
         configField.setPreferredSize(new java.awt.Dimension(300, 20));
+        gpuPanel.add(configField, c);
+        configField.setText("...");
+        configField.setEnabled(false);
         configField.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 configFieldDirMouseReleased(evt);
@@ -296,6 +299,20 @@ public class frmMain extends javax.swing.JFrame {
                 configFieldDirActionPerformed(evt);
             }
         });
+
+        c= new GridBagConstraints();
+        c.gridx=0;
+        c.gridy=2;
+        gpuPanel.add(new JLabel("\nMax RAM size: \t"), c);
+
+        c= new GridBagConstraints();
+        c.gridx=1;
+        c.gridy=2;
+        spinRAM.setMaximumSize(new java.awt.Dimension(3000, 20));
+        spinRAM.setMinimumSize(new java.awt.Dimension(60, 20));
+        spinRAM.setPreferredSize(new java.awt.Dimension(60, 20));
+        gpuPanel.add(spinRAM, c);
+        spinRAM.setModel(new javax.swing.SpinnerNumberModel(4, 4, 256, 4));
 
         int result = JOptionPane.showConfirmDialog(null, gpuPanel,
                 "Specify configuration", JOptionPane.OK_CANCEL_OPTION);
@@ -314,8 +331,12 @@ public class frmMain extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this,"Could not save config.txt file, please enter value for number of GPUs");
                     System.exit(0);
                 }
+                if(StringUtils.isBlank(spinRAM.getValue().toString())) {
+                    JOptionPane.showMessageDialog(this,"Could not save config.txt file, please enter value for RAM size");
+                    System.exit(0);
+                }
                 String str = configField.getText().replaceAll("\\\\", "/");
-                List<String> lines = Arrays.asList("TMP_SSD_DRIVE="+str, "numGPU="+spinGPU.getValue());
+                List<String> lines = Arrays.asList("TMP_SSD_DRIVE="+str, "numGPU="+spinGPU.getValue(), "maxRAM="+spinRAM.getValue());
                 Path file = Paths.get(dir.getCanonicalPath() + File.separator + "config.txt");
                 Files.write(file, lines, Charset.forName("UTF-8"));
             }
@@ -406,6 +427,14 @@ public class frmMain extends javax.swing.JFrame {
 
                 int currCnt = 1;
 
+                Properties config = new Properties();
+                config.load(new FileInputStream(System.getProperty("user.home")+File.separator+"config.txt"));
+                String maxRAM = "";
+                if(config.contains("maxRAM") && !StringUtils.isEmpty(config.get("maxRAM").toString())) {
+                    maxRAM = config.get("maxRAM").toString();
+                }
+                maxRAM = maxRAM.equals("") ? "48":maxRAM;
+
                 for (int reg : exp.regIdx) {
                     for (int tile = 1; tile <= exp.region_height * exp.region_width; tile++) {
 
@@ -414,13 +443,12 @@ public class frmMain extends javax.swing.JFrame {
                         while (!d.exists() && numTrial < 3) {
                             numTrial++;
 
-                            ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx48G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
+                            ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx"+ maxRAM +"G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
                             pb.redirectErrorStream(true);
 
                             log("Starting process: " + pb.command().toString());
                             Process proc = pb.start();
                             allProcess.add(proc);
-
 
                             waitAndPrint(proc);
                             log("Driffta done");
@@ -479,7 +507,7 @@ public class frmMain extends javax.swing.JFrame {
 
                 log("Creating montages");
 
-                ProcessBuilder pb = new ProcessBuilder("cmd", "/C start /B /belownormal java -Xms5G -Xmx48G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
+                ProcessBuilder pb = new ProcessBuilder("cmd", "/C start /B /belownormal java -Xms5G -Xmx"+ maxRAM +"G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
                 log("Starting process: " + pb.command().toString());
                 pb.redirectErrorStream(true);
                 Process proc = pb.start();
@@ -586,12 +614,9 @@ public class frmMain extends javax.swing.JFrame {
     private javax.swing.JProgressBar prg;
     private com.akoya.codex.upload.ProcessingOptionsView uploadOptionsView;
     private JSpinner spinGPU = new JSpinner();
+    private JSpinner spinRAM = new JSpinner();
     private JButton cmdStop;
     private JTextField configField = new JTextField(5);
-
-    public JSpinner getSpinGPU() {
-        return spinGPU;
-    }
 
     // End of variables declaration//GEN-END:variables
 }
