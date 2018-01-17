@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.akoya.codex.MicroscopeTypeEnum;
+import static com.akoya.codex.MicroscopeTypeEnum.KEYENCE;
+import static com.akoya.codex.MicroscopeTypeEnum.ZEISS;
 /**
  *
  * @author Nikolay
@@ -26,7 +29,7 @@ public class Experiment {
     public final String name;
     public final String date;
     public final String codex_instrument;
-    public final String microscope;
+    public MicroscopeTypeEnum microscope;
     public final String deconvolution;
     public final int magnification;
     public final double numerical_aperture;
@@ -60,7 +63,7 @@ public class Experiment {
     public final int focusing_offset;
 
 
-    public Experiment(String name, String date, String codex_instrument, String microscope,
+    public Experiment(String name, String date, String codex_instrument, MicroscopeTypeEnum microscope,
             String deconvolution, int magnification, double numerical_aperture, double per_pixel_XY_resolution,
             double z_pitch, int num_z_planes, String channel_arrangement, String[] channel_names,
             int[] channelWavelen, int drift_comp_channel, int driftCompReferenceCycle, int bestFocusReferenceCycle, int best_focus_channel,
@@ -118,14 +121,14 @@ public class Experiment {
         String name = null;
 
         switch (microscope) {
-            case "Keyence BZ-X710":
+            case KEYENCE:
                 name = "Cyc" + cycle + "_reg" + region;
 
                 if (cycle == this.num_cycles && this.HandEstain) {
                     name = getHandEDirName(region);
                 }
                 break;
-            case "Zeiss ZEN":
+            case ZEISS:
                 if (region > 1) {
                     throw new UnsupportedOperationException("The processing of Zeiss data supports only 1 region at the moment  ");
                 }
@@ -267,12 +270,11 @@ public class Experiment {
 
     public static HashMap<String, String> projectNameCache = new HashMap<>();
 
-    public static final String[] microscopeTypes = new String[]{"Keyence BZ-X710", "Zeiss ZEN"};
+    public static final MicroscopeTypeEnum[] microscopeTypes = new MicroscopeTypeEnum[]{KEYENCE, ZEISS};
 
-    public String getSourceFileName(final String sourceDir, final String microscope, final int tile, final int zSlice, final int channel) {
-
+    public String getSourceFileName(final String sourceDir, final MicroscopeTypeEnum microscope, final int tile, final int zSlice, final int channel) {
         switch (microscope) {
-            case "Keyence BZ-X710":
+            case KEYENCE:
                 String pname = projectNameCache.get(sourceDir);
                 if (pname == null) {
                     File[] f = new File(sourceDir).listFiles((a) -> (a.isFile() && a.getName().endsWith(".bcf")));
@@ -286,13 +288,13 @@ public class Experiment {
                     projectNameCache.put(sourceDir, pname);
                 }
                 return pname + String.format("_%05d_Z%03d_", tile, zSlice) + channel_names[channel] + ".tif";
-            case "Zeiss ZEN":
+            case ZEISS:
                 File sourceDirF = new File(sourceDir);
                 String n1 = sourceDirF.getName();
-                String n2 = String.format("z%02dc%01dm%01d", zSlice, channel+1, tile) + "_ORG.tif";
+                String n2 = String.format("z%02dc%01dm%02d", zSlice, channel+1, tile) + "_ORG.tif";
                 return n1 + "_" + n2;
             default:
-                throw new IllegalArgumentException("Unsupported microscope: " + microscope);
+                throw new IllegalArgumentException("Unsupported microscope type: " + microscope);
         }
     }
 

@@ -5,14 +5,15 @@
  */
 package com.akoya.codex.upload;
 
+import com.akoya.codex.Microscope;
+import com.akoya.codex.MicroscopeFactory;
 import com.akoya.codex.upload.driffta.BestFocus;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.io.FileSaver;
 import ij.plugin.Duplicator;
 import org.apache.commons.lang3.StringUtils;
-import java.lang.Object;
-import java.lang.Runtime;
+import org.apache.commons.lang3.SystemUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -364,7 +365,14 @@ public class frmMain extends javax.swing.JFrame {
                 String experimentJS = exp.toJSON();
 
                 //Included a feature to check if the product of region size X and Y is equal to the number of tiles
-                if (experimentView.isTilesAProductOfRegionXAndY(dir, exp)) {
+                String microscopeType = exp != null && exp.microscope != null ? exp.microscope.toString() : "";
+                if(microscopeType == null || microscopeType.equals("")) {
+                    JOptionPane.showMessageDialog(null, "Microscope type is invalid");
+                }
+
+                Microscope microscope = MicroscopeFactory.getMicroscope(microscopeType);
+
+                if(microscope.isTilesAProductOfRegionXAndY(dir, experimentView)) {
                     exp.saveToFile(new File(dir + File.separator + "Experiment.json"));
                 }
                 else {
@@ -430,7 +438,7 @@ public class frmMain extends javax.swing.JFrame {
                 Properties config = new Properties();
                 config.load(new FileInputStream(System.getProperty("user.home")+File.separator+"config.txt"));
                 String maxRAM = "";
-                if(config.contains("maxRAM") && !StringUtils.isEmpty(config.get("maxRAM").toString())) {
+                if(config.toString().contains("maxRAM") && !StringUtils.isEmpty(config.get("maxRAM").toString())) {
                     maxRAM = config.get("maxRAM").toString();
                 }
                 maxRAM = maxRAM.equals("") ? "48":maxRAM;
@@ -442,16 +450,29 @@ public class frmMain extends javax.swing.JFrame {
                         int numTrial = 0;
                         while (!d.exists() && numTrial < 3) {
                             numTrial++;
+                            if(SystemUtils.IS_OS_WINDOWS) {
+                                ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
+                                pb.redirectErrorStream(true);
 
-                            ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx"+ maxRAM +"G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
-                            pb.redirectErrorStream(true);
+                                log("Starting process: " + pb.command().toString());
+                                Process proc = pb.start();
+                                allProcess.add(proc);
 
-                            log("Starting process: " + pb.command().toString());
-                            Process proc = pb.start();
-                            allProcess.add(proc);
+                                waitAndPrint(proc);
+                                log("Driffta done");
+                            }
+                            else if(SystemUtils.IS_OS_LINUX) {
+                                ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
+                                pb.redirectErrorStream(true);
 
-                            waitAndPrint(proc);
-                            log("Driffta done");
+                                log("Starting process: " + pb.command().toString());
+                                Process proc = pb.start();
+                                allProcess.add(proc);
+
+                                waitAndPrint(proc);
+                                log("Driffta done");
+
+                            }
                         }
 
                         if (!d.exists()) {
@@ -506,13 +527,23 @@ public class frmMain extends javax.swing.JFrame {
                 }
 
                 log("Creating montages");
+                if(SystemUtils.IS_OS_WINDOWS) {
+                    ProcessBuilder pb = new ProcessBuilder("cmd", "/C start /B /belownormal java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
+                    log("Starting process: " + pb.command().toString());
+                    pb.redirectErrorStream(true);
+                    Process proc = pb.start();
+                    allProcess.add(proc);
+                    waitAndPrint(proc);
+                }
 
-                ProcessBuilder pb = new ProcessBuilder("cmd", "/C start /B /belownormal java -Xms5G -Xmx"+ maxRAM +"G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
-                log("Starting process: " + pb.command().toString());
-                pb.redirectErrorStream(true);
-                Process proc = pb.start();
-                allProcess.add(proc);
-                waitAndPrint(proc);
+                else if(SystemUtils.IS_OS_LINUX) {
+                    ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
+                    log("Starting process: " + pb.command().toString());
+                    pb.redirectErrorStream(true);
+                    Process proc = pb.start();
+                    allProcess.add(proc);
+                    waitAndPrint(proc);
+                }
 
             } catch (Exception e) {
                 throw new Error(e);
@@ -602,7 +633,6 @@ public class frmMain extends javax.swing.JFrame {
                 } catch (Throwable e) {
                     logger.showException(e);
                 }
-
             }
         });
     }

@@ -5,6 +5,9 @@
  */
 package com.akoya.codex.upload;
 
+import com.akoya.codex.Microscope;
+import com.akoya.codex.MicroscopeFactory;
+import com.akoya.codex.MicroscopeTypeEnum;
 import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +30,7 @@ public class ExperimentView extends javax.swing.JPanel {
      */
     public ExperimentView() {
         initComponents();
-        val3.setModel(new DefaultComboBoxModel<String>(Experiment.microscopeTypes));
+        val3.setModel(new DefaultComboBoxModel<MicroscopeTypeEnum>(Experiment.microscopeTypes));
     }
 
     /**
@@ -830,7 +833,7 @@ public class ExperimentView extends javax.swing.JPanel {
             File expJS = new File(jfc.getSelectedFile().getAbsolutePath() + File.separator + "Experiment.json");
             if (expJS.exists()) {
                 try {
-                    load(Experiment.loadFromJSON(expJS));
+                    load(Experiment.loadFromJSON(expJS), jfc.getSelectedFile());
                 } catch (Exception e) {
                     logger.showException(e);
                 }
@@ -886,68 +889,6 @@ public class ExperimentView extends javax.swing.JPanel {
     }
 
     /*
-    Method to check if the product of Region Size X and Y is equal to the total number of tiles
-    @return returns true if equal
-     */
-    public boolean isTilesAProductOfRegionXAndY(File dir, Experiment exp) {
-        if(exp.microscope != null && exp.microscope.contains("Keyence")) {
-            if (dir != null) {
-                for (File cyc : dir.listFiles()) {
-                    if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
-                        File[] cycFiles = cyc.listFiles();
-                        Arrays.sort(cycFiles, Collections.reverseOrder());
-                        for (File tif : cycFiles) {
-                            if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
-                                int lastZIndex = tif.getName().lastIndexOf("Z");
-                                String regXYNumber = tif.getName().substring(lastZIndex - 5, lastZIndex - 1);
-                                if (regXYNumber != null) {
-                                    int regXYIndex = Integer.parseInt(regXYNumber);
-                                    if (regXYIndex == Integer.parseInt(val17.getText()) * Integer.parseInt(val18.getText())) {
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                        //break outer loop
-                        break;
-                    }
-                }
-            }
-        }
-        else { //Zeiss Microscpe
-            if (dir != null) {
-                for (File cyc : dir.listFiles()) {
-                    if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
-                        File[] cycFiles = cyc.listFiles();
-                        Arrays.sort(cycFiles, Collections.reverseOrder());
-                        for (File tif : cycFiles) {
-                            if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
-                                int last_Index = tif.getName().lastIndexOf("_");
-                                String regXYNumber = tif.getName().substring(last_Index - 2, last_Index);
-                                if (regXYNumber != null) {
-                                    int regXYIndex = Integer.parseInt(regXYNumber);
-                                    if (regXYIndex == Integer.parseInt(val17.getText()) * Integer.parseInt(val18.getText())) {
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                        //break outer loop
-                        break;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    /*
     Method to check if channelNames.txt file is present in the experiment folder
      */
     public boolean isChannelNamesPresent(File dir) {
@@ -981,7 +922,7 @@ public class ExperimentView extends javax.swing.JPanel {
                 }).length > 0;
             }
             if (containsBcf) {
-                val3.setSelectedItem("Keyence BZ-X710");
+                val3.setSelectedItem(MicroscopeTypeEnum.KEYENCE);
             }
             String[] s = f.getName().split("_");
             int cyc = Integer.parseInt(s[0].substring(3));
@@ -1058,124 +999,56 @@ public class ExperimentView extends javax.swing.JPanel {
         val14.setText(regTxt);
         val15.setText(regNames);
 
-        guessZSlices(dir);
-        guessChannelNamesAndWavelength(dir);
-        guessCycleRange(dir);
+        guessMicroscope(dir);
+
+        String microscopeType = val3.getSelectedItem() != null ? val3.getSelectedItem().toString() : "";
+        if(microscopeType == null || microscopeType.equals("")) {
+            JOptionPane.showMessageDialog(null, "Microscope type is invalid");
+        }
+
+        Microscope microscope = MicroscopeFactory.getMicroscope(microscopeType);
+        microscope.guessZSlices(dir, this);
+        microscope.guessChannelNamesAndWavelength(dir, this);
+        microscope.guessCycleRange(dir, this);
 
         return err.length() == 0 ? "" : ("Following errors were found in the experiment:\n" + err.toString());
     }
 
-
     /*
-        Set the number of Z-indices after reading it from the experiment folder
-     */
-    private void guessZSlices(File dir) {
-
+    Set the number of Z-indices after reading it from the experiment folder
+ */
+    private void guessMicroscope(File dir) {
+        boolean flag = false;
         if(dir != null) {
             for (File cyc : dir.listFiles()) {
                 if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
-                    File[] cycFiles = cyc.listFiles();
-                    Arrays.sort(cycFiles, Collections.reverseOrder());
-                    for (File tif : cycFiles) {
-                        if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
-                            int lastZIndex = tif.getName().lastIndexOf("Z");
-                            String zNumber = tif.getName().substring(lastZIndex+1, lastZIndex+4);
-                            if (zNumber != null) {
-                                int zIndex = Integer.parseInt(zNumber);
-                                zNumber = String.valueOf(zIndex);
-                            }
-                            val9.setText(zNumber);
-                            break;
-                        }
-                    }
-                    //break outer loop
+                    val3.setSelectedItem(MicroscopeTypeEnum.KEYENCE);
+                    flag = true;
                     break;
                 }
             }
-        }
-    }
-
-    /*
-        Set the channel names after reading from experiment folder
-        TO DO - The guess should also support different kinds of microscope.
-        Create an interface for guess all these values using the methods and make diffrent micscrope classses
-        implement this interface so that it could be reusable.
-     */
-    private void guessChannelNamesAndWavelength(File dir) {
-        if(dir != null) {
-            for (File cyc : dir.listFiles()) {
-                if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
-                    File[] cycFiles = cyc.listFiles();
-                    Arrays.sort(cycFiles, Collections.reverseOrder());
-                    LinkedHashMap<String, Boolean> chVsBool = new LinkedHashMap<String, Boolean>();
-                    chVsBool.put("CH1", false);
-                    chVsBool.put("CH2", false);
-                    chVsBool.put("CH3", false);
-                    chVsBool.put("CH4", false);
-                    for (File tif : cycFiles) {
-                        if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
-                            int last_Index = tif.getName().lastIndexOf("_");
-                            String chNumber = tif.getName().substring(last_Index+1, last_Index+4);
-                            if (chNumber != null) {
-                                if(chVsBool.containsKey(chNumber)){
-                                    chVsBool.put(chNumber, true);
-                                }
-                            }
-                        }
-                    }
-                    LinkedHashMap<String, String> chVsWavelength = new LinkedHashMap<String, String>();
-                    chVsWavelength.put("CH1","425");
-                    chVsWavelength.put("CH2","525");
-                    chVsWavelength.put("CH3","595");
-                    chVsWavelength.put("CH4","670");
-
-                    String ch="";
-                    String waveL="";
-
-                    boolean first = true;
-                    for (String key: chVsBool.keySet()) {
-                        if (!first && chVsBool.get(key)) {
-                            ch += ";"+key;
-                            waveL += ";"+chVsWavelength.get(key);
-                        }
-                        else {
-                            if(chVsBool.get(key)) {
-                                first = false;
-                                ch += key;
-                                waveL += chVsWavelength.get(key);
-                            }
-                        }
-                    }
-                    val11.setText(ch);
-                    val21.setText(waveL);
-                    //break outer loop
-                    break;
-                }
+            if(!flag) {
+                val3.setSelectedItem(MicroscopeTypeEnum.ZEISS);
             }
-        }
-    }
-
-    /*
-    Set the number of cyles/range field depending upon the content of Experiment folder.
-    */
-    private void guessCycleRange(File dir) {
-        int lowL = 1;
-        int upL = getMaxCycNumberFromFolder(dir);
-        if(upL == 0) {
-            val13.setText(String.valueOf(lowL));
-        }
-        else {
-            val13.setText(String.valueOf(lowL) + "-" + String.valueOf(upL));
         }
     }
 
     /*
     Method to load the values from the JSON file and set it to the Experiment property
      */
-    private void load(Experiment exp) throws FileNotFoundException {
+    private void load(Experiment exp, File dir) throws FileNotFoundException {
         val1.setText(exp.name);
         val2.setText(exp.codex_instrument);
-        val3.setSelectedItem(exp.microscope);
+
+        if(exp.microscope instanceof MicroscopeTypeEnum) {
+            val3.setSelectedItem(exp.microscope);
+        }
+        else {
+            if(exp.microscope == null) {
+                guessMicroscope(dir);
+            }
+        }
+
         val4.setSelectedItem(exp.deconvolution);
         val23.setSelectedItem(exp.objectiveType);// out of order
         val5.setText(String.valueOf(exp.magnification));
@@ -1266,6 +1139,13 @@ public class ExperimentView extends javax.swing.JPanel {
 
         }
 
+        String microscopeType = val3.getSelectedItem() != null ? val3.getSelectedItem().toString() : "";
+        if(microscopeType == null || microscopeType.equals("")) {
+            JOptionPane.showMessageDialog(null, "Microscope type is invalid");
+        }
+
+        Microscope microscope = MicroscopeFactory.getMicroscope(microscopeType);
+
         //New feature to support range for number of cycles
         String cyc = val13.getText();
         int count = 0;
@@ -1322,7 +1202,7 @@ public class ExperimentView extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "The lower limit on the range of number of cycles is invalid.");
                 throw new IllegalStateException("The lower limit on the range of number of cycles is invalid.");
             }
-            if(upperCycLimit > getMaxCycNumberFromFolder(dir)) {
+            if(upperCycLimit > microscope.getMaxCycNumberFromFolder(dir)) {
                 JOptionPane.showMessageDialog(this, "The upper limit on the range of number of cycles is invalid.");
                 throw new IllegalStateException("The upper limit on the range of number of cycles is invalid.");
             }
@@ -1343,7 +1223,7 @@ public class ExperimentView extends javax.swing.JPanel {
         return new Experiment(val1.getText(),
                 formattedDate,
                 val2.getText(),
-                val3.getSelectedItem().toString(),
+                (MicroscopeTypeEnum) val3.getSelectedItem(),
                 val4.getSelectedItem().toString(),
                 Integer.valueOf(val5.getText()),
                 Double.parseDouble(val6.getText()),
@@ -1557,7 +1437,7 @@ public class ExperimentView extends javax.swing.JPanel {
     private JTextField val20;
     private JTextField val21;
     private javax.swing.JComboBox<String> val23;
-    private javax.swing.JComboBox<String> val3;
+    private javax.swing.JComboBox<MicroscopeTypeEnum> val3;
     private javax.swing.JComboBox<String> val4;
     private JTextField val5;
     private JTextField val6;
@@ -1572,5 +1452,541 @@ public class ExperimentView extends javax.swing.JPanel {
     private JComboBox<String> optionalFragmentButton;
     private JSpinner focussingOffset;
     private JPanel optionalPanel;
+
+    public ButtonGroup getButtonGroup1() {
+        return buttonGroup1;
+    }
+
+    public void setButtonGroup1(ButtonGroup buttonGroup1) {
+        this.buttonGroup1 = buttonGroup1;
+    }
+
+    public JLabel getjLabel1() {
+        return jLabel1;
+    }
+
+    public void setjLabel1(JLabel jLabel1) {
+        this.jLabel1 = jLabel1;
+    }
+
+    public JLabel getjLabel10() {
+        return jLabel10;
+    }
+
+    public void setjLabel10(JLabel jLabel10) {
+        this.jLabel10 = jLabel10;
+    }
+
+    public JLabel getjLabel12() {
+        return jLabel12;
+    }
+
+    public void setjLabel12(JLabel jLabel12) {
+        this.jLabel12 = jLabel12;
+    }
+
+    public JLabel getjLabel13() {
+        return jLabel13;
+    }
+
+    public void setjLabel13(JLabel jLabel13) {
+        this.jLabel13 = jLabel13;
+    }
+
+    public JLabel getjLabel14() {
+        return jLabel14;
+    }
+
+    public void setjLabel14(JLabel jLabel14) {
+        this.jLabel14 = jLabel14;
+    }
+
+    public JLabel getjLabel15() {
+        return jLabel15;
+    }
+
+    public void setjLabel15(JLabel jLabel15) {
+        this.jLabel15 = jLabel15;
+    }
+
+    public JLabel getjLabel16() {
+        return jLabel16;
+    }
+
+    public void setjLabel16(JLabel jLabel16) {
+        this.jLabel16 = jLabel16;
+    }
+
+    public JLabel getjLabel17() {
+        return jLabel17;
+    }
+
+    public void setjLabel17(JLabel jLabel17) {
+        this.jLabel17 = jLabel17;
+    }
+
+    public JLabel getjLabel18() {
+        return jLabel18;
+    }
+
+    public void setjLabel18(JLabel jLabel18) {
+        this.jLabel18 = jLabel18;
+    }
+
+    public JLabel getjLabel19() {
+        return jLabel19;
+    }
+
+    public void setjLabel19(JLabel jLabel19) {
+        this.jLabel19 = jLabel19;
+    }
+
+    public JLabel getjLabel20() {
+        return jLabel20;
+    }
+
+    public void setjLabel20(JLabel jLabel20) {
+        this.jLabel20 = jLabel20;
+    }
+
+    public JLabel getjLabel21() {
+        return jLabel21;
+    }
+
+    public void setjLabel21(JLabel jLabel21) {
+        this.jLabel21 = jLabel21;
+    }
+
+    public JLabel getjLabel22() {
+        return jLabel22;
+    }
+
+    public void setjLabel22(JLabel jLabel22) {
+        this.jLabel22 = jLabel22;
+    }
+
+    public JLabel getjLabel23() {
+        return jLabel23;
+    }
+
+    public void setjLabel23(JLabel jLabel23) {
+        this.jLabel23 = jLabel23;
+    }
+
+    public JLabel getjLabel24() {
+        return jLabel24;
+    }
+
+    public void setjLabel24(JLabel jLabel24) {
+        this.jLabel24 = jLabel24;
+    }
+
+    public JLabel getjLabel25() {
+        return jLabel25;
+    }
+
+    public void setjLabel25(JLabel jLabel25) {
+        this.jLabel25 = jLabel25;
+    }
+
+    public JLabel getjLabel27() {
+        return jLabel27;
+    }
+
+    public void setjLabel27(JLabel jLabel27) {
+        this.jLabel27 = jLabel27;
+    }
+
+    public JLabel getjLabel28() {
+        return jLabel28;
+    }
+
+    public void setjLabel28(JLabel jLabel28) {
+        this.jLabel28 = jLabel28;
+    }
+
+    public JLabel getjLabel29() {
+        return jLabel29;
+    }
+
+    public void setjLabel29(JLabel jLabel29) {
+        this.jLabel29 = jLabel29;
+    }
+
+    public JLabel getDriftReferenceLabel() {
+        return driftReferenceLabel;
+    }
+
+    public void setDriftReferenceLabel(JLabel driftReferenceLabel) {
+        this.driftReferenceLabel = driftReferenceLabel;
+    }
+
+    public JLabel getBestFocusCycleLabel() {
+        return bestFocusCycleLabel;
+    }
+
+    public void setBestFocusCycleLabel(JLabel bestFocusCycleLabel) {
+        this.bestFocusCycleLabel = bestFocusCycleLabel;
+    }
+
+    public JLabel getBestFocusChannelLabel() {
+        return bestFocusChannelLabel;
+    }
+
+    public void setBestFocusChannelLabel(JLabel bestFocusChannelLabel) {
+        this.bestFocusChannelLabel = bestFocusChannelLabel;
+    }
+
+    public JLabel getjLabel3() {
+        return jLabel3;
+    }
+
+    public void setjLabel3(JLabel jLabel3) {
+        this.jLabel3 = jLabel3;
+    }
+
+    public JLabel getjLabel4() {
+        return jLabel4;
+    }
+
+    public void setjLabel4(JLabel jLabel4) {
+        this.jLabel4 = jLabel4;
+    }
+
+    public JLabel getjLabel5() {
+        return jLabel5;
+    }
+
+    public void setjLabel5(JLabel jLabel5) {
+        this.jLabel5 = jLabel5;
+    }
+
+    public JLabel getjLabel6() {
+        return jLabel6;
+    }
+
+    public void setjLabel6(JLabel jLabel6) {
+        this.jLabel6 = jLabel6;
+    }
+
+    public JLabel getjLabel8() {
+        return jLabel8;
+    }
+
+    public void setjLabel8(JLabel jLabel8) {
+        this.jLabel8 = jLabel8;
+    }
+
+    public JLabel getjLabel9() {
+        return jLabel9;
+    }
+
+    public void setjLabel9(JLabel jLabel9) {
+        this.jLabel9 = jLabel9;
+    }
+
+    public JPanel getjPanel1() {
+        return jPanel1;
+    }
+
+    public void setjPanel1(JPanel jPanel1) {
+        this.jPanel1 = jPanel1;
+    }
+
+    public JPanel getjPanel2() {
+        return jPanel2;
+    }
+
+    public void setjPanel2(JPanel jPanel2) {
+        this.jPanel2 = jPanel2;
+    }
+
+    public JPanel getjPanel4() {
+        return jPanel4;
+    }
+
+    public void setjPanel4(JPanel jPanel4) {
+        this.jPanel4 = jPanel4;
+    }
+
+    public JPanel getjPanel5() {
+        return jPanel5;
+    }
+
+    public void setjPanel5(JPanel jPanel5) {
+        this.jPanel5 = jPanel5;
+    }
+
+    public JRadioButton getjRadioButton2() {
+        return jRadioButton2;
+    }
+
+    public void setjRadioButton2(JRadioButton jRadioButton2) {
+        this.jRadioButton2 = jRadioButton2;
+    }
+
+    public JTextField getjTextField1() {
+        return jTextField1;
+    }
+
+    public void setjTextField1(JTextField jTextField1) {
+        this.jTextField1 = jTextField1;
+    }
+
+    public JRadioButton getRb_HandE_yes() {
+        return rb_HandE_yes;
+    }
+
+    public void setRb_HandE_yes(JRadioButton rb_HandE_yes) {
+        this.rb_HandE_yes = rb_HandE_yes;
+    }
+
+    public JTextField getTxtDir() {
+        return txtDir;
+    }
+
+    public void setTxtDir(JTextField txtDir) {
+        this.txtDir = txtDir;
+    }
+
+    public JTextField getVal1() {
+        return val1;
+    }
+
+    public void setVal1(JTextField val1) {
+        this.val1 = val1;
+    }
+
+    public JComboBox<String> getVal10() {
+        return val10;
+    }
+
+    public void setVal10(JComboBox<String> val10) {
+        this.val10 = val10;
+    }
+
+    public JTextField getVal11() {
+        return val11;
+    }
+
+    public void setVal11(JTextField val11) {
+        this.val11 = val11;
+    }
+
+    public JSpinner getVal12() {
+        return val12;
+    }
+
+    public void setVal12(JSpinner val12) {
+        this.val12 = val12;
+    }
+
+    public JTextField getVal13() {
+        return val13;
+    }
+
+    public void setVal13(JTextField val13) {
+        this.val13 = val13;
+    }
+
+    public JTextField getVal14() {
+        return val14;
+    }
+
+    public void setVal14(JTextField val14) {
+        this.val14 = val14;
+    }
+
+    public JTextField getVal15() {
+        return val15;
+    }
+
+    public void setVal15(JTextField val15) {
+        this.val15 = val15;
+    }
+
+    public JComboBox<String> getVal16() {
+        return val16;
+    }
+
+    public void setVal16(JComboBox<String> val16) {
+        this.val16 = val16;
+    }
+
+    public JTextField getVal17() {
+        return val17;
+    }
+
+    public void setVal17(JTextField val17) {
+        this.val17 = val17;
+    }
+
+    public JTextField getVal18() {
+        return val18;
+    }
+
+    public void setVal18(JTextField val18) {
+        this.val18 = val18;
+    }
+
+    public JTextField getVal19() {
+        return val19;
+    }
+
+    public void setVal19(JTextField val19) {
+        this.val19 = val19;
+    }
+
+    public JTextField getVal2() {
+        return val2;
+    }
+
+    public void setVal2(JTextField val2) {
+        this.val2 = val2;
+    }
+
+    public JTextField getVal20() {
+        return val20;
+    }
+
+    public void setVal20(JTextField val20) {
+        this.val20 = val20;
+    }
+
+    public JTextField getVal21() {
+        return val21;
+    }
+
+    public void setVal21(JTextField val21) {
+        this.val21 = val21;
+    }
+
+    public JComboBox<String> getVal23() {
+        return val23;
+    }
+
+    public void setVal23(JComboBox<String> val23) {
+        this.val23 = val23;
+    }
+
+    public JComboBox<MicroscopeTypeEnum> getVal3() {
+        return val3;
+    }
+
+    public void setVal3(JComboBox<MicroscopeTypeEnum> val3) {
+        this.val3 = val3;
+    }
+
+    public JComboBox<String> getVal4() {
+        return val4;
+    }
+
+    public void setVal4(JComboBox<String> val4) {
+        this.val4 = val4;
+    }
+
+    public JTextField getVal5() {
+        return val5;
+    }
+
+    public void setVal5(JTextField val5) {
+        this.val5 = val5;
+    }
+
+    public JTextField getVal6() {
+        return val6;
+    }
+
+    public void setVal6(JTextField val6) {
+        this.val6 = val6;
+    }
+
+    public JTextField getVal7() {
+        return val7;
+    }
+
+    public void setVal7(JTextField val7) {
+        this.val7 = val7;
+    }
+
+    public JTextField getVal8() {
+        return val8;
+    }
+
+    public void setVal8(JTextField val8) {
+        this.val8 = val8;
+    }
+
+    public JTextField getVal9() {
+        return val9;
+    }
+
+    public void setVal9(JTextField val9) {
+        this.val9 = val9;
+    }
+
+    public JSpinner getDriftReference() {
+        return driftReference;
+    }
+
+    public void setDriftReference(JSpinner driftReference) {
+        this.driftReference = driftReference;
+    }
+
+    public JSpinner getBestFocusCycle() {
+        return bestFocusCycle;
+    }
+
+    public void setBestFocusCycle(JSpinner bestFocusCycle) {
+        this.bestFocusCycle = bestFocusCycle;
+    }
+
+    public JSpinner getBestFocusChannel() {
+        return bestFocusChannel;
+    }
+
+    public void setBestFocusChannel(JSpinner bestFocusChannel) {
+        this.bestFocusChannel = bestFocusChannel;
+    }
+
+    public JLabel getOptionalFragmentLabel() {
+        return optionalFragmentLabel;
+    }
+
+    public void setOptionalFragmentLabel(JLabel optionalFragmentLabel) {
+        this.optionalFragmentLabel = optionalFragmentLabel;
+    }
+
+    public JLabel getFocussingOffsetLabel() {
+        return focussingOffsetLabel;
+    }
+
+    public void setFocussingOffsetLabel(JLabel focussingOffsetLabel) {
+        this.focussingOffsetLabel = focussingOffsetLabel;
+    }
+
+    public JComboBox<String> getOptionalFragmentButton() {
+        return optionalFragmentButton;
+    }
+
+    public void setOptionalFragmentButton(JComboBox<String> optionalFragmentButton) {
+        this.optionalFragmentButton = optionalFragmentButton;
+    }
+
+    public JSpinner getFocussingOffset() {
+        return focussingOffset;
+    }
+
+    public void setFocussingOffset(JSpinner focussingOffset) {
+        this.focussingOffset = focussingOffset;
+    }
+
+    public JPanel getOptionalPanel() {
+        return optionalPanel;
+    }
+
+    public void setOptionalPanel(JPanel optionalPanel) {
+        this.optionalPanel = optionalPanel;
+    }
     // End of variables declaration//GEN-END:variables
 }

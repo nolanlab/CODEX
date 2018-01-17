@@ -8,6 +8,7 @@ package com.akoya.codex.upload.driffta;
 import com.akoya.codex.upload.Experiment;
 import com.akoya.codex.upload.ProcessingOptions;
 import com.akoya.codex.upload.logger;
+import com.akoya.codex.MicroscopeTypeEnum;
 import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.WindowManager;
@@ -207,23 +208,12 @@ public class Driffta {
                             }
                         }
 
+                        if(!MicroscopeTypeEnum.KEYENCE.equals(exp.microscope)){
                         alR.add(new Callable<String>() {
                             @Override
                             public String call() throws IOException, InterruptedException {
-
-                                //log("Opening file: " + sourceFileName);
-                                File f = new File(destFileName);
-                                do {
-                                    Process p = Runtime.getRuntime().exec(cmd);
-                                    p.waitFor();
-                                    if (!f.exists()) {
-                                        log("Copy process finished but the dest file does not exist: " + destFileName + " trying again.");
-                                    }
-                                } while (!f.exists());
-
                                 Opener o = new Opener();
-                                stack[idx] = o.openImage(destFileName);
-                                new File(destFileName).delete();
+                                stack[idx] = o.openImage(sourceFileName);
 
                                 if (stack[idx] != null) {
                                     if (color || stack[idx].getStack().getSize() != 1) {
@@ -242,8 +232,44 @@ public class Driffta {
                                     return "Image opening failed: " + sourceFileName;
                                 }
                             }
-                        });
+                        });}
+                        else {
+                                alR.add(new Callable<String>() {
+                            @Override
+                            public String call() throws IOException, InterruptedException {
 
+                                //log("Opening file: " + sourceFileName);
+                                File f = new File(destFileName);
+                                do {
+                                    Process p = Runtime.getRuntime().exec(cmd);
+                                    p.waitFor();
+                                    if (!f.exists()) {
+                                        log("Copy process finished but the dest file does not exist: " + destFileName + " trying again.");
+                                    }
+                                } while (!f.exists());
+
+                                Opener o = new Opener();
+                                stack[idx] = o.openImage(destFileName);
+                                new File(destFileName).deleteOnExit();
+
+                                if (stack[idx] != null) {
+                                    if (color || stack[idx].getStack().getSize() != 1) {
+                                        if (!exp.getDirName(cycF, region, baseDir).startsWith("HandE")) {
+                                            ZProjector zp = new ZProjector();
+                                            log("Flattening " + stack[idx].getTitle() + ", nslices" + stack[idx].getNSlices() + "ch=" + stack[idx].getNChannels() + "stacksize=" + stack[idx].getStack().getSize());
+                                            zp.setImage(stack[idx]);
+                                            zp.setMethod(ZProjector.MAX_METHOD);
+                                            zp.doProjection();
+                                            stack[idx] = zp.getProjection();
+                                        }
+                                    }
+                                    //stack[idx].setTitle(channelNames[(cycF - 1) * exp.channel_names.length + chIdxF]);
+                                    return "Image opened: " + destFileName;
+                                } else {
+                                    return "Image opening failed: " + sourceFileName;
+                                }
+                            }
+                        });}
                     }
                 }
             }
