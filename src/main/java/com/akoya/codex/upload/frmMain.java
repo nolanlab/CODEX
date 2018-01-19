@@ -462,7 +462,7 @@ public class frmMain extends javax.swing.JFrame {
                                 log("Driffta done");
                             }
                             else if(SystemUtils.IS_OS_LINUX) {
-                                ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
+                                ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \"./*\" com.akoya.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
                                 pb.redirectErrorStream(true);
 
                                 log("Starting process: " + pb.command().toString());
@@ -537,7 +537,7 @@ public class frmMain extends javax.swing.JFrame {
                 }
 
                 else if(SystemUtils.IS_OS_LINUX) {
-                    ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" com.akoya.codex.upload.driffta.MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
+                    ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \"./*\" com.akoya.codex.upload.driffta.MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
                     log("Starting process: " + pb.command().toString());
                     pb.redirectErrorStream(true);
                     Process proc = pb.start();

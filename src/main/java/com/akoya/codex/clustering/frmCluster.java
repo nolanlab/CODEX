@@ -1,6 +1,7 @@
 package com.akoya.codex.clustering;
 
 import com.akoya.codex.upload.TextAreaOutputStream;
+import com.akoya.codex.upload.logger;
 import dataIO.DatasetStub;
 import org.apache.commons.io.FileUtils;
 
@@ -37,6 +38,18 @@ public class frmCluster extends JFrame {
         cmdCreate = new JButton();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Create cluster config");
+
+        try {
+            File workingDir = new File(".");
+            if(workingDir != null) {
+                ImageIcon img = new ImageIcon(workingDir.getCanonicalPath() + File.separator + "codexlogo.png");
+                if (img != null) {
+                    setIconImage(img.getImage());
+                }
+            }
+        } catch(Exception e) {
+            logger.showException(e);
+        }
 
         getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
         JPanel mainPanel = new JPanel();
@@ -145,19 +158,19 @@ public class frmCluster extends JFrame {
     }
 
     public void initFolder() {
-        JPanel gpuPanel = new JPanel();
+        JPanel initPanel = new JPanel();
         GridBagLayout gridBag = new GridBagLayout();
-        gpuPanel.setLayout(gridBag);
+        initPanel.setLayout(gridBag);
         GridBagConstraints c = new GridBagConstraints();
 
         c.gridx=0;
         c.gridy=0;
-        gpuPanel.add(new JLabel("\nEnter segmented region location: \t"), c);
+        initPanel.add(new JLabel("\nEnter segmented region location containing FCS files: \t"), c);
 
         c= new GridBagConstraints();
         c.gridx=1;
         c.gridy=0;
-        gpuPanel.add(fcsFolderField, c);
+        initPanel.add(fcsFolderField, c);
 
         fcsFolderField.setText("...");
         fcsFolderField.setEnabled(false);
@@ -175,7 +188,7 @@ public class frmCluster extends JFrame {
             }
         });
 
-        int result = JOptionPane.showConfirmDialog(null, gpuPanel,
+        int result = JOptionPane.showConfirmDialog(null, initPanel,
                 "Specify folder", JOptionPane.OK_CANCEL_OPTION);
         if(result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
             System.exit(0);

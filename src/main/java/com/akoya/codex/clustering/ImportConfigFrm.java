@@ -39,7 +39,6 @@ public class ImportConfigFrm extends JPanel {
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new Insets(3,3,3,3);
         mainPanel.add(clusteringColsLabel, gridBagConstraints);
 
         lstColNames = new GlassListSelector<String>();

@@ -1016,7 +1016,7 @@ public class ExperimentView extends javax.swing.JPanel {
 
     /*
     Set the number of Z-indices after reading it from the experiment folder
- */
+    */
     private void guessMicroscope(File dir) {
         boolean flag = false;
         if(dir != null) {

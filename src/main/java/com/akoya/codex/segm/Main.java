@@ -1,6 +1,5 @@
 package com.akoya.codex.segm;
 
-import com.akoya.codex.upload.logger;
 import com.opencsv.CSVReader;
 import ij.IJ;
 import ij.ImageJ;
@@ -22,7 +21,7 @@ import java.util.List;
 public class Main {
 
     public static boolean printParams = false;
-    public static final String revision = "CODEX-segm rev 17-NOV-2017";
+    public static final String revision = "CODEX-segm rev 18-JAN-2018";
     public static Properties params;
 
     public static void main(String[] args) throws IOException {
@@ -58,7 +57,7 @@ public class Main {
                 printParams = Boolean.parseBoolean(args[2]);
             }
             if (args.length == 2) {
-                //numberOfGpuDialog();
+                //inputFolderDialog();
                 //rootDir = new File(configField.getText());
                 showImage = Boolean.parseBoolean(args[0]);
                 printParams = Boolean.parseBoolean(args[1]);
@@ -393,7 +392,7 @@ public class Main {
         File bestFocusDir = new File (rootDir + File.separator + "bestFocus");
 
         if(!bestFocusDir.exists()) {
-            logger.print("Best focus folder cannot be found: " + bestFocusDir);
+            System.out.println("Best focus folder cannot be found: " + bestFocusDir);
             return;
         }
 
