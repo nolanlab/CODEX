@@ -9,7 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -24,8 +26,8 @@ import java.util.List;
 
 public class SegmMain extends JFrame {
 
-    private static JTextField configField = new JTextField(5);
-    private static JPanel configPanel = new JPanel();
+    private JTextField configField = new JTextField(5);
+    private JPanel configPanel = new JPanel();
     private static int version = 1;
     private JTextArea textArea = new JTextArea(15,30);
     private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "");
@@ -38,8 +40,8 @@ public class SegmMain extends JFrame {
     }
 
     private void initComponents() throws Exception {
-        inputFolderDialog();
         segmConfigFrm = new SegmConfigFrm();
+        inputFolderDialog();
         cmdCreate = new JButton();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Create Segmentation configuration");
@@ -122,7 +124,7 @@ public class SegmMain extends JFrame {
      * Mouseevent to open the filechooser option to specify config.txt TMP_SSD_DRIVE content.
      * @param evt
      */
-    private static void configFieldDirMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtDirMouseReleased
+    private void configFieldDirMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtDirMouseReleased
         JFileChooser jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -137,7 +139,7 @@ public class SegmMain extends JFrame {
     private static void configFieldDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDirActionPerformed
     }
 
-    private static void fireStateChanged() {
+    private void fireStateChanged() {
         PropertyChangeListener[] chl = configPanel.getListeners(PropertyChangeListener.class);
         for (PropertyChangeListener c : chl) {
             c.propertyChange(new PropertyChangeEvent(configPanel, "dir", "...", configField.getText()));
@@ -182,6 +184,11 @@ public class SegmMain extends JFrame {
         configField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 configFieldDirActionPerformed(evt);
+            }
+        });
+        configField.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                configFieldMouseReleased(evt);
             }
         });
 
@@ -239,30 +246,23 @@ public class SegmMain extends JFrame {
             try {
                 File dir = new File(configField.getText());
                 //Create importConfig.txt
-                if(!StringUtils.isBlank(segmConfigFrm.getReadOutChannels())) {
-                    List<String> lines = Arrays.asList("radius=" + segmConfigFrm.getRadius(), "maxCutoff=" + segmConfigFrm.getMaxCutOff(), "minCutoff=" + segmConfigFrm.getMinCutOff(),
-                            "relativeCutoff=" + segmConfigFrm.getRelativeCutOff(), "nuclearStainChannel=" + segmConfigFrm.getNuclearStainChannel(),
-                            "nuclearStainCycle=" + segmConfigFrm.getNuclearStainCycle(), "membraneStainChannel=" + segmConfigFrm.getMembraneStainChannel(),
-                            "membraneStainCycle=" + segmConfigFrm.getMembraneStainCycle(), "readoutChannels=" + segmConfigFrm.getReadOutChannels(),
-                            "use_membrane=false", "inner_ring_size=1.0", "delaunay_graph=false");
+                List<String> lines = Arrays.asList("radius=" + segmConfigFrm.getRadius(), "maxCutoff=" + segmConfigFrm.getMaxCutOff(), "minCutoff=" + segmConfigFrm.getMinCutOff(),
+                        "relativeCutoff=" + segmConfigFrm.getRelativeCutOff(), "nuclearStainChannel=" + segmConfigFrm.getNuclearStainChannel(),
+                        "nuclearStainCycle=" + segmConfigFrm.getNuclearStainCycle(), "membraneStainChannel=" + segmConfigFrm.getMembraneStainChannel(),
+                        "membraneStainCycle=" + segmConfigFrm.getMembraneStainCycle(), //"readoutChannels=1,2,3",
+                        "use_membrane=false", "inner_ring_size=1.0", "delaunay_graph=false");
 
-                    Path file = Paths.get(dir.getCanonicalPath() + File.separator + "config.txt");
-                    Files.write(file, lines, Charset.forName("UTF-8"));
-                    log("Config file for segmentation was successfully created.");
-                    callSegm();
-                }
-                else {
-                    JOptionPane.showMessageDialog(this,"Readout channels cannot be blank or empty. Try again!");
-                    return;
-                }
-
+                Path file = Paths.get(dir.getCanonicalPath() + File.separator + "config.txt");
+                Files.write(file, lines, Charset.forName("UTF-8"));
+                log("Config file for segmentation was successfully created.");
+                callSegm();
             } catch (Exception e) {
-                e.getMessage();
+                System.out.println(e.getMessage());
             }
         }).start();
     }
 
-    private static void callSegm() throws Exception {
+    private void callSegm() throws Exception {
         log("Segmentation version: " + version);
         String[] arg = new String[3];
         arg[0] = configField.getText();
@@ -286,4 +286,44 @@ public class SegmMain extends JFrame {
         System.out.println(s);
     }
 
+    private void configFieldMouseReleased(java.awt.event.MouseEvent evt) {
+            File configTxt = new File(configField.getText()+File.separator+"config.txt");
+            if (configTxt.exists()) {
+                try {
+                    //set values here
+                    BufferedReader br = new BufferedReader(new FileReader(configTxt));
+                    String st;
+                    while ((st = br.readLine()) != null) {
+                        if(st.contains("radius=")) {
+                            segmConfigFrm.setRadius(st.replace("radius=",""));
+                        }
+                        else if(st.contains("maxCutoff=")) {
+                            segmConfigFrm.setMaxCutOff(st.replace("maxCutoff=",""));
+                        }
+                        else if(st.contains("minCutoff=")) {
+                            segmConfigFrm.setMinCutOff(st.replace("minCutoff=",""));
+                        }
+                        else if(st.contains("relativeCutoff=")) {
+                            segmConfigFrm.setRelativeCutOff(st.replace("relativeCutoff=",""));
+                        }
+                        else if(st.contains("nuclearStainChannel=")) {
+                            segmConfigFrm.setNuclearStainChannel(st.replace("nuclearStainChannel=",""));
+                        }
+                        else if(st.contains("nuclearStainCycle=")) {
+                            segmConfigFrm.setNuclearStainCycle(st.replace("nuclearStainCycle=",""));
+                        }
+                        else if(st.contains("membraneStainChannel=")) {
+                            segmConfigFrm.setMembraneStainChannel(st.replace("membraneStainChannel=",""));
+                        }
+                        else if(st.contains("membraneStainCycle=")) {
+                            segmConfigFrm.setMembraneStainCycle(st.replace("membraneStainCycle=",""));
+                        }
+                    }
+
+                }
+                 catch (Exception e) {
+                    logger.showException(e);
+                }
+            }
+    }
 }

@@ -160,7 +160,7 @@ public class SegmConfigFrm extends JPanel {
         mainPanel.add(nuclearStainChannelLabel, gridBagConstraints);
 
         nuclearStainChannel = new JSpinner();
-        nuclearStainChannel.setModel(new SpinnerNumberModel(1, 1, 4, 1));
+        nuclearStainChannel.setModel(new SpinnerNumberModel(1, 1, 100, 1));
         nuclearStainChannel.setMaximumSize(new java.awt.Dimension(500, 20));
         nuclearStainChannel.setMinimumSize(new java.awt.Dimension(100, 20));
         nuclearStainChannel.setPreferredSize(new java.awt.Dimension(100, 20));
@@ -222,7 +222,7 @@ public class SegmConfigFrm extends JPanel {
         mainPanel.add(membraneStainChannelLabel, gridBagConstraints);
 
         membraneStainChannel = new JSpinner();
-        membraneStainChannel.setModel(new SpinnerNumberModel(1, 1, 4, 1));
+        membraneStainChannel.setModel(new SpinnerNumberModel(1, 1, 100, 1));
         membraneStainChannel.setMaximumSize(new java.awt.Dimension(100, 20));
         membraneStainChannel.setMinimumSize(new java.awt.Dimension(100, 20));
         membraneStainChannel.setPreferredSize(new java.awt.Dimension(100, 20));
@@ -269,33 +269,33 @@ public class SegmConfigFrm extends JPanel {
         mainPanel.add(membraneStainCycle, gridBagConstraints);
 
         //Readout Channel
-        readOutChannelsLabel = new JLabel();
-        readOutChannelsLabel.setText("Readout Channels");
-        readOutChannelsLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
-        readOutChannelsLabel.setMinimumSize(new java.awt.Dimension(100, 20));
-        readOutChannelsLabel.setPreferredSize(new java.awt.Dimension(100, 20));
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
-        //gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
-        mainPanel.add(readOutChannelsLabel, gridBagConstraints);
-
-        readOutChannels = new JTextField();
-        readOutChannels.setMaximumSize(new java.awt.Dimension(100, 20));
-        readOutChannels.setMinimumSize(new java.awt.Dimension(100, 20));
-        readOutChannels.setPreferredSize(new java.awt.Dimension(100, 20));
-        readOutChannels.setText("1,2,3,4");
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = GridBagConstraints.CENTER;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 8;
-        mainPanel.add(readOutChannels, gridBagConstraints);
+//        readOutChannelsLabel = new JLabel();
+//        readOutChannelsLabel.setText("Readout Channels");
+//        readOutChannelsLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
+//        readOutChannelsLabel.setMinimumSize(new java.awt.Dimension(100, 20));
+//        readOutChannelsLabel.setPreferredSize(new java.awt.Dimension(100, 20));
+//        gridBagConstraints = new GridBagConstraints();
+//        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+//        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+//        //gridBagConstraints.weightx = 1.0;
+//        gridBagConstraints.weighty = 1.0;
+//        gridBagConstraints.gridx = 0;
+//        gridBagConstraints.gridy = 8;
+//        mainPanel.add(readOutChannelsLabel, gridBagConstraints);
+//
+//        readOutChannels = new JTextField();
+//        readOutChannels.setMaximumSize(new java.awt.Dimension(100, 20));
+//        readOutChannels.setMinimumSize(new java.awt.Dimension(100, 20));
+//        readOutChannels.setPreferredSize(new java.awt.Dimension(100, 20));
+//        readOutChannels.setText("1,2,3,4");
+//        gridBagConstraints = new GridBagConstraints();
+//        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+//        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+//        gridBagConstraints.weightx = 1.0;
+//        gridBagConstraints.weighty = 1.0;
+//        gridBagConstraints.gridx = 1;
+//        gridBagConstraints.gridy = 8;
+//        mainPanel.add(readOutChannels, gridBagConstraints);
 
         //Use Membrane
 //        useMembraneLabel = new JLabel();
@@ -431,12 +431,18 @@ public class SegmConfigFrm extends JPanel {
     public String getRadius() {
         return radius.getValue().toString();
     }
+    public void setRadius(String radius) {
+        this.radius.setValue(Integer.parseInt(radius));
+    }
 
     private JLabel maxCutOffLabel;
     private JSpinner maxCutOff;
 
     public String getMaxCutOff() {
         return maxCutOff.getValue().toString();
+    }
+    public void setMaxCutOff(String maxCutOff) {
+        this.maxCutOff.setValue(Float.parseFloat(maxCutOff));
     }
 
     private JLabel minCutOffLabel;
@@ -445,12 +451,18 @@ public class SegmConfigFrm extends JPanel {
     public String getMinCutOff() {
         return minCutOff.getValue().toString();
     }
+    public void setMinCutOff(String minCutOff) {
+        this.minCutOff.setValue(Float.parseFloat(minCutOff));
+    }
 
     private JLabel relativeCutOffLabel;
     private JSpinner relativeCutOff;
 
     public String getRelativeCutOff() {
         return relativeCutOff.getValue().toString();
+    }
+    public void setRelativeCutOff(String relativeCutOff) {
+        this.relativeCutOff.setValue(Float.parseFloat(relativeCutOff));
     }
 
     private JLabel nuclearStainChannelLabel;
@@ -459,12 +471,18 @@ public class SegmConfigFrm extends JPanel {
     public String getNuclearStainChannel() {
         return nuclearStainChannel.getValue().toString();
     }
+    public void setNuclearStainChannel(String nuclearStainChannel) {
+        this.nuclearStainChannel.setValue(Integer.parseInt(nuclearStainChannel));
+    }
 
     private JLabel nuclearStainCycleLabel;
     private JSpinner nuclearStainCycle;
 
     public String getNuclearStainCycle() {
         return nuclearStainCycle.getValue().toString();
+    }
+    public void setNuclearStainCycle(String nuclearStainCycle) {
+        this.nuclearStainCycle.setValue(Integer.parseInt(nuclearStainCycle));
     }
 
     private JLabel membraneStainChannelLabel;
@@ -473,6 +491,9 @@ public class SegmConfigFrm extends JPanel {
     public String getMembraneStainChannel() {
         return membraneStainChannel.getValue().toString();
     }
+    public void setMembraneStainChannel(String membraneStainChannel) {
+        this.membraneStainChannel.setValue(Integer.parseInt(membraneStainChannel));
+    }
 
     private JLabel membraneStainCycleLabel;
     private JSpinner membraneStainCycle;
@@ -480,15 +501,18 @@ public class SegmConfigFrm extends JPanel {
     public String getMembraneStainCycle() {
         return membraneStainCycle.getValue().toString();
     }
-
-    private JLabel readOutChannelsLabel;
-    private JTextField readOutChannels;
-
-    public String getReadOutChannels() {
-        return readOutChannels.getText().toString();
+    public void setMembraneStainCycle(String membraneStainCycle) {
+        this.membraneStainCycle.setValue(Integer.parseInt(membraneStainCycle));
     }
 
     private JPanel mainPanel;
+
+//    private JLabel readOutChannelsLabel;
+//    private JTextField readOutChannels;
+//
+//    public String getReadOutChannels() {
+//        return readOutChannels.getText().toString();
+//    }
 
 
 //    Later MayBe

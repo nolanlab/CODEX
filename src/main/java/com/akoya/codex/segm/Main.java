@@ -24,7 +24,7 @@ public class Main {
     public static final String revision = "CODEX-segm rev 18-JAN-2018";
     public static Properties params;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 
         File rootDir = null;
         File config = null;
@@ -88,11 +88,17 @@ public class Main {
             dont_inverse_memb = Boolean.parseBoolean(params.getProperty("dont_inverse_membrane", "false").trim());
             concentricCircles = Integer.parseInt(params.getProperty("concentric_circle_featurization_steps", "0").trim());
             delaunay_graph = Boolean.parseBoolean(params.getProperty("delaunay_graph", "true").trim());
-            String[] s = params.getProperty("readoutChannels", "-1").trim().split(",");
-
-            readoutChannels = new int[s.length];
-            for (int i = 0; i < s.length; ++i) {
-                readoutChannels[i] = Integer.parseInt(s[i]);
+            //String[] s = params.getProperty("readoutChannels", "-1").trim().split(",");
+            File[] tifFiles = rootDir.listFiles(t->t.getName().endsWith("tif") || t.getName().endsWith("tiff"));
+            if(tifFiles != null && tifFiles.length != 0) {
+                ImagePlus imp = IJ.openImage(tifFiles[0].getPath());
+                readoutChannels = new int[imp.getNChannels()];
+                for (int i = 0; i < imp.getNChannels(); i++) {
+                    readoutChannels[i] = i+1;
+                }
+            }
+            else {
+                throw new IllegalStateException("No tif file found inside processed folder!");
             }
             System.out.printf("Using segmentation parameters:\n", new Object[0]);
             System.out.printf(params.toString().replace(',', '\n'), new Object[0]);
@@ -196,8 +202,27 @@ public class Main {
             FileSaver fs = new FileSaver(copy);
             fs.saveAsTiff(currTiff.getAbsolutePath());
 
-            System.out.println("Applying mask/overlay for bestFocus file: "+FilenameUtils.removeExtension(currTiff.getName()));
-            applyBestFocusOverlay(currTiff , bi2);
+            File dir = (currTiff == null)? null : currTiff.getParentFile();
+            File bestFocusDir = new File (dir + File.separator + "bestFocus");
+
+            if(!bestFocusDir.exists()) {
+                System.out.println("Best focus folder cannot be found. Cannot apply overlays here." + bestFocusDir);
+            }
+            else {
+                File[] bestFocusFiles = bestFocusDir.listFiles(t -> (t.getName().endsWith("tif") || t.getName().endsWith("tiff")));
+                if(bestFocusFiles.length != 0) {
+                    System.out.println("Applying mask/overlay for bestFocus file: " + FilenameUtils.removeExtension(currTiff.getName()));
+                    try {
+                        applyBestFocusOverlay(bestFocusDir, bi2);
+                    }
+                    catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+                else {
+                    System.out.println("No files present inside the best focus folder, so not applying the overlays here.");
+                }
+            }
 
             int numFrames = imp.getNFrames();
             if (cellsSegmentedObject.length == 0) {
@@ -383,20 +408,20 @@ public class Main {
 
     /**
      * Find the best focus folder and apply the overlay to the input tif file
-     * @param in
+     * @param bestFocusDir
      * @param overlays
      */
-    private static void applyBestFocusOverlay(File in, BufferedImage [] overlays) {
+    private static void applyBestFocusOverlay(File bestFocusDir, BufferedImage [] overlays) throws IllegalStateException {
 
-        File rootDir = (in == null)? null : in.getParentFile();
-        File bestFocusDir = new File (rootDir + File.separator + "bestFocus");
+//        File rootDir = (in == null)? null : in.getParentFile();
+//        File bestFocusDir = new File (rootDir + File.separator + "bestFocus");
+//
+//        if(!bestFocusDir.exists()) {
+//            System.out.println("Best focus folder cannot be found: " + bestFocusDir);
+//            return;
+//        }
 
-        if(!bestFocusDir.exists()) {
-            System.out.println("Best focus folder cannot be found: " + bestFocusDir);
-            return;
-        }
-
-        File[] lst = bestFocusDir.listFiles(tif->(FilenameUtils.removeExtension(tif.getName()).contains(FilenameUtils.removeExtension(in.getName())))&(tif.getName().endsWith(".tif") || tif.getName().endsWith(".tiff")));
+        File[] lst = bestFocusDir.listFiles(tif->(FilenameUtils.removeExtension(tif.getName()).contains(FilenameUtils.removeExtension(bestFocusDir.getName())))&(tif.getName().endsWith(".tif") || tif.getName().endsWith(".tiff")));
 
         if(lst.length != 1) {
             throw new IllegalStateException("Found more than one or less than one match for file:" + Arrays.toString(lst));
