@@ -49,8 +49,8 @@ public class Experiment {
     public final String tiling_mode;
     public final int region_width;
     public final int region_height;
-    public final int tile_overlap_X;
-    public final int tile_overlap_Y;
+    public int tile_overlap_X;
+    public int tile_overlap_Y;
     public final int[] readout_channels;
     public final String objectiveType;
     public boolean HandEstain;

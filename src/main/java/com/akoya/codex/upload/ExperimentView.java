@@ -8,6 +8,8 @@ package com.akoya.codex.upload;
 import com.akoya.codex.Microscope;
 import com.akoya.codex.MicroscopeFactory;
 import com.akoya.codex.MicroscopeTypeEnum;
+import ij.IJ;
+import ij.ImagePlus;
 import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import java.awt.*;
@@ -354,7 +356,6 @@ public class ExperimentView extends javax.swing.JPanel {
         });
         jPanel4.add(val18);
 
-        val19.setText("576");
         val19.setInputVerifier(integerVerifier);
         val19.setInputVerifier(integerVerifier);
         val19.setMaximumSize(new java.awt.Dimension(3000, 20));
@@ -367,7 +368,6 @@ public class ExperimentView extends javax.swing.JPanel {
         });
         jPanel4.add(val19);
 
-        val20.setText("432");
         val20.setInputVerifier(integerVerifier);
         val20.setMaximumSize(new java.awt.Dimension(3000, 20));
         val20.setMinimumSize(new java.awt.Dimension(300, 20));
@@ -698,7 +698,7 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(jLabel22, gridBagConstraints);
 
-        jLabel23.setText("Tile Overlap X (pixels)");
+        jLabel23.setText("Tile Overlap X (in Percent)");
         jLabel23.setMaximumSize(new java.awt.Dimension(3000, 20));
         jLabel23.setMinimumSize(new java.awt.Dimension(100, 20));
         jLabel23.setPreferredSize(new java.awt.Dimension(500, 20));
@@ -710,7 +710,7 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(jLabel23, gridBagConstraints);
 
-        jLabel28.setText("Tile Overlap Y (pixels)");
+        jLabel28.setText("Tile Overlap Y (in Percent)");
         jLabel28.setMaximumSize(new java.awt.Dimension(3000, 20));
         jLabel28.setMinimumSize(new java.awt.Dimension(100, 20));
         jLabel28.setPreferredSize(new java.awt.Dimension(500, 20));
@@ -1074,8 +1074,20 @@ public class ExperimentView extends javax.swing.JPanel {
         val16.setSelectedItem(exp.tiling_mode);
         val17.setText(String.valueOf(exp.region_width));
         val18.setText(String.valueOf(exp.region_height));
-        val19.setText(String.valueOf(exp.tile_overlap_X));
-        val20.setText(String.valueOf(exp.tile_overlap_Y));
+
+        //Calculate tile overlap
+        if(dir != null) {
+            for (File cyc : dir.listFiles()) {
+                if (cyc != null && cyc.isDirectory()) {
+                    File[] cycFiles = cyc.listFiles(tif->tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif"));
+                    ImagePlus imp = IJ.openImage(cycFiles[0].getAbsolutePath());
+                    val19.setText(String.valueOf(exp.tile_overlap_X * 100/imp.getWidth()));
+                    val20.setText(String.valueOf(exp.tile_overlap_Y * 100/imp.getHeight()));
+                    break;
+                }
+            }
+        }
+
         rb_HandE_yes.setSelected(exp.HandEstain);
         optionalFragmentButton.setSelectedItem(Boolean.toString(exp.optionalFocusFragment) == null ? "Yes" : Boolean.toString(exp.optionalFocusFragment).equalsIgnoreCase("true") ? "Yes" : "No");
         focussingOffset.setValue(exp.focusing_offset);

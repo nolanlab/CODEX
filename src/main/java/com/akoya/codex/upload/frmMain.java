@@ -349,6 +349,23 @@ public class frmMain extends javax.swing.JFrame {
         }
     }
 
+    /*
+    Replaces tile overlap in percent with pixel value in the exp.json file
+     */
+    private void replaceTileOverlapInExp(File dir, Experiment exp) {
+        if(dir != null) {
+            for (File cyc : dir.listFiles()) {
+                if (cyc != null && cyc.isDirectory()) {
+                    File[] cycFiles = cyc.listFiles(tif->tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif"));
+                    ImagePlus imp = IJ.openImage(cycFiles[0].getAbsolutePath());
+                    exp.tile_overlap_X  = (int)((double)(exp.tile_overlap_X *imp.getWidth()/100));
+                    exp.tile_overlap_Y = (int)((double)(exp.tile_overlap_Y*imp.getHeight()/100));
+                    break;
+                }
+            }
+        }
+    }
+
     private void cmdStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
         new Thread(new Runnable() {
             @Override
@@ -361,17 +378,16 @@ public class frmMain extends javax.swing.JFrame {
                 }
 
                 Experiment exp = experimentView.getExperiment();
+                replaceTileOverlapInExp(dir, exp);
 
                 String experimentJS = exp.toJSON();
 
-                //Included a feature to check if the product of region size X and Y is equal to the number of tiles
                 String microscopeType = exp != null && exp.microscope != null ? exp.microscope.toString() : "";
                 if(microscopeType == null || microscopeType.equals("")) {
                     JOptionPane.showMessageDialog(null, "Microscope type is invalid");
                 }
-
                 Microscope microscope = MicroscopeFactory.getMicroscope(microscopeType);
-
+                //Included a feature to check if the product of region size X and Y is equal to the number of tiles
                 if(microscope.isTilesAProductOfRegionXAndY(dir, experimentView)) {
                     exp.saveToFile(new File(dir + File.separator + "Experiment.json"));
                 }
