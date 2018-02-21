@@ -1232,6 +1232,11 @@ public class ExperimentView extends javax.swing.JPanel {
             throw new IllegalStateException("Please enter a valid number or range for number cycles.");
         }
 
+        if(StringUtils.isBlank(val19.getText()) || StringUtils.isBlank(val20.getText())) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid percentage value for tile overlap.");
+            throw new IllegalStateException("Please enter a valid percentage value for tile overlap.");
+        }
+
         return new Experiment(val1.getText(),
                 formattedDate,
                 val2.getText(),
