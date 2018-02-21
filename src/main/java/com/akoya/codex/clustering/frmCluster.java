@@ -232,7 +232,7 @@ public class frmCluster extends JFrame {
                 //Create importConfig.txt
                 List<String> lines = Arrays.asList("clustering_columns=" + clustCols, "limit_events_per_file=" + impConfigFrm.getLimitEvents(), "transformation=" + impConfigFrm.getTransformation(),
                         "scaling_factor=" + impConfigFrm.getScalingFactor(), "noise_threshold=" + impConfigFrm.getNoiseThreshold(),
-                        "euclidian_length_threshold=" + impConfigFrm.getEucLengthThreshold(), "rescale=" + impConfigFrm.getRescale(), "quantile=" + impConfigFrm.getQuantile(),
+                        "euclidian_length_threshold=1", "rescale=" + impConfigFrm.getRescale(), "quantile=" + impConfigFrm.getQuantile(),
                         "rescale_separately=" + impConfigFrm.getRescaleSeparately().toLowerCase());
                 Path file = Paths.get(dir.getCanonicalPath() + File.separator + "importConfig.txt");
                 Files.write(file, lines, Charset.forName("UTF-8"));

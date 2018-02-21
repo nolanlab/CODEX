@@ -183,36 +183,36 @@ public class ImportConfigFrm extends JPanel {
         mainPanel.add(noiseThreshold, gridBagConstraints);
 
         //Eucledian Length threshold
-        eucLengthThresholdLabel = new JLabel();
-        eucLengthThresholdLabel.setText("Eucledian length threshold");
-        eucLengthThresholdLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
-        eucLengthThresholdLabel.setMinimumSize(new java.awt.Dimension(100, 20));
-        eucLengthThresholdLabel.setPreferredSize(new java.awt.Dimension(100, 20));
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
-        //gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        mainPanel.add(eucLengthThresholdLabel, gridBagConstraints);
-
-        eucLengthThreshold = new JSpinner();
-        eucLengthThreshold.setModel(new SpinnerNumberModel(1.0, 0, 200, 0.1));
-        eucLengthThreshold.setMaximumSize(new java.awt.Dimension(500, 20));
-        eucLengthThreshold.setMinimumSize(new java.awt.Dimension(100, 20));
-        eucLengthThreshold.setPreferredSize(new java.awt.Dimension(100, 20));
-        eucLengthThreshold.setValue(Float.parseFloat("1.0"));
-        eucLengthThreshold.setInputVerifier(integerVerifier);
-        ((JSpinner.DefaultEditor)eucLengthThreshold.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = GridBagConstraints.CENTER;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        mainPanel.add(eucLengthThreshold, gridBagConstraints);
+//        eucLengthThresholdLabel = new JLabel();
+//        eucLengthThresholdLabel.setText("Eucledian length threshold");
+//        eucLengthThresholdLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
+//        eucLengthThresholdLabel.setMinimumSize(new java.awt.Dimension(100, 20));
+//        eucLengthThresholdLabel.setPreferredSize(new java.awt.Dimension(100, 20));
+//        gridBagConstraints = new GridBagConstraints();
+//        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+//        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+//        //gridBagConstraints.weightx = 1.0;
+//        gridBagConstraints.weighty = 1.0;
+//        gridBagConstraints.gridx = 0;
+//        gridBagConstraints.gridy = 5;
+//        mainPanel.add(eucLengthThresholdLabel, gridBagConstraints);
+//
+//        eucLengthThreshold = new JSpinner();
+//        eucLengthThreshold.setModel(new SpinnerNumberModel(1.0, 0, 200, 0.1));
+//        eucLengthThreshold.setMaximumSize(new java.awt.Dimension(500, 20));
+//        eucLengthThreshold.setMinimumSize(new java.awt.Dimension(100, 20));
+//        eucLengthThreshold.setPreferredSize(new java.awt.Dimension(100, 20));
+//        eucLengthThreshold.setValue(Float.parseFloat("1.0"));
+//        eucLengthThreshold.setInputVerifier(integerVerifier);
+//        ((JSpinner.DefaultEditor)eucLengthThreshold.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
+//        gridBagConstraints = new GridBagConstraints();
+//        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+//        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+//        gridBagConstraints.weightx = 1.0;
+//        gridBagConstraints.weighty = 1.0;
+//        gridBagConstraints.gridx = 1;
+//        gridBagConstraints.gridy = 5;
+//        mainPanel.add(eucLengthThreshold, gridBagConstraints);
 
         //Rescale
         rescaleLabel = new JLabel();
@@ -384,12 +384,12 @@ public class ImportConfigFrm extends JPanel {
         return noiseThreshold.getValue().toString();
     }
 
-    private JLabel eucLengthThresholdLabel;
-    private JSpinner eucLengthThreshold;
+//    private JLabel eucLengthThresholdLabel;
+//    private JSpinner eucLengthThreshold;
 
-    public String getEucLengthThreshold() {
-        return eucLengthThreshold.getValue().toString();
-    }
+//    public String getEucLengthThreshold() {
+//        return eucLengthThreshold.getValue().toString();
+//    }
 
     private JLabel rescaleLabel;
     private JComboBox<String> rescaleCombo;
