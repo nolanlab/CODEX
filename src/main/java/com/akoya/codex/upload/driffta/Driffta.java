@@ -20,6 +20,7 @@ import ij.plugin.HyperStackConverter;
 import ij.plugin.ZProjector;
 import ij.process.ImageConverter;
 import ij.process.LUT;
+import org.apache.commons.lang3.SystemUtils;
 import org.scijava.util.FileUtils;
 
 import java.awt.*;
@@ -200,6 +201,7 @@ public class Driffta {
 
                         //final String cmd = "C:\\Users\\Nikolay\\IdeaProjects\\CODEX\\lib\\tiffcp.exe -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
                         final String cmd = "./lib/tiffcp -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
+                        final String cmdLinux = "tiffcp -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
 
                         if (new File(destFileName).exists()) {
                             if (new File(destFileName).length() > 10000) {
@@ -228,11 +230,12 @@ public class Driffta {
                                     }
                                     //stack[idx].setTitle(channelNames[(cycF - 1) * exp.channel_names.length + chIdxF]);
                                     return "Image opened: " + destFileName;
-                                } else {
-                                    return "Image opening failed: " + sourceFileName;
+                                    } else {
+                                        return "Image opening failed: " + sourceFileName;
+                                    }
                                 }
-                            }
-                        });}
+                            });
+                        }
                         else {
                                 alR.add(new Callable<String>() {
                             @Override
@@ -241,8 +244,22 @@ public class Driffta {
                                 //log("Opening file: " + sourceFileName);
                                 File f = new File(destFileName);
                                 do {
-                                    Process p = Runtime.getRuntime().exec(cmd);
-                                    p.waitFor();
+                                    Process p = null;
+                                    if(SystemUtils.IS_OS_WINDOWS) {
+                                        p = Runtime.getRuntime().exec(cmd);
+                                    }
+                                    else if(SystemUtils.IS_OS_LINUX) {
+                                        log("Source: "+sourceFileName);
+                                        log("Destination: "+destFileName);
+                                        p = Runtime.getRuntime().exec(cmdLinux);
+                                        //log("Ran well");
+                                    }
+                                    if(p != null) {
+                                        p.waitFor();
+                                        log(p.getOutputStream().toString());
+                                        log(p.getErrorStream().toString());
+                                        //log("Ran here also");
+                                    }
                                     if (!f.exists()) {
                                         log("Copy process finished but the dest file does not exist: " + destFileName + " trying again.");
                                     }
@@ -265,11 +282,12 @@ public class Driffta {
                                     }
                                     //stack[idx].setTitle(channelNames[(cycF - 1) * exp.channel_names.length + chIdxF]);
                                     return "Image opened: " + destFileName;
-                                } else {
-                                    return "Image opening failed: " + sourceFileName;
+                                    } else {
+                                        return "Image opening failed: " + sourceFileName;
+                                    }
                                 }
-                            }
-                        });}
+                            });
+                        }
                     }
                 }
             }
