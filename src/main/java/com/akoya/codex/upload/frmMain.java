@@ -12,6 +12,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.io.FileSaver;
 import ij.plugin.Duplicator;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
@@ -404,8 +405,18 @@ public class frmMain extends javax.swing.JFrame {
 
                 //Included a feature to check if the channelNames.txt file is present
                 if (!experimentView.isChannelNamesPresent(dir)) {
-                    JOptionPane.showMessageDialog(null, "ChannelNames.txt file is not present in the experiment folder. Please check and try again!");
+                    JOptionPane.showMessageDialog(null, "channelNames.txt file is not present in the experiment folder. Please check and try again!");
                     return;
+                }
+
+                log("Copying channelNames.txt file from experiment folder to processed folder location");
+
+                File source = new File(dir + File.separator + "channelNames.txt");
+                File dest = po.getTempDir();
+                try {
+                    FileUtils.copyFileToDirectory(source, dest);
+                } catch (IOException e) {
+                    log(e.getMessage());
                 }
 
                 cmdStart.setEnabled(false);
