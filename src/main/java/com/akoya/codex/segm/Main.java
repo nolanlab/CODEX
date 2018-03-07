@@ -89,17 +89,6 @@ public class Main {
             concentricCircles = Integer.parseInt(params.getProperty("concentric_circle_featurization_steps", "0").trim());
             delaunay_graph = Boolean.parseBoolean(params.getProperty("delaunay_graph", "true").trim());
             //String[] s = params.getProperty("readoutChannels", "-1").trim().split(",");
-            File[] tifFiles = rootDir.listFiles(t->t.getName().endsWith("tif") || t.getName().endsWith("tiff"));
-            if(tifFiles != null && tifFiles.length != 0) {
-                ImagePlus imp = IJ.openImage(tifFiles[0].getPath());
-                readoutChannels = new int[imp.getNChannels()];
-                for (int i = 0; i < imp.getNChannels(); i++) {
-                    readoutChannels[i] = i+1;
-                }
-            }
-            else {
-                throw new IllegalStateException("No tif file found inside processed folder!");
-            }
             System.out.printf("Using segmentation parameters:\n", new Object[0]);
             System.out.printf(params.toString().replace(',', '\n'), new Object[0]);
         } catch (Exception e) {
@@ -132,6 +121,10 @@ public class Main {
             ImagePlus imp = IJ.openImage(currTiff.getAbsolutePath());
             if (imp == null) {
                 throw new IllegalStateException("Couldn't open the image file: " + currTiff);
+            }
+            readoutChannels = new int[imp.getNChannels()];
+            for (int x = 0; x < imp.getNChannels(); x++) {
+                readoutChannels[x] = x+1;
             }
             imp.getNFrames();
             ImagePlus nucl = dup.run(imp, nuclearStainChannel, nuclearStainChannel, 1, imp.getNSlices(), nuclearStainCycle, nuclearStainCycle);
@@ -185,7 +178,7 @@ public class Main {
             cellsSegmentedObject = Arrays.stream(cellsSegmentedObject).filter(c -> c.getPoints().length >= sizeCutoff).toArray(SegmentedObject[]::new);
 
             //Apply overlay to the different Z stacks of the actual tif file based on different masks.
-            BufferedImage[] bi2 = RegionImageWriter.writeRegionImage((SegmentedObject[]) cellsSegmentedObject, (ImagePlus) mult, (String) currTiff.getName(), (File) currTiff.getParentFile());
+            BufferedImage[] bi2 = RegionImageWriter.writeRegionImage(cellsSegmentedObject, mult, currTiff.getName(), currTiff.getParentFile());
             ImagePlus copy = IJ.openImage(currTiff.getAbsolutePath());
             Overlay overlay = new Overlay();
 

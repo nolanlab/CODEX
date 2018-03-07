@@ -66,19 +66,6 @@ public class MakeFCS {
         String nuclearStainChannelS = prop.getProperty("nuclearStainChannel", "-1");
         int nuclearStainCycle = Integer.parseInt(prop.getProperty("nuclearStainCycle", "-1"));
 
-        String[] readoutCh = prop.getProperty("readoutChannels", "-1").split(",");
-
-        int nuclearStainChannel = -1;
-
-        for (int i = 0; i < readoutCh.length; i++) {
-            if (readoutCh[i].equals(nuclearStainChannelS)) {
-                nuclearStainChannel = i;
-            }
-        }
-
-        if (nuclearStainChannel == -1) {
-            throw new IllegalStateException("Could not identify the nuclear channel '" + nuclearStainChannelS + "' amongst the readoutChannels:" + Arrays.toString(readoutCh));
-        }
 
         String[] blankCycIdxS = (blankCycIDXString == null) ? new String[0] : blankCycIDXString.split(",");
         int[] blankCycleIdx = new int[blankCycIdxS.length];
@@ -132,9 +119,7 @@ public class MakeFCS {
             splitHeader[i] += ":" + chNames[i - offset][0];
         }
 
-        splitHeader = append(splitHeader, "Fiter1:Nucl_Stain_Density");
-        splitHeader = append(splitHeader, "Fiter2:Profile_Homogeneity");
-        splitHeader = append(splitHeader, "Fiter3:Avg_Background");
+        splitHeader = append(splitHeader, "Fiter1:Profile_Homogeneity");
 
         //System.out.println(Arrays.toString(splitHeader));
         outWr.writeNext(splitHeader);
@@ -145,11 +130,8 @@ public class MakeFCS {
                 l = Arrays.copyOf(l, l.length - 1);
             }
             double size = getSize(l, offset);
-            double nucl = getVecForCycle(l, offset, readoutCh.length, nuclearStainCycle)[nuclearStainChannel];
 
             String[] l2 = split(l, 1)[1];
-
-            l2 = append(l2, String.valueOf(nucl / size));
 
             double sum = 0;
             double sumsq = 0;
@@ -163,43 +145,7 @@ public class MakeFCS {
                     e.printStackTrace();
                 }
             }
-
             l2 = append(l2, String.valueOf(sum / Math.sqrt(sumsq)));
-
-            double[] avgBg = new double[readoutCh.length];
-
-            Arrays.fill(avgBg, -1);
-            for (int bgIDX : blankCycleIdx) {
-                double[] blankCyc = getVecForCycle(l, offset, readoutCh.length, bgIDX);
-                for (int j = 0; j < readoutCh.length; j++) {
-                    if (avgBg[j] < 0) {
-                        avgBg[j] = blankCyc[j];
-                    } else {
-                        avgBg[j] = Math.min(blankCyc[j], avgBg[j]);
-                    }
-                }
-            }
-
-            double avgbgAllCh = 0;
-            for (double d : avgBg) {
-                avgbgAllCh += d;
-            }
-
-            avgbgAllCh /= avgBg.length;
-            l2 = append(l2, String.valueOf(avgbgAllCh));
-
-            int numCycles = (l.length - offset) / readoutCh.length;
-
-            if (blankCycIDXString != null) {
-                for (int cycle = 0; cycle < numCycles; cycle++) {
-                    int idx = (cycle * readoutCh.length) + offset;
-                    for (int ch = 0; ch < readoutCh.length; ch++) {
-                        double oldValue = Double.parseDouble(l[idx + ch]);
-                        double newValue = oldValue - avgBg[ch];
-                        l2[(idx + ch) - 1] = String.valueOf(newValue);
-                    }
-                }
-            }
             outWr.writeNext(l2);
         }
 
