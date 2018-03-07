@@ -66,60 +66,74 @@ public class BestFocus {
         int yStep = (imp.getHeight() / 4) + 1;
         int xStep = (imp.getWidth() / 4) + 1;
         ArrayList<Integer> al = new ArrayList<>();
-
-        for (int x = 0; x < imp.getWidth(); x += xStep) {
-            for (int y = 0; y < imp.getHeight(); y += yStep) {
-                ImageStack out = null;
-                for (int i = 1; i <= imp.getNSlices(); i++) {
-                    ImageProcessor ip = imp.getStack().getProcessor(i);
-                    ip.setRoi(x, y, xStep, yStep);
-                    ImageProcessor cropped;
-                    if(optionalFocusFragment) {
+        if(optionalFocusFragment) {
+            for (int x = 0; x < imp.getWidth(); x += xStep) {
+                for (int y = 0; y < imp.getHeight(); y += yStep) {
+                    ImageStack out = null;
+                    for (int i = 1; i <= imp.getNSlices(); i++) {
+                        ImageProcessor ip = imp.getStack().getProcessor(i);
+                        ip.setRoi(x, y, xStep, yStep);
+                        ImageProcessor cropped;
                         cropped = ip.crop();
-                    }
-                    else {
-                        cropped = ip;
-                    }
-                    if (out == null) {
-                        out = new ImageStack(cropped.getWidth(), cropped.getHeight());
-                    }
-                    out.addSlice("slice" + i, cropped);
-                }
-
-                ImagePlus tmp = new ImagePlus("tmp_crop", out);
-                ImageStatistics isTmp = tmp.getStatistics();
-
-                if (isTmp.mean > is.mean - is.stdDev) {
-                    plg.setup("select=100 variance=0.000", tmp);
-                    int z = plg.run(null);
-                    if (z == 0) {
-                        double maxIntens = 0;
-                        int maxZ = 0;
-                        for (int i = 1; i <= imp.getNSlices(); i++) {
-                            ImageProcessor ip = imp.getStack().getProcessor(i);
-                             ImageStatistics isTmp2 = ip.getStatistics();
-                             if(isTmp2.mean> maxIntens){
-                                 maxIntens = isTmp2.mean;
-                                 maxZ= i;
-                             }
+                        if (out == null) {
+                            out = new ImageStack(cropped.getWidth(), cropped.getHeight());
                         }
-                        z = maxZ;
+                        out.addSlice("slice" + i, cropped);
                     }
-                    logger.print("trying subtile x=" + x + ", y=" + y + ", best_slice=" + z);
-                    al.add(z);
+
+                    ImagePlus tmp = new ImagePlus("tmp_crop", out);
+                    ImageStatistics isTmp = tmp.getStatistics();
+
+                    if (isTmp.mean > is.mean - is.stdDev) {
+                        plg.setup("select=100 variance=0.000", tmp);
+                        int z = plg.run(null);
+                        if (z == 0) {
+                            double maxIntens = 0;
+                            int maxZ = 0;
+                            for (int i = 1; i <= imp.getNSlices(); i++) {
+                                ImageProcessor ip = imp.getStack().getProcessor(i);
+                                ImageStatistics isTmp2 = ip.getStatistics();
+                                if (isTmp2.mean > maxIntens) {
+                                    maxIntens = isTmp2.mean;
+                                    maxZ = i;
+                                }
+                            }
+                            z = maxZ;
+                        }
+                        logger.print("trying subtile x=" + x + ", y=" + y + ", best_slice=" + z);
+                        al.add(z);
+                    }
                 }
             }
+
+            int bestSlice = imp.getNSlices() / 2;
+
+            if (al.size() > 0) {
+                Collections.sort(al);
+                bestSlice = al.get(al.size() / 2);
+            }
+
+            logger.print("best Z = " + bestSlice);
+            return bestSlice;
         }
-
-        int bestSlice = imp.getNSlices() / 2;
-
-        if (al.size() > 0) {
-            Collections.sort(al);
-            bestSlice = al.get(al.size() / 2);
+        else{
+            plg.setup("select=100 variance=0.000", imp);
+            int z = plg.run(null);
+            if (z == 0) {
+                double maxIntens = 0;
+                int maxZ = 0;
+                for (int i = 1; i <= imp.getNSlices(); i++) {
+                    ImageProcessor ip = imp.getStack().getProcessor(i);
+                    ImageStatistics isTmp2 = ip.getStatistics();
+                    if (isTmp2.mean > maxIntens) {
+                        maxIntens = isTmp2.mean;
+                        maxZ = i;
+                    }
+                }
+                z = maxZ;
+            }
+            return z;
         }
-
-        logger.print("best Z = " + bestSlice);
-        return bestSlice;
     }
 
     public static ImagePlus retrieveFocusedPlane(ImagePlus imp, int z) {
