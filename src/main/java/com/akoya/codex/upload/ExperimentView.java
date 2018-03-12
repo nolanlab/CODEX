@@ -1036,7 +1036,7 @@ public class ExperimentView extends javax.swing.JPanel {
     /*
     Method to load the values from the JSON file and set it to the Experiment property
      */
-    private void load(Experiment exp, File dir) throws FileNotFoundException {
+    public void load(Experiment exp, File dir) throws FileNotFoundException {
         val1.setText(exp.name);
         val2.setText(exp.codex_instrument);
 
