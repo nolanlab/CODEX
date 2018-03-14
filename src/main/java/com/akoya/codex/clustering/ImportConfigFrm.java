@@ -356,11 +356,20 @@ public class ImportConfigFrm extends JPanel {
         return idx;
     }
 
+    public void setLstColNamesIndex(ArrayList<Integer> lstColNamesIndex) {
+        for(int i=0; i<lstColNamesIndex.size(); i++) {
+
+        }
+    }
+
     private JLabel limitEventsLabel;
     private JSpinner limitEvents;
 
     public String getLimitEvents() {
         return limitEvents.getValue().toString();
+    }
+    public void setLimitEvents(String limitEvents) {
+        this.limitEvents.setValue(Integer.parseInt(limitEvents));
     }
 
     private JLabel transformationLabel;
@@ -370,6 +379,10 @@ public class ImportConfigFrm extends JPanel {
         return transformationCombo.getSelectedItem().toString();
     }
 
+    public void setTransformation(String transformation) {
+        this.transformationCombo.setSelectedItem(transformation);
+    }
+
     private JLabel scalingFactorLabel;
     private JSpinner scalingFactor;
 
@@ -377,11 +390,19 @@ public class ImportConfigFrm extends JPanel {
         return scalingFactor.getValue().toString();
     }
 
+    public void setScalingFactor(String scalingFactor) {
+        this.scalingFactor.setValue(Integer.parseInt(scalingFactor));
+    }
+
     private JLabel noiseThresholdLabel;
     private JSpinner noiseThreshold;
 
     public String getNoiseThreshold() {
         return noiseThreshold.getValue().toString();
+    }
+
+    public void setNoiseThreshold(String noiseThreshold) {
+        this.noiseThreshold.setValue(Float.parseFloat(noiseThreshold));
     }
 
 //    private JLabel eucLengthThresholdLabel;
@@ -398,6 +419,10 @@ public class ImportConfigFrm extends JPanel {
         return rescaleCombo.getSelectedItem().toString();
     }
 
+    public void setRescale(String rescale) {
+        this.rescaleCombo.setSelectedItem(rescale);
+    }
+
     private JLabel quantileLabel;
     private JSpinner quantile;
 
@@ -405,11 +430,19 @@ public class ImportConfigFrm extends JPanel {
         return quantile.getValue().toString();
     }
 
+    public void setQuantile(String quantile) {
+        this.quantile.setValue(Float.parseFloat(quantile));
+    }
+
     private JLabel rescaleSeparatelyLabel;
     private JComboBox<String> rescaleSeparatelyCombo;
 
     public String getRescaleSeparately() {
         return rescaleSeparatelyCombo.getSelectedItem().toString();
+    }
+
+    public void setRescaleSeparately(String rescaleSeparately) {
+        this.rescaleSeparatelyCombo.setSelectedItem(rescaleSeparately);
     }
 
     private JPanel mainPanel;

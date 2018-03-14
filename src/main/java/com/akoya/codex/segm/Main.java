@@ -206,7 +206,7 @@ public class Main {
                 if(bestFocusFiles.length != 0) {
                     System.out.println("Applying mask/overlay for bestFocus file: " + FilenameUtils.removeExtension(currTiff.getName()));
                     try {
-                        applyBestFocusOverlay(bestFocusDir, bi2);
+                        applyBestFocusOverlay(bestFocusDir, currTiff, bi2);
                     }
                     catch (Exception e) {
                         System.out.println(e.getMessage());
@@ -404,7 +404,7 @@ public class Main {
      * @param bestFocusDir
      * @param overlays
      */
-    private static void applyBestFocusOverlay(File bestFocusDir, BufferedImage [] overlays) throws IllegalStateException {
+    private static void applyBestFocusOverlay(File bestFocusDir, File currTiff, BufferedImage [] overlays) throws IllegalStateException {
 
 //        File rootDir = (in == null)? null : in.getParentFile();
 //        File bestFocusDir = new File (rootDir + File.separator + "bestFocus");
@@ -414,7 +414,7 @@ public class Main {
 //            return;
 //        }
 
-        File[] lst = bestFocusDir.listFiles(tif->(FilenameUtils.removeExtension(tif.getName()).contains(FilenameUtils.removeExtension(bestFocusDir.getName())))&(tif.getName().endsWith(".tif") || tif.getName().endsWith(".tiff")));
+        File[] lst = bestFocusDir.listFiles(tif->(FilenameUtils.removeExtension(tif.getName()).contains(FilenameUtils.removeExtension(currTiff.getName())))&(tif.getName().endsWith(".tif") || tif.getName().endsWith(".tiff")));
 
         if(lst.length != 1) {
             throw new IllegalStateException("Found more than one or less than one match for file:" + Arrays.toString(lst));

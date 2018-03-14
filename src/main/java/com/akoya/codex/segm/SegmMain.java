@@ -1,5 +1,8 @@
 package com.akoya.codex.segm;
 
+import com.akoya.codex.DefaultOptionPane;
+import com.akoya.codex.OkayMockOptionPane;
+import com.akoya.codex.OptionPane;
 import com.akoya.codex.upload.TextAreaOutputStream;
 import com.akoya.codex.upload.logger;
 
@@ -33,13 +36,14 @@ public class SegmMain extends JFrame {
     private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "");
     private SegmConfigFrm segmConfigFrm;
     private JButton cmdCreate;
+    private OptionPane optionPane = new DefaultOptionPane();
 
     public SegmMain() throws Exception {
         System.setOut(new PrintStream(taOutputStream));
-        initComponents();
+        //initComponents();
     }
 
-    private void initComponents() throws Exception {
+    public void initComponents() throws Exception {
         segmConfigFrm = new SegmConfigFrm();
         inputFolderDialog();
         cmdCreate = new JButton();
@@ -171,7 +175,9 @@ public class SegmMain extends JFrame {
         configPanel.add(new JLabel("Select input folder to be segmented: "));
         configPanel.add(configField);
 
-        configField.setText("...");
+        if(!(optionPane instanceof OkayMockOptionPane)) {
+            configField.setText("...");
+        }
         configField.setEnabled(false);
         configField.setMaximumSize(new java.awt.Dimension(3000, 20));
         configField.setMinimumSize(new java.awt.Dimension(300, 20));
@@ -192,7 +198,7 @@ public class SegmMain extends JFrame {
             }
         });
 
-        int result = JOptionPane.showConfirmDialog(null, configPanel,
+        int result = optionPane.showConfirmDialog(null, configPanel,
                 "Specify folder", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
             System.exit(0);
@@ -237,12 +243,13 @@ public class SegmMain extends JFrame {
             // handle exception
         }
         SegmMain segmMain = new SegmMain();
+        segmMain.initComponents();
         segmMain.setVisible(true);
     }
 
 
-    private void cmdCreateButtonClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
-        new Thread(() -> {
+    public Thread cmdCreateButtonClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
+        Thread th = new Thread(() -> {
             try {
                 File dir = new File(configField.getText());
                 //Create importConfig.txt
@@ -259,7 +266,9 @@ public class SegmMain extends JFrame {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-        }).start();
+        });
+        th.start();
+        return th;
     }
 
     private void callSegm() throws Exception {
@@ -325,5 +334,41 @@ public class SegmMain extends JFrame {
                     logger.showException(e);
                 }
             }
+    }
+
+    public SegmConfigFrm getSegmConfigFrm() {
+        return segmConfigFrm;
+    }
+
+    public void setSegmConfigFrm(SegmConfigFrm segmConfigFrm) {
+        this.segmConfigFrm = segmConfigFrm;
+    }
+
+    public JTextField getConfigField() {
+        return configField;
+    }
+
+    public void setConfigField(JTextField configField) {
+        this.configField = configField;
+    }
+
+    public JPanel getConfigPanel() {
+        return configPanel;
+    }
+
+    public void setConfigPanel(JPanel configPanel) {
+        this.configPanel = configPanel;
+    }
+
+    public JButton getCmdCreate() {
+        return cmdCreate;
+    }
+
+    public void setCmdCreate(JButton cmdCreate) {
+        this.cmdCreate = cmdCreate;
+    }
+
+    public void setOptionPane(OptionPane o) {
+        this.optionPane = o;
     }
 }

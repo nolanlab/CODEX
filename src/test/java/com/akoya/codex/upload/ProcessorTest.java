@@ -11,6 +11,9 @@ import java.awt.event.ActionEvent;
 import java.io.*;
 import java.util.Scanner;
 
+/**
+ * @author Vishal
+ */
 public class ProcessorTest {
 
     private static frmMain frm;
@@ -41,7 +44,6 @@ public class ProcessorTest {
         }
 
         exp = expView.getExperiment();
-
         poView = frm.getUploadOptionsView();
 
         JTextField txtTempDir = new JTextField();
@@ -73,7 +75,7 @@ public class ProcessorTest {
     @Test(priority = 2)
     public void testChannelNames() throws Exception {
         File channelNamesFile = new File(testExp + File.separator + "channelNames.txt");
-        Assert.assertEquals(true, channelNamesFile.exists() && channelNamesFile.isFile());
+        Assert.assertTrue(channelNamesFile != null && channelNamesFile.exists() && channelNamesFile.isFile());
     }
 
     @Test(priority = 3)
@@ -91,7 +93,7 @@ public class ProcessorTest {
 
 
         Assert.assertTrue(sec < 600);
-        Assert.assertTrue(frmMainTestRunFile.exists());
+        Assert.assertTrue(frmMainTestRunFile != null && frmMainTestRunFile.exists());
     }
 
     @Test(priority = 4)
@@ -100,26 +102,26 @@ public class ProcessorTest {
         Scanner scanner = new Scanner(frmMainTestRunFile);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
-            Assert.assertFalse(line.toLowerCase().contains("error") || line.toLowerCase().contains("exception"));
+            Assert.assertFalse(line == null && (line.toLowerCase().contains("error") || line.toLowerCase().contains("exception")));
         }
     }
 
     @Test(priority = 5)
     public void testForBestFocus() throws Exception {
         File bestFocusFile = new File(outDir + File.separator + "bestFocus");
-        Assert.assertTrue(bestFocusFile.exists() && bestFocusFile.isDirectory());
+        Assert.assertTrue(bestFocusFile != null && bestFocusFile.exists() && bestFocusFile.isDirectory());
     }
 
     @Test(priority = 6)
     public void testMakeMontage() throws Exception {
         File bestFocusdir = new File(outDir + File.separator + "bestFocus");
         File[] montageFiles = bestFocusdir.listFiles(m -> m.getName().toLowerCase().contains("montage.tif"));
-        Assert.assertTrue(montageFiles.length != 0);
+        Assert.assertTrue(montageFiles != null && montageFiles.length != 0);
     }
 
     @Test(priority = 7)
     public void testTileMap() throws Exception {
         File tileMapFile = new File(outDir + File.separator + "tileMap.txt");
-        Assert.assertTrue(tileMapFile.exists() && tileMapFile.isFile());
+        Assert.assertTrue(tileMapFile != null && tileMapFile.exists() && tileMapFile.isFile());
     }
 }

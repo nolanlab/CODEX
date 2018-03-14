@@ -275,7 +275,7 @@ public class frmMain extends javax.swing.JFrame {
         spinGPU.setMaximumSize(new java.awt.Dimension(3000, 20));
         spinGPU.setMinimumSize(new java.awt.Dimension(60, 20));
         spinGPU.setPreferredSize(new java.awt.Dimension(60, 20));
-        spinGPU.setModel(new javax.swing.SpinnerNumberModel(4, 1, 200, 1));
+        spinGPU.setModel(new javax.swing.SpinnerNumberModel(1, 1, 200, 1));
 
         c= new GridBagConstraints();
         c.gridx=0;
@@ -314,7 +314,7 @@ public class frmMain extends javax.swing.JFrame {
         spinRAM.setMinimumSize(new java.awt.Dimension(60, 20));
         spinRAM.setPreferredSize(new java.awt.Dimension(60, 20));
         gpuPanel.add(spinRAM, c);
-        spinRAM.setModel(new javax.swing.SpinnerNumberModel(4, 4, 256, 4));
+        spinRAM.setModel(new javax.swing.SpinnerNumberModel(48, 4, 256, 4));
 
         int result = JOptionPane.showConfirmDialog(null, gpuPanel,
                 "Specify configuration", JOptionPane.OK_CANCEL_OPTION);
@@ -367,8 +367,16 @@ public class frmMain extends javax.swing.JFrame {
         }
     }
 
-    private void cmdStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
-        new Thread(new Runnable() {
+    public void copyFileFromSourceToDest(File source, File dest) {
+        try {
+            FileUtils.copyFileToDirectory(source, dest);
+        } catch (IOException e) {
+            log(e.getMessage());
+        }
+    }
+
+    public Thread cmdStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
+       Thread th = new Thread(new Runnable() {
             @Override
             public void run() {
             try {
@@ -413,11 +421,7 @@ public class frmMain extends javax.swing.JFrame {
 
                 File source = new File(dir + File.separator + "channelNames.txt");
                 File dest = po.getTempDir();
-                try {
-                    FileUtils.copyFileToDirectory(source, dest);
-                } catch (IOException e) {
-                    log(e.getMessage());
-                }
+                copyFileFromSourceToDest(source, dest);
 
                 cmdStart.setEnabled(false);
                 cmdStop.setEnabled(true);
@@ -576,8 +580,9 @@ public class frmMain extends javax.swing.JFrame {
                 throw new Error(e);
             }
           }
-        }).start();
-
+        });
+        th.start();
+        return th;
     }//GEN-LAST:event_cmdStartActionPerformed
 
     private void cmdStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
@@ -674,6 +679,30 @@ public class frmMain extends javax.swing.JFrame {
     private JSpinner spinRAM = new JSpinner();
     private JButton cmdStop;
     private JTextField configField = new JTextField(5);
+
+    public ExperimentView getExperimentView() {
+        return experimentView;
+    }
+
+    public void setExperimentView(ExperimentView experimentView) {
+        this.experimentView = experimentView;
+    }
+
+    public ProcessingOptionsView getUploadOptionsView() {
+        return uploadOptionsView;
+    }
+
+    public void setUploadOptionsView(ProcessingOptionsView uploadOptionsView) {
+        this.uploadOptionsView = uploadOptionsView;
+    }
+
+    public JButton getCmdStart() {
+        return cmdStart;
+    }
+
+    public void setCmdStart(JButton cmdStart) {
+        this.cmdStart = cmdStart;
+    }
 
     // End of variables declaration//GEN-END:variables
 }
