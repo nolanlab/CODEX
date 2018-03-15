@@ -106,6 +106,13 @@
             <artifactId>annotations</artifactId>
             <version>RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.8</version>
+            <scope>test</scope>
+        </dependency>
+
 
     </dependencies>
     <properties>
@@ -121,7 +128,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.akoya.codex.clustering.frmCluster</mainClass>
+                            <mainClass>com.akoya.codex.upload.frmMain</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

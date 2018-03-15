@@ -291,6 +291,15 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
     private javax.swing.JRadioButton rbProcessing;
     private javax.swing.JSpinner spinThreads;
     private javax.swing.JPasswordField txtPwd;
+
+    public JTextField getTxtTempDir() {
+        return txtTempDir;
+    }
+
+    public void setTxtTempDir(JTextField txtTempDir) {
+        this.txtTempDir = txtTempDir;
+    }
+
     private JTextField txtTempDir;
     private JTextField txtURL;
     private JTextField txtUsrname;

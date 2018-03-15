@@ -1,9 +1,13 @@
 package com.akoya.codex.clustering;
 
+import com.akoya.codex.DefaultOptionPane;
+import com.akoya.codex.OkayMockOptionPane;
+import com.akoya.codex.OptionPane;
 import com.akoya.codex.upload.TextAreaOutputStream;
 import com.akoya.codex.upload.logger;
 import dataIO.DatasetStub;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,12 +31,16 @@ public class frmCluster extends JFrame {
     private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "");
     private String[] colNames = null;
     private static int version = 1;
+    private ImportConfigFrm impConfigFrm;
+    private JButton cmdCreate;
+    private JTextField fcsFolderField = new JTextField(5);
+    private String clustCols = "";
+    private OptionPane optionPane = new DefaultOptionPane();
 
     public frmCluster() {
         System.setOut(new PrintStream(taOutputStream));
-        initComponents();
     }
-    private void initComponents() {
+    public void initComponents() {
         initFolder();
         impConfigFrm = new ImportConfigFrm(colNames);
         cmdCreate = new JButton();
@@ -128,6 +136,7 @@ public class frmCluster extends JFrame {
             // handle exception
         }
                     frmCluster frm = new frmCluster();
+                    frm.initComponents();
                     frm.setVisible(true);
     }
 
@@ -172,7 +181,9 @@ public class frmCluster extends JFrame {
         c.gridy=0;
         initPanel.add(fcsFolderField, c);
 
-        fcsFolderField.setText("...");
+        if(!(optionPane instanceof OkayMockOptionPane)) {
+            fcsFolderField.setText("...");
+        }
         fcsFolderField.setEnabled(false);
         fcsFolderField.setMaximumSize(new java.awt.Dimension(3000, 20));
         fcsFolderField.setMinimumSize(new java.awt.Dimension(300, 20));
@@ -188,7 +199,7 @@ public class frmCluster extends JFrame {
             }
         });
 
-        int result = JOptionPane.showConfirmDialog(null, initPanel,
+        int result = optionPane.showConfirmDialog(null, initPanel,
                 "Specify folder", JOptionPane.OK_CANCEL_OPTION);
         if(result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
             System.exit(0);
@@ -212,11 +223,10 @@ public class frmCluster extends JFrame {
             }
         }
 
-    private void cmdCreateButtonClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
-        new Thread(() -> {
+    public Thread cmdCreateButtonClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
+        Thread th = new Thread(() -> {
             try {
                 File dir = new File(fcsFolderField.getText());
-                String clustCols = "";
                 if(impConfigFrm.getLstColNamesIndex() != null && !impConfigFrm.getLstColNamesIndex().isEmpty()) {
                     for (int i = 0; i < impConfigFrm.getLstColNamesIndex().size() - 1; i++) {
                         clustCols += impConfigFrm.getLstColNamesIndex().get(i).toString() + ",";
@@ -224,8 +234,10 @@ public class frmCluster extends JFrame {
                     clustCols += impConfigFrm.getLstColNamesIndex().get(impConfigFrm.getLstColNamesIndex().size()-1).toString();
                 }
                 else {
-                    JOptionPane.showMessageDialog(this, "Please select/add at least 1 clustering column from the list.");
-                    return;
+                    if(StringUtils.isBlank(clustCols)) {
+                        JOptionPane.showMessageDialog(this, "Please select/add at least 1 clustering column from the list.");
+                        return;
+                    }
                 }
                 log("Clustering tool to read configuration to be used for invoking X-shift. Version: " + version);
 
@@ -266,7 +278,9 @@ public class frmCluster extends JFrame {
             } catch (Exception e) {
                 log(e.getMessage());
             }
-        }).start();
+        });
+        th.start();
+        return th;
     }
 
     private static void log(String s) {
@@ -332,7 +346,32 @@ public class frmCluster extends JFrame {
         }
     }
 
-    private ImportConfigFrm impConfigFrm;
-    private JButton cmdCreate;
-    private JTextField fcsFolderField = new JTextField(5);
+    public ImportConfigFrm getImpConfigFrm() {
+        return impConfigFrm;
+    }
+
+    public void setImpConfigFrm(ImportConfigFrm impConfigFrm) {
+        this.impConfigFrm = impConfigFrm;
+    }
+
+    public JTextField getFcsFolderField() {
+        return fcsFolderField;
+    }
+
+    public void setFcsFolderField(JTextField fcsFolderField) {
+        this.fcsFolderField = fcsFolderField;
+    }
+
+    public String getClustCols() {
+        return clustCols;
+    }
+
+    public void setClustCols(String clustCols) {
+        this.clustCols = clustCols;
+    }
+
+    public void setOptionPane(OptionPane o) {
+        this.optionPane = o;
+    }
+
 }

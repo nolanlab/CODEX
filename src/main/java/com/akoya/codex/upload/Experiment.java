@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import com.akoya.codex.MicroscopeTypeEnum;
 import static com.akoya.codex.MicroscopeTypeEnum.KEYENCE;
+import static com.akoya.codex.MicroscopeTypeEnum.LEICA;
 import static com.akoya.codex.MicroscopeTypeEnum.ZEISS;
 /**
  *
@@ -62,6 +63,8 @@ public class Experiment {
     public final boolean optionalFocusFragment;
     public final int focusing_offset;
 
+    public static transient HashMap<String, String> projectNameCache = new HashMap<>();
+    public static transient final MicroscopeTypeEnum[] microscopeTypes = new MicroscopeTypeEnum[]{KEYENCE, ZEISS, LEICA};
 
     public Experiment(String name, String date, String codex_instrument, MicroscopeTypeEnum microscope,
             String deconvolution, int magnification, double numerical_aperture, double per_pixel_XY_resolution,
@@ -268,9 +271,6 @@ public class Experiment {
         }
     }
 
-    public static HashMap<String, String> projectNameCache = new HashMap<>();
-
-    public static final MicroscopeTypeEnum[] microscopeTypes = new MicroscopeTypeEnum[]{KEYENCE, ZEISS};
 
     public String getSourceFileName(final String sourceDir, final MicroscopeTypeEnum microscope, final int tile, final int zSlice, final int channel) {
         switch (microscope) {
