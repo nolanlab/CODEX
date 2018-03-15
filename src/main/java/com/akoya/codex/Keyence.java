@@ -2,6 +2,9 @@ package com.akoya.codex;
 
 import com.akoya.codex.upload.ExperimentView;
 
+import javax.swing.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,6 +100,43 @@ public class Keyence implements Microscope {
     Set the number of cyles/range field depending upon the content of Experiment folder.
     */
     public void guessCycleRange(File dir, ExperimentView experimentView) {
+        //default the cycle range value based on H&E stain cycle
+        defaultCycleRange(dir, experimentView);
+
+        //Item listener to capture the state of the h&e radio button to display the max cycles(upper cycle limit)
+        JRadioButton rb_handE_yes = experimentView.getRb_HandE_yes();
+        ItemListener itl = itemEvent -> {
+            int state = itemEvent.getStateChange();
+            if (state == ItemEvent.SELECTED) {
+                int lowL = 1;
+                int upL = getMaxCycNumberFromFolder(dir)+1;
+                if(upL == 0) {
+                    experimentView.getVal13().setText(String.valueOf(lowL));
+                }
+                else if(lowL == upL) {
+                    experimentView.getVal13().setText(String.valueOf(lowL));
+                }
+                else {
+                    experimentView.getVal13().setText(String.valueOf(lowL) + "-" + String.valueOf(upL));
+                }
+            }  else {
+                int lowL = 1;
+                int upL = getMaxCycNumberFromFolder(dir);
+                if(upL == 0) {
+                    experimentView.getVal13().setText(String.valueOf(lowL));
+                }
+                else if(lowL == upL) {
+                    experimentView.getVal13().setText(String.valueOf(lowL));
+                }
+                else {
+                    experimentView.getVal13().setText(String.valueOf(lowL) + "-" + String.valueOf(upL));
+                }
+            }
+        };
+        rb_handE_yes.addItemListener(itl);
+    }
+
+    private void defaultCycleRange(File dir, ExperimentView experimentView) {
         int lowL = 1;
         int upL = getMaxCycNumberFromFolder(dir);
         if(upL == 0) {
@@ -106,7 +146,12 @@ public class Keyence implements Microscope {
             experimentView.getVal13().setText(String.valueOf(lowL));
         }
         else {
-            experimentView.getVal13().setText(String.valueOf(lowL) + "-" + String.valueOf(upL));
+            if(experimentView.getRb_HandE_yes().isSelected()) {
+                experimentView.getVal13().setText(String.valueOf(lowL) + "-" + String.valueOf(upL+1));
+            }
+            else {
+                experimentView.getVal13().setText(String.valueOf(lowL) + "-" + String.valueOf(upL));
+            }
         }
     }
 

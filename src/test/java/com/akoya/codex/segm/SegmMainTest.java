@@ -83,7 +83,7 @@ public class SegmMainTest {
         Scanner scanner = new Scanner(segmTestRunFile);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
-            Assert.assertFalse(line == null && (line.toLowerCase().contains("error") || line.toLowerCase().contains("exception")));
+            Assert.assertFalse(line == null || (line.toLowerCase().contains("error") || line.toLowerCase().contains("exception")));
         }
     }
 

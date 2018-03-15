@@ -13,6 +13,8 @@ import ij.ImagePlus;
 import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -1091,6 +1093,30 @@ public class ExperimentView extends javax.swing.JPanel {
         rb_HandE_yes.setSelected(exp.HandEstain);
         optionalFragmentButton.setSelectedItem(Boolean.toString(exp.optionalFocusFragment) == null ? "Yes" : Boolean.toString(exp.optionalFocusFragment).equalsIgnoreCase("true") ? "Yes" : "No");
         focussingOffset.setValue(exp.focusing_offset);
+        if(exp.HandEstain) {
+            JRadioButton rb_handE_yes = getRb_HandE_yes();
+            ItemListener itl = itemEvent -> {
+                int state = itemEvent.getStateChange();
+                if (state == ItemEvent.SELECTED) {
+                    val13.setText(String.valueOf(exp.cycle_lower_limit) + "-" + String.valueOf(exp.cycle_upper_limit));
+                } else {
+                    val13.setText(String.valueOf(exp.cycle_lower_limit) + "-" + String.valueOf(exp.cycle_upper_limit - 1));
+                }
+            };
+            rb_handE_yes.addItemListener(itl);
+        }
+        else {
+            JRadioButton rb_handE_yes = getRb_HandE_yes();
+            ItemListener itl = itemEvent -> {
+                int state = itemEvent.getStateChange();
+                if (state == ItemEvent.SELECTED) {
+                    val13.setText(String.valueOf(exp.cycle_lower_limit) + "-" + String.valueOf(exp.cycle_upper_limit + 1));
+                } else {
+                    val13.setText(String.valueOf(exp.cycle_lower_limit) + "-" + String.valueOf(exp.cycle_upper_limit));
+                }
+            };
+            rb_handE_yes.addItemListener(itl);
+        }
     }
 
     private Experiment buildExperiment() {
@@ -1214,9 +1240,18 @@ public class ExperimentView extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "The lower limit on the range of number of cycles is invalid.");
                 throw new IllegalStateException("The lower limit on the range of number of cycles is invalid.");
             }
-            if(upperCycLimit > microscope.getMaxCycNumberFromFolder(dir)) {
-                JOptionPane.showMessageDialog(this, "The upper limit on the range of number of cycles is invalid.");
-                throw new IllegalStateException("The upper limit on the range of number of cycles is invalid.");
+
+            if(!rb_HandE_yes.isSelected()) {
+                if (upperCycLimit > microscope.getMaxCycNumberFromFolder(dir)) {
+                    JOptionPane.showMessageDialog(this, "The upper limit on the range of number of cycles is invalid.");
+                    throw new IllegalStateException("The upper limit on the range of number of cycles is invalid.");
+                }
+            }
+            else {
+                if (upperCycLimit > 1+microscope.getMaxCycNumberFromFolder(dir)) {
+                    JOptionPane.showMessageDialog(this, "The upper limit on the range of number of cycles is invalid for this experiment with H&E stain.");
+                    throw new IllegalStateException("The upper limit on the range of number of cycles is invalid for this experiment with H&E stain.");
+                }
             }
             if(Integer.parseInt(driftReference.getValue().toString()) < lowerCycLimit || Integer.parseInt(driftReference.getValue().toString()) > upperCycLimit) {
                 JOptionPane.showMessageDialog(this, "Drift compensation reference cycle is invalid.");

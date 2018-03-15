@@ -6,7 +6,8 @@ package com.akoya.codex;
  */
 public enum MicroscopeTypeEnum {
     KEYENCE("Keyence BZ-X710"),
-    ZEISS("Zeiss ZEN");
+    ZEISS("Zeiss ZEN"),
+    LEICA("Leica DMI8");
 
     private final String type;
 
