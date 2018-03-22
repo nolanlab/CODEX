@@ -27,6 +27,8 @@ public class ProcessingOptions {
     private String password;
     private boolean doProcessing;
     private boolean doUpload;
+    private boolean exportTiff;
+    private boolean exportImgSeq;
     private int numThreads;
     
     
@@ -46,7 +48,7 @@ public class ProcessingOptions {
 
     
     
-    public ProcessingOptions(File tempDir, boolean useBleachMinimizingCrop, boolean useBlindDeconvolution, int numThreads, URL destinationUrl, String username, String password, boolean doUpload) {
+    public ProcessingOptions(File tempDir, boolean useBleachMinimizingCrop, boolean useBlindDeconvolution, int numThreads, URL destinationUrl, String username, String password, boolean doUpload, boolean exportTiff, boolean exportImgSeq) {
         this.tempDir = tempDir;
         this.useBleachMinimizingCrop = useBleachMinimizingCrop;
         this.useBlindDeconvolution = useBlindDeconvolution;
@@ -56,6 +58,8 @@ public class ProcessingOptions {
         this.password = EncryptUtils.xorMessage(password, encoder);
         this.doProcessing = true;
         this.doUpload = doUpload;
+        this.exportTiff = exportTiff;
+        this.exportImgSeq = exportImgSeq;
     }
 
     public URL getDestinationUrl() {
@@ -88,6 +92,22 @@ public class ProcessingOptions {
 
     public String getPassword() {
         return EncryptUtils.xorMessage(password, encoder);
+    }
+
+    public boolean isExportTiff() {
+        return exportTiff;
+    }
+
+    public void setExportTiff(boolean exportTiff) {
+        this.exportTiff = exportTiff;
+    }
+
+    public boolean isExportImgSeq() {
+        return exportImgSeq;
+    }
+
+    public void setExportImgSeq(boolean exportImgSeq) {
+        this.exportImgSeq = exportImgSeq;
     }
 
     public void saveToFile(File f) throws IOException {

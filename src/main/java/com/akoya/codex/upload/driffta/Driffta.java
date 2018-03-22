@@ -9,17 +9,14 @@ import com.akoya.codex.upload.Experiment;
 import com.akoya.codex.upload.ProcessingOptions;
 import com.akoya.codex.upload.logger;
 import com.akoya.codex.MicroscopeTypeEnum;
-import ij.CompositeImage;
-import ij.ImagePlus;
-import ij.WindowManager;
+import fiji.stacks.Hyperstack_rearranger;
+import ij.*;
 import ij.io.FileSaver;
 import ij.io.Opener;
-import ij.plugin.Concatenator;
-import ij.plugin.Duplicator;
-import ij.plugin.HyperStackConverter;
-import ij.plugin.ZProjector;
+import ij.plugin.*;
 import ij.process.ImageConverter;
 import ij.process.LUT;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.scijava.util.FileUtils;
 
@@ -45,13 +42,13 @@ public class Driffta {
 
     private static final boolean copy = false;
     private static boolean color = false;
-//    private static HashMap<String, Double> expVsMs = new HashMap<>();
-//
+    private static HashMap<String, Double> expVsMs = new HashMap<>();
+
     // Define the path to a local file.
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 
         SessionIdentifierGenerator gen = new SessionIdentifierGenerator();
 
@@ -116,21 +113,6 @@ public class Driffta {
             }
             final String[] channelNames = chNamesAL.toArray(new String[chNamesAL.size()]);
 
-//            File exposureTimesFile = new File(baseDir + File.separator + "exposure_times.txt");
-//            String[][] exposureTimes = create2DIntMatrixFromFile(exposureTimesFile);
-//            populateExposureTimesMap();
-//
-//            for(int i=0; i<exposureTimes.length; i++) {
-//                for(int j=0; j<exposureTimes[0].length; j++) {
-//                    if(expVsMs.containsKey(exposureTimes[i][j])) {
-//                        exposureTimes[i][j] = String.valueOf(expVsMs.get(exposureTimes[i][j]));
-//                    }
-//                }
-//            }
-//
-//
-//
-//            System.out.println(findBlankCyclesAndChannels(channelNames, exp));
             int[][] deconvIterations = new int[exp.num_cycles][exp.channel_names.length];
 
             for (int i = 0; i < deconvIterations.length; i++) {
@@ -321,12 +303,7 @@ public class Driffta {
 
             log("All files opened. Deleting temporary dir");
 
-            new Thread() {
-                @Override
-                public void run() {
-                    FileUtils.deleteRecursively(new File(tmpDestDir));
-                }
-            }.start();
+            new Thread(() -> FileUtils.deleteRecursively(new File(tmpDestDir))).start();
 
             if (exp.HandEstain) {
                 int cycle = exp.num_cycles;
@@ -518,11 +495,33 @@ public class Driffta {
                 ((CompositeImage) hyp).setLuts(new LUT[]{LUT.createLutFromColor(Color.RED), LUT.createLutFromColor(Color.GREEN), LUT.createLutFromColor(new Color(0, 70, 255))});
             }
 
-            FileSaver fs = new FileSaver(hyp);
-            String outStr = outDir + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width);
+            //Do background subtraction if needed
+            ImagePlus reorderedHyp = null;
+            if(exp.bgSub) {
+                reorderedHyp = backgroundSubtraction(hyp, exp, baseDir, channelNames);
+            }
 
-            log("Saving result file: " + outStr);
-            fs.saveAsTiff(outStr);
+            //Save prcessed files as normal tiffs or image sequence
+            if(!po.isExportImgSeq()) {
+                FileSaver fs = new FileSaver(hyp);
+                String outStr = outDir + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width);
+
+                log("Saving result tiff file: " + outStr);
+                fs.saveAsTiff(outStr);
+            }
+            else {
+                if(reorderedHyp != null) {
+                    String outStr = outDir + File.separator + FilenameUtils.removeExtension(Experiment.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width));
+                    File out = new File(outStr);
+                    if (!out.exists()) {
+                        out.mkdir();
+                    }
+
+                    log("Saving result file as image sequence: " + outStr);
+                    reorderedHyp.setTitle(FilenameUtils.removeExtension(Experiment.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width)));
+                    IJ.run(reorderedHyp, "Image Sequence... ", "format=TIFF save=" + outStr);
+                }
+            }
 
             if (copy) {
                 delete(new File(tmpDestDir));
@@ -534,19 +533,12 @@ public class Driffta {
             if (!bfFile.exists()) {
                 bfFile.mkdirs();
             }
-
             
             log("Running best focus");
             ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(hyp, bestFocusPlanes);
             log("Saving the focused tiff");
-            fs = new FileSaver(focused);
+            FileSaver fs = new FileSaver(focused);
             fs.saveAsTiff(bestFocus + File.separator + Experiment.getDestStackFileNameWithZIndex(exp.tiling_mode, tile, region, exp.region_width, bestFocusPlanes[0]));
-            /*
-            Duplicator dup = new Duplicator();
-            for (int fr = 1; fr <= focused.getNFrames(); fr++) {
-                fs = new FileSaver(dup.run(focused, 1, focused.getNChannels(), 1, focused.getNSlices(), fr, fr));
-                fs.saveAsPng(bestFocus + File.separator + Experiment.getDestPNGFileName(exp.tiling_mode, tile, region, exp.region_width, fr));
-            }*/
             
             WindowManager.closeAllWindows();
 
@@ -582,92 +574,6 @@ public class Driffta {
     private static File logFile = null;
     private static PrintStream logStream;
 
-//    private static HashMap<Integer, List<Integer>> findBlankCyclesAndChannels(String[] channelNames, Experiment exp) {
-//        HashMap<Integer, List<Integer>> cycVsCh = new HashMap<>();
-//        for(int i=0; i<channelNames.length; i++) {
-//            int channels_count = exp.channel_names.length;
-//            if(channelNames[i].contains("blank")) {
-//                String[] str = channelNames[i].split("_");
-//                if(str[str.length-1].contains("cyc")) {
-//                    int cycle = Integer.parseInt(str[str.length-1].replaceAll("[A-Za-z]", ""));
-//                    if (!cycVsCh.containsKey(cycle)) {
-//                        List<Integer> chList = new ArrayList<>();
-//                        chList.add((i % channels_count) + 1);
-//                        cycVsCh.put(cycle, chList);
-//                    } else {
-//                        cycVsCh.get(cycle).add((i % channels_count) + 1);
-//                    }
-//                }
-//            }
-//        }
-//        return cycVsCh;
-//    }
-//
-//    private static void populateExposureTimesMap() {
-//        expVsMs.put("skip", (double)0);
-//        expVsMs.put("1/7500s", (double)1000 * 1/7500);
-//        expVsMs.put("1/5500s", (double)1000 * 1/5500);
-//        expVsMs.put("1/4500s", (double)1000 * 1/4500);
-//        expVsMs.put("1/4000s", (double)1000 * 1/4000);
-//        expVsMs.put("1/3200s", (double)1000 * 1/3200);
-//        expVsMs.put("1/2800s", (double)1000 * 1/2800);
-//        expVsMs.put("1/2500s", (double)1000 * 1/2500);
-//        expVsMs.put("1/2250s", (double)1000 * 1/2250);
-//        expVsMs.put("1/2000s", (double)1000 * 1/2000);
-//        expVsMs.put("1/1500s", (double)1000 * 1/1500);
-//        expVsMs.put("1/1300s", (double)1000 * 1/1300);
-//        expVsMs.put("1/1100s", (double)1000 * 1/1100);
-//        expVsMs.put("1/1000s", (double)1000 * 1/1000);
-//        expVsMs.put("1/800s", (double)1000 * 1/800);
-//        expVsMs.put("1/700s", (double)1000 * 1/700);
-//        expVsMs.put("1/600s", (double)1000 * 1/600);
-//        expVsMs.put("1/500s", (double)1000 * 1/500);
-//        expVsMs.put("1/400s", (double)1000 * 1/400);
-//        expVsMs.put("1/350s", (double)1000 * 1/350);
-//        expVsMs.put("1/300s", (double)1000 * 1/300);
-//        expVsMs.put("1/250s", (double)1000 * 1/250);
-//        expVsMs.put("1/200s", (double)1000 * 1/200);
-//        expVsMs.put("1/175s", (double)1000 * 1/175);
-//        expVsMs.put("1/150s", (double)1000 * 1/150);
-//        expVsMs.put("1/120s", (double)1000 * 1/120);
-//        expVsMs.put("1/100s", (double)1000 * 1/100);
-//        expVsMs.put("1/80s", (double)1000 * 1/80);
-//        expVsMs.put("1/70s", (double)1000 * 1/70);
-//        expVsMs.put("1/60s", (double)1000 * 1/60);
-//        expVsMs.put("1/50s", (double)1000 * 1/50);
-//        expVsMs.put("1/40s", (double)1000 * 1/40);
-//        expVsMs.put("1/35s", (double)1000 * 1/35);
-//        expVsMs.put("1/30s", (double)1000 * 1/30);
-//        expVsMs.put("1/25s", (double)1000 * 1/25);
-//        expVsMs.put("1/20s", (double)1000 * 1/20);
-//        expVsMs.put("1/15s", (double)1000 * 1/15);
-//        expVsMs.put("1/12s", (double)1000 * 1/12);
-//        expVsMs.put("1/10s", (double)1000 * 1/10);
-//        expVsMs.put("1/8.5s", 1000 * 1/8.5);
-//        expVsMs.put("1/7.5s", 1000 * 1/7.5);
-//        expVsMs.put("1/6s", (double)1000 * 1/6);
-//        expVsMs.put("1/5s", (double)1000 * 1/4);
-//        expVsMs.put("1/4s", (double)1000 * 1/4);
-//        expVsMs.put("1/3.5s", 1000 * 1/3.5);
-//        expVsMs.put("1/3s", (double)1000 * 1/3);
-//        expVsMs.put("1/2.5s", 1000 * 1/2.50);
-//        expVsMs.put("1/2.3s", 1000 * 1/2.3);
-//        expVsMs.put("1/2s", (double)1000 * 1/2);
-//        expVsMs.put("1/1.7s", 1000 * 1/1.7);
-//        expVsMs.put("1/1.5s", 1000 * 1/1.5);
-//        expVsMs.put("1/1.2s", 1000 * 1/1.2);
-//        expVsMs.put("1s", (double)1000 * 1);
-//        expVsMs.put("1.2s", 1000 * 1.2);
-//        expVsMs.put("1.5s", 1000 * 1.5);
-//        expVsMs.put("2s", (double)1000 * 2);
-//        expVsMs.put("2.5s", (double)1000 * 2.5);
-//        expVsMs.put("3s", (double)1000 * 3);
-//        expVsMs.put("3.5s", 1000 * 3.5);
-//        expVsMs.put("4s", (double)1000 * 4);
-//        expVsMs.put("4.5s", (double)1000 * 4.5);
-//        expVsMs.put("5s", (double)1000 * 5);
-//    }
-//
     public static void log(String s) {
         logger.print(s);
         /*if (false && logFile == null) {
@@ -696,21 +602,249 @@ public class Driffta {
         DriftcompInterlockDispatcher.releaseLock();
         DeconvolutionInterlockDispatcher.releaseLock();
     }
-//
-//    private static String[][] create2DIntMatrixFromFile(File exposureTimes) throws IOException {
-//        Scanner in = new Scanner(exposureTimes);
-//        List<String[]> lines = new ArrayList<>();
-//        while(in.hasNextLine()) {
-//            String line = in.nextLine().trim();
-//            String[] splitted = line.split("\\t");
-//            lines.add(splitted);
-//        }
-//
-//        String[][] result = new String[lines.size()][];
-//        for(int i = 0; i<result.length; i++) {
-//            result[i] = lines.get(i);
-//        }
-//
-//        return result;
-//    }
+
+    /**
+     * Method to parse the content of exposureTimes.txt and store in a 2D String matrix
+     * @param exposureTimes
+     * @return
+     * @throws IOException
+     */
+    private static String[][] parseExposureTimesTxtFile(File exposureTimes) throws IOException {
+        Scanner in = new Scanner(exposureTimes);
+        List<String[]> lines = new ArrayList<>();
+        while(in.hasNextLine()) {
+            String line = in.nextLine().trim();
+            String[] splitStr = line.split("\\t");
+            lines.add(splitStr);
+        }
+
+        String[][] result = new String[lines.size()][];
+        for(int i = 0; i<result.length; i++) {
+            result[i] = lines.get(i);
+        }
+
+        return result;
+    }
+
+    /**
+     * Preserving order by iterating through channel entries from channelNames field in experiment.json
+     * @param expTimes
+     * @param chNames
+     * @return
+     */
+    private static HashMap<Integer, List<String>> createOrderlyMapForExpTimes(String[][] expTimes, String[] chNames) {
+        LinkedHashMap<Integer, List<String>> chVsExp = new LinkedHashMap<>();
+        for(String ch: chNames) {
+            List firstRow = Arrays.asList(expTimes[0]);
+            int index = firstRow.indexOf(ch);
+            if(index != -1) {
+                for(int i=0; i<expTimes.length; i++){
+                    if (!chVsExp.containsKey(Arrays.asList(chNames).indexOf(ch) + 1)) {
+                        List<String> expTimesForAChannel = new ArrayList<>();
+                        chVsExp.put(Arrays.asList(chNames).indexOf(ch) + 1, expTimesForAChannel);
+                    }
+                    if(i != 0) {
+                        chVsExp.get(Arrays.asList(chNames).indexOf(ch) + 1).add(expTimes[i][index]);
+                    }
+                }
+            }
+        }
+        return chVsExp;
+    }
+
+    /**
+     * Method to identify the channel-cycle that contains the blank cycles
+     * Returns a list of blank cycles for every channel if present
+     * @param channelNames
+     * @param exp
+     * @return
+     */
+    private static HashMap<Integer, List<Integer>> findBlankCyclesAndChannels(String[] channelNames, Experiment exp) {
+        LinkedHashMap<Integer, List<Integer>> chVsCyc = new LinkedHashMap<>();
+        for(int i=0; i<channelNames.length; i++) {
+            int channels_count = exp.channel_names.length;
+            if(channelNames[i].contains("blank")) {
+                int ch = (i%channels_count) + 1;
+                //String ch = exp.channel_names[(i%channels_count)];
+                int cycle = (i/channels_count) + 1;
+                if (!chVsCyc.containsKey(ch)) {
+                    List<Integer> cycList = new ArrayList<>();
+                    chVsCyc.put(ch, cycList);
+                }
+                chVsCyc.get(ch).add(cycle);
+            }
+        }
+        return chVsCyc;
+    }
+
+    /**
+     * Method to find the channel-cycle with the highest exposure time for blank channels/cycles
+     * Always returs one cycle with max exposure for one channel that has a blank cycle
+     * @param expTimesForEveryCh
+     * @param blankCyclesForEveryCh
+     * @return
+     */
+    private static HashMap<Integer, Integer> getHighestExpCycForEveryChannel(HashMap<Integer, List<String>> expTimesForEveryCh, HashMap<Integer, List<Integer>> blankCyclesForEveryCh) {
+        LinkedHashMap<Integer, Integer> maxExpTimeChVsCyc = new LinkedHashMap<>();
+        for(Map.Entry<Integer, List<Integer>> blankCycEntry : blankCyclesForEveryCh.entrySet()) {
+            List<Integer> blankCycForACh = blankCycEntry.getValue();
+            int firstBlankCycIndex = blankCycForACh.get(0) - 1;
+            List<String> expTimesForACh = expTimesForEveryCh.get(blankCycEntry.getKey());
+
+            int cycForMaxExp = blankCycForACh.get(0);
+            double maxExp = Double.parseDouble(expTimesForACh.get(firstBlankCycIndex));
+
+            for(int i = 1; i<blankCycForACh.size(); i++) {
+                double newMaxExp = Double.parseDouble(expTimesForACh.get(blankCycForACh.get(i) - 1));
+                if(newMaxExp > maxExp) {
+                    maxExp = newMaxExp;
+                    cycForMaxExp = blankCycForACh.get(i);
+                }
+            }
+            maxExpTimeChVsCyc.put(blankCycEntry.getKey(), cycForMaxExp);
+        }
+        return maxExpTimeChVsCyc;
+    }
+
+    /**
+     * Method to perform background subtraction to eliminate noise from the processed image after drift compensation and deconvolution
+     * @param hyp
+     * @param exp
+     * @param baseDir
+     * @param channelNames
+     * @throws IOException
+     */
+    private static ImagePlus backgroundSubtraction(ImagePlus hyp, Experiment exp, String baseDir, String[] channelNames) throws IOException {
+        Duplicator dup = new Duplicator();
+
+        File exposureTimesFile = new File(baseDir + File.separator + "exposure_times.txt");
+        if(!exposureTimesFile.exists()) {
+            throw new IllegalStateException("exposure_times.txt file not present. This is required for background subtraction to eliminate noise. Try again!");
+        }
+        String[][] exposureTimes = parseExposureTimesTxtFile(exposureTimesFile);
+        populateExposureTimesMap();
+
+        for(int i=0; i<exposureTimes.length; i++) {
+            for(int j=0; j<exposureTimes[0].length; j++) {
+                if(expVsMs.containsKey(exposureTimes[i][j])) {
+                    exposureTimes[i][j] = String.valueOf(expVsMs.get(exposureTimes[i][j]));
+                }
+            }
+        }
+
+        HashMap<Integer, List<String>> expTimesMapForChannels = createOrderlyMapForExpTimes(exposureTimes, exp.channel_names);
+        HashMap<Integer, List<Integer>> blankCycMapForChannels = findBlankCyclesAndChannels(channelNames, exp);
+        HashMap<Integer, Integer> maxExpChVsCyc = getHighestExpCycForEveryChannel(expTimesMapForChannels, blankCycMapForChannels);
+
+        ArrayList<ImagePlus> stacks = new ArrayList<>();
+
+        for(int ch = 1; ch <= hyp.getNChannels(); ch++) {
+            boolean sub = maxExpChVsCyc.containsKey(ch);
+
+            //Get zSlices stack for the channel-cycle that has maximum exposure time.
+            ImagePlus maxBlankStack =  sub ? dup.run(hyp, ch, ch, 1, hyp.getNSlices(), maxExpChVsCyc.get(ch), maxExpChVsCyc.get(ch)):null;
+
+            //Iterate over the stacks
+            for(int fr=0; fr<hyp.getNFrames(); fr++) {
+                if(!sub) {
+                    ImagePlus st = dup.run(hyp, ch, ch, 1, hyp.getNSlices(), fr+1, fr+1);
+                    stacks.add(st);
+                    continue;
+                }
+                //Get a list of all exposure times for this channel(for all cycles)
+                List<String> expTimes = expTimesMapForChannels.get(ch);
+
+                //find the exposure time that corresponds to the blank cycle
+                double expBlankStack = Double.parseDouble(expTimes.get(maxExpChVsCyc.get(ch)-1));
+
+                //find the exposure time that corresponds to the current stack
+                double expStack = Double.parseDouble(expTimes.get(fr));
+
+                double r = expStack/expBlankStack;
+
+                //multiply the blank stack image processor with the factor r
+                maxBlankStack.getProcessor().multiply(r);
+
+                ImageCalculator ic = new ImageCalculator();
+
+                //Subtract the blank stack from the current stack and store it in the current
+                ImagePlus st = ic.run("Subtract create stack",  dup.run(hyp, ch, ch, 1, hyp.getNSlices(), fr+1, fr+1), maxBlankStack);
+                stacks.add(st);
+            }
+        }
+
+        ImagePlus concatenatedStacks = new Concatenator().concatenate(stacks.toArray(new ImagePlus[stacks.size()]), false);
+        ImagePlus newHyp = HyperStackConverter.toHyperStack(concatenatedStacks, hyp.getNChannels(), hyp.getNSlices(), hyp.getNFrames(), "xyztc", "composite");
+        ImagePlus reorderedHyp = Hyperstack_rearranger.reorderHyperstack(newHyp, "CZT", false, false);
+
+        return reorderedHyp;
+    }
+
+    /**
+     * Method to populate the exposure times map which is used to store exposure time in ms
+     */
+    private static void populateExposureTimesMap() {
+        expVsMs.put("skip", (double)0);
+        expVsMs.put("1/7500s", (double)1000 * 1/7500);
+        expVsMs.put("1/5500s", (double)1000 * 1/5500);
+        expVsMs.put("1/4500s", (double)1000 * 1/4500);
+        expVsMs.put("1/4000s", (double)1000 * 1/4000);
+        expVsMs.put("1/3200s", (double)1000 * 1/3200);
+        expVsMs.put("1/2800s", (double)1000 * 1/2800);
+        expVsMs.put("1/2500s", (double)1000 * 1/2500);
+        expVsMs.put("1/2250s", (double)1000 * 1/2250);
+        expVsMs.put("1/2000s", (double)1000 * 1/2000);
+        expVsMs.put("1/1500s", (double)1000 * 1/1500);
+        expVsMs.put("1/1300s", (double)1000 * 1/1300);
+        expVsMs.put("1/1100s", (double)1000 * 1/1100);
+        expVsMs.put("1/1000s", (double)1000 * 1/1000);
+        expVsMs.put("1/800s", (double)1000 * 1/800);
+        expVsMs.put("1/700s", (double)1000 * 1/700);
+        expVsMs.put("1/600s", (double)1000 * 1/600);
+        expVsMs.put("1/500s", (double)1000 * 1/500);
+        expVsMs.put("1/400s", (double)1000 * 1/400);
+        expVsMs.put("1/350s", (double)1000 * 1/350);
+        expVsMs.put("1/300s", (double)1000 * 1/300);
+        expVsMs.put("1/250s", (double)1000 * 1/250);
+        expVsMs.put("1/200s", (double)1000 * 1/200);
+        expVsMs.put("1/175s", (double)1000 * 1/175);
+        expVsMs.put("1/150s", (double)1000 * 1/150);
+        expVsMs.put("1/120s", (double)1000 * 1/120);
+        expVsMs.put("1/100s", (double)1000 * 1/100);
+        expVsMs.put("1/80s", (double)1000 * 1/80);
+        expVsMs.put("1/70s", (double)1000 * 1/70);
+        expVsMs.put("1/60s", (double)1000 * 1/60);
+        expVsMs.put("1/50s", (double)1000 * 1/50);
+        expVsMs.put("1/40s", (double)1000 * 1/40);
+        expVsMs.put("1/35s", (double)1000 * 1/35);
+        expVsMs.put("1/30s", (double)1000 * 1/30);
+        expVsMs.put("1/25s", (double)1000 * 1/25);
+        expVsMs.put("1/20s", (double)1000 * 1/20);
+        expVsMs.put("1/15s", (double)1000 * 1/15);
+        expVsMs.put("1/12s", (double)1000 * 1/12);
+        expVsMs.put("1/10s", (double)1000 * 1/10);
+        expVsMs.put("1/8.5s", 1000 * 1/8.5);
+        expVsMs.put("1/7.5s", 1000 * 1/7.5);
+        expVsMs.put("1/6s", (double)1000 * 1/6);
+        expVsMs.put("1/5s", (double)1000 * 1/4);
+        expVsMs.put("1/4s", (double)1000 * 1/4);
+        expVsMs.put("1/3.5s", 1000 * 1/3.5);
+        expVsMs.put("1/3s", (double)1000 * 1/3);
+        expVsMs.put("1/2.5s", 1000 * 1/2.50);
+        expVsMs.put("1/2.3s", 1000 * 1/2.3);
+        expVsMs.put("1/2s", (double)1000 * 1/2);
+        expVsMs.put("1/1.7s", 1000 * 1/1.7);
+        expVsMs.put("1/1.5s", 1000 * 1/1.5);
+        expVsMs.put("1/1.2s", 1000 * 1/1.2);
+        expVsMs.put("1s", (double)1000 * 1);
+        expVsMs.put("1.2s", 1000 * 1.2);
+        expVsMs.put("1.5s", 1000 * 1.5);
+        expVsMs.put("2s", (double)1000 * 2);
+        expVsMs.put("2.5s", (double)1000 * 2.5);
+        expVsMs.put("3s", (double)1000 * 3);
+        expVsMs.put("3.5s", 1000 * 3.5);
+        expVsMs.put("4s", (double)1000 * 4);
+        expVsMs.put("4.5s", (double)1000 * 4.5);
+        expVsMs.put("5s", (double)1000 * 5);
+    }
 }

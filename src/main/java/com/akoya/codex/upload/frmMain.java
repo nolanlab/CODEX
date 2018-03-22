@@ -13,6 +13,7 @@ import ij.ImagePlus;
 import ij.io.FileSaver;
 import ij.plugin.Duplicator;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
@@ -185,7 +186,11 @@ public class frmMain extends javax.swing.JFrame {
         cmdStart.setPreferredSize(new java.awt.Dimension(150, 30));
         cmdStart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdStartActionPerformed(evt);
+                try {
+                    cmdStartActionPerformed(evt);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             }
         });
 
@@ -375,7 +380,7 @@ public class frmMain extends javax.swing.JFrame {
         }
     }
 
-    public Thread cmdStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
+    public Thread cmdStartActionPerformed(java.awt.event.ActionEvent evt) throws Exception {//GEN-FIRST:event_cmdStartActionPerformed
        Thread th = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -397,8 +402,10 @@ public class frmMain extends javax.swing.JFrame {
                 }
                 Microscope microscope = MicroscopeFactory.getMicroscope(microscopeType);
                 //Included a feature to check if the product of region size X and Y is equal to the number of tiles
+                File expJSON = null;
                 if(microscope.isTilesAProductOfRegionXAndY(dir, experimentView)) {
-                    exp.saveToFile(new File(dir + File.separator + "Experiment.json"));
+                    expJSON = new File(dir + File.separator + "Experiment.json");
+                    exp.saveToFile(expJSON);
                 }
                 else {
                     JOptionPane.showMessageDialog(null, "Check the values of Region Size X and Y and then try again!");
@@ -411,7 +418,12 @@ public class frmMain extends javax.swing.JFrame {
                 boolean doUpload = po.doUpload();
                 po.saveToFile(poFile);
 
-                //Included a feature to check if the channelNames.txt file is present
+                //Copy Experiment.JSON to processed folder.
+                if(expJSON != null) {
+                    copyFileFromSourceToDest(expJSON, po.getTempDir());
+                }
+
+                        //Included a feature to check if the channelNames.txt file is present
                 if (!experimentView.isChannelNamesPresent(dir)) {
                     JOptionPane.showMessageDialog(null, "channelNames.txt file is not present in the experiment folder. Please check and try again!");
                     return;
@@ -476,8 +488,13 @@ public class frmMain extends javax.swing.JFrame {
 
                 for (int reg : exp.regIdx) {
                     for (int tile = 1; tile <= exp.region_height * exp.region_width; tile++) {
-
-                        File d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
+                        File d = null;
+                        if(!po.isExportImgSeq()) {
+                            d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
+                        }
+                        else {
+                            d = new File(po.getTempDir() + File.separator + FilenameUtils.removeExtension(Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width)));
+                        }
                         int numTrial = 0;
                         while (!d.exists() && numTrial < 3) {
                             numTrial++;
@@ -577,7 +594,7 @@ public class frmMain extends javax.swing.JFrame {
                 }
 
             } catch (Exception e) {
-                throw new Error(e);
+                System.out.println(new Error(e));
             }
           }
         });

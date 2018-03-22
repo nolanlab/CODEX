@@ -62,6 +62,7 @@ public class Experiment {
     public final String projName;
     public final boolean optionalFocusFragment;
     public final int focusing_offset;
+    public boolean bgSub;
 
     public static transient HashMap<String, String> projectNameCache = new HashMap<>();
     public static transient final MicroscopeTypeEnum[] microscopeTypes = new MicroscopeTypeEnum[]{KEYENCE, ZEISS, LEICA};
@@ -73,7 +74,7 @@ public class Experiment {
             int cycle_lower_limit, int cycle_upper_limit, int[] regIdx,
             String[] region_names, String tiling_mode, int region_width,
             int region_height, int tile_overlap_X, int tile_overlap_Y,
-            String objectiveType, boolean HandEstain, String projName, boolean optionalFocusFragment, int focusing_offset) {
+            String objectiveType, boolean HandEstain, boolean bgSub, String projName, boolean optionalFocusFragment, int focusing_offset) {
         this.name = name;
         this.date = date;
         this.codex_instrument = codex_instrument;
@@ -114,6 +115,7 @@ public class Experiment {
             readout_channels[k++] = i;
         }
         this.HandEstain = HandEstain;
+        this.bgSub = bgSub;
         this.projName = projName;
         this.optionalFocusFragment = optionalFocusFragment;
         this.focusing_offset = focusing_offset;

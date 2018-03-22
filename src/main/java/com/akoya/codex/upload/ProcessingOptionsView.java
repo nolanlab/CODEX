@@ -40,7 +40,9 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
                 new URL(txtURL.getText()),
                 txtUsrname.getText(),
                 new String(txtPwd.getPassword()),
-                rbBoth.isSelected()
+                rbBoth.isSelected(),
+                rbExportTiff.isSelected(),
+                rbImageSeq.isSelected()
                 );
                 
     }
@@ -55,6 +57,7 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         jPanel3 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         spinThreads = new javax.swing.JSpinner();
@@ -62,6 +65,8 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
         jLabel26 = new javax.swing.JLabel();
         rbProcessing = new javax.swing.JRadioButton();
         rbBoth = new javax.swing.JRadioButton();
+        rbExportTiff = new JRadioButton();
+        rbImageSeq = new JRadioButton();
         chkBlind = new javax.swing.JCheckBox();
         chkTrueCrop = new javax.swing.JCheckBox();
         jLabel7 = new javax.swing.JLabel();
@@ -89,6 +94,7 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
                 txtTempDirMouseReleased(evt);
             }
         });
+
         txtTempDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTempDirActionPerformed(evt);
@@ -103,6 +109,15 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
 
         buttonGroup1.add(rbBoth);
         rbBoth.setText("Processing and upload");
+
+        buttonGroup2.add(rbExportTiff);
+        rbExportTiff.setSelected(true);
+        rbExportTiff.setText("Export as Tiff");
+
+        buttonGroup2.add(rbImageSeq);
+        rbImageSeq.setText("Export as Image Sequence");
+
+
         chkBlind.setText("use Blind deconvolution (must have license)");
 
         chkTrueCrop.setText("use bleach-minimizing cropping (incompatible with CODEXweb)");
@@ -146,6 +161,7 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
                         .addComponent(jLabel26))
                     .addComponent(jLabel2)
                     .addComponent(rbProcessing)
+                    .addComponent(rbExportTiff)
                     .addComponent(jLabel1)
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -164,7 +180,8 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
                                 .addComponent(chkBlind)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(chkTrueCrop))
-                            .addComponent(rbBoth))
+                            .addComponent(rbBoth)
+                            .addComponent(rbImageSeq))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -202,6 +219,9 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(rbProcessing)
                             .addComponent(rbBoth))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(rbExportTiff)
+                            .addComponent(rbImageSeq))
                         .addGap(0, 13, Short.MAX_VALUE))))
         );
 
@@ -221,6 +241,8 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
         txtPwd.setText(opt.getPassword());
         txtUsrname.setText(opt.getUsername());
         txtTempDir.setText(opt.getTempDir().getPath());
+        rbExportTiff.setSelected(opt.isExportTiff());
+        rbImageSeq.setSelected(opt.isExportImgSeq());
     }
 
     private void txtURLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtURLActionPerformed
@@ -277,8 +299,25 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
         this.rbBoth = rbBoth;
     }
 
+    public JRadioButton getRbExportTiff() {
+        return rbExportTiff;
+    }
+
+    public void setRbExportTiff(JRadioButton rbExportTiff) {
+        this.rbExportTiff = rbExportTiff;
+    }
+
+    public JRadioButton getRbImageSeq() {
+        return rbImageSeq;
+    }
+
+    public void setRbImageSeq(JRadioButton rbImageSeq) {
+        this.rbImageSeq = rbImageSeq;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JCheckBox chkBlind;
     private javax.swing.JCheckBox chkTrueCrop;
     private javax.swing.JLabel jLabel1;
@@ -289,6 +328,9 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JRadioButton rbBoth;
     private javax.swing.JRadioButton rbProcessing;
+    private JRadioButton rbExportTiff;
+    private JRadioButton rbImageSeq;
+
     private javax.swing.JSpinner spinThreads;
     private javax.swing.JPasswordField txtPwd;
 

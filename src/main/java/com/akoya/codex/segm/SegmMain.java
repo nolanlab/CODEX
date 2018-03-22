@@ -3,9 +3,11 @@ package com.akoya.codex.segm;
 import com.akoya.codex.DefaultOptionPane;
 import com.akoya.codex.OkayMockOptionPane;
 import com.akoya.codex.OptionPane;
+import com.akoya.codex.upload.Experiment;
 import com.akoya.codex.upload.TextAreaOutputStream;
 import com.akoya.codex.upload.logger;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -212,8 +214,8 @@ public class SegmMain extends JFrame {
                 else {
                     File dir = new File(configField.getText());
                     if(dir.exists() && dir.isDirectory()) {
-                        File[] tifFiles = dir.listFiles(f -> f.getName().endsWith(".tif") || f.getName().endsWith(".tiff"));
-                        if(tifFiles == null || tifFiles.length < 1) {
+                        File[] regFolders = dir.listFiles(f -> f.getName().startsWith("reg0"));
+                        if(regFolders == null || regFolders.length < 1) {
                             JOptionPane.showMessageDialog(configPanel, "No tif files present in the folder. Specify the folder with tif files and best focus folder.");
                             System.exit(0);
                         }
