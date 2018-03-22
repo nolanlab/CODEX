@@ -22,36 +22,48 @@ public class ProcessorTest {
     private static Experiment exp;
     private static ProcessingOptions po;
 
-    private String testExp = "D:\\exp2Test";
-    private String outDir = "D:\\exp2TestPro";
+    private String testExp = "F:\\exp2Test";
+    private String outDir = "F:\\exp2TestPro";
 
     @BeforeTest
     public void setUp() throws Exception {
         frm = new frmMain();
         expView = frm.getExperimentView();
+        poView = frm.getUploadOptionsView();
 
         JTextField txtDir = new JTextField();
         txtDir.setText(testExp);
         expView.setTxtDir(txtDir);
 
-        File expJS = new File(testExp + File.separator + "Experiment.json");
-        if (expJS.exists()) {
-            try {
-                expView.load(Experiment.loadFromJSON(expJS), new File(testExp));
-            } catch (Exception e) {
-                logger.showException(e);
-            }
-        }
-
-        exp = expView.getExperiment();
-        poView = frm.getUploadOptionsView();
-
         JTextField txtTempDir = new JTextField();
         txtTempDir.setText(outDir);
         poView.setTxtTempDir(txtTempDir);
 
+        File expJS = new File(testExp + File.separator + "Experiment.json");
+        if (expJS.exists()) {
+            try {
+                exp = Experiment.loadFromJSON(expJS);
+                expView.load(exp, new File(testExp));
+            } catch (Exception e) {
+                logger.showException(e);
+            }
+        }
+        else {
+            throw new IllegalStateException("Experiment.json does not exist for the test experiment!");
+        }
+
         File poFile = new File(testExp + File.separator + "processingOptions.json");
-        po = ProcessingOptions.load(poFile);
+        if(poFile.exists()) {
+            try {
+                po = ProcessingOptions.load(poFile);
+                poView.load(po);
+            } catch (Exception e) {
+                logger.showException(e);
+            }
+        }
+        else {
+            throw new IllegalStateException("ProcessingOptions.json does not exist for the test experiment!");
+        }
     }
 
     @Test(priority = 1)
@@ -89,10 +101,9 @@ public class ProcessorTest {
         Thread th= frm.cmdStartActionPerformed(new ActionEvent(this, 1, "TestEvt"));
         do {
             Thread.currentThread().sleep(1000);
-        }while(th.isAlive() && (sec++) < 600);
+        }while(th.isAlive() && (sec++) < 900);
 
-
-        Assert.assertTrue(sec < 600);
+        Assert.assertTrue(sec < 900);
         Assert.assertTrue(frmMainTestRunFile != null && frmMainTestRunFile.exists());
     }
 

@@ -88,7 +88,7 @@ public class RegionImageWriter {
         }
 
         for (int z = 0; z < d; z++) {
-            String fileName = String.format(outputDir + File.separator + "regions_" + srcFileName + "_Z%02d", z);
+            String fileName = String.format(outputDir + File.separator + "regions_" + srcFileName + "_Z%02d", z+1);
             ImageIO.write(bi2[z], "PNG", new File(fileName + ".png"));
         }
     return bi2;

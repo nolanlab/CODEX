@@ -48,6 +48,7 @@ public class ExperimentView extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         txtDir = new JTextField();
@@ -101,6 +102,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel27 = new javax.swing.JLabel();
         jLabel28 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
+        bgSubLabel = new javax.swing.JLabel();
         jLabel29 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         bestFocusCycleLabel = new JLabel();
@@ -381,7 +383,7 @@ public class ExperimentView extends javax.swing.JPanel {
         });
         jPanel4.add(val20);
 
-        jPanel1.setPreferredSize(new java.awt.Dimension(10000, 23));
+        jPanel1.setPreferredSize(new java.awt.Dimension(10000, 19));
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
         buttonGroup1.add(rb_HandE_yes);
@@ -819,6 +821,34 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.gridy = 1;
         optionalPanel.add(focussingOffset, gridBagConstraints);
 
+        bgSubLabel.setText("Background subtraction");
+        bgSubLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
+        bgSubLabel.setMinimumSize(new java.awt.Dimension(100, 20));
+        bgSubLabel.setPreferredSize(new java.awt.Dimension(180, 20));
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+        //gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        optionalPanel.add(bgSubLabel, gridBagConstraints);
+
+        optionalBgSub = new JComboBox<String>();
+        optionalBgSub.setModel(new DefaultComboBoxModel<>(new String[] { "Yes", "No" }));
+        optionalBgSub.setSelectedItem("No");
+        optionalBgSub.setMaximumSize(new java.awt.Dimension(100, 20));
+        optionalBgSub.setMinimumSize(new java.awt.Dimension(40, 20));
+        optionalBgSub.setPreferredSize(new java.awt.Dimension(50, 20));
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        optionalPanel.add(optionalBgSub, gridBagConstraints);
+
 
         this.setLayout(new BorderLayout());
         this.add(jPanel2, BorderLayout.PAGE_START);
@@ -1091,7 +1121,8 @@ public class ExperimentView extends javax.swing.JPanel {
         }
 
         rb_HandE_yes.setSelected(exp.HandEstain);
-        optionalFragmentButton.setSelectedItem(Boolean.toString(exp.optionalFocusFragment) == null ? "Yes" : Boolean.toString(exp.optionalFocusFragment).equalsIgnoreCase("true") ? "Yes" : "No");
+        optionalBgSub.setSelectedItem(Boolean.toString(exp.bgSub) == null ? "No" : Boolean.toString(exp.bgSub).equalsIgnoreCase("true") ? "Yes" : "No");
+        optionalFragmentButton.setSelectedItem(Boolean.toString(exp.optionalFocusFragment) == null ? "No" : Boolean.toString(exp.optionalFocusFragment).equalsIgnoreCase("true") ? "Yes" : "No");
         focussingOffset.setValue(exp.focusing_offset);
         if(exp.HandEstain) {
             JRadioButton rb_handE_yes = getRb_HandE_yes();
@@ -1300,8 +1331,9 @@ public class ExperimentView extends javax.swing.JPanel {
                 Integer.parseInt(val20.getText()),
                 val23.getSelectedItem().toString(),
                 rb_HandE_yes.isSelected(),
+                "Yes".equalsIgnoreCase(optionalBgSub.getSelectedItem().toString()),
                 projName,
-                "No".equalsIgnoreCase(optionalFragmentButton.getSelectedItem().toString()),
+                "Yes".equalsIgnoreCase(optionalFragmentButton.getSelectedItem().toString()),
                 Integer.parseInt(focussingOffset.getValue().toString())
         );
     }
@@ -1438,6 +1470,7 @@ public class ExperimentView extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
@@ -1450,6 +1483,7 @@ public class ExperimentView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel bgSubLabel;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
@@ -1473,6 +1507,7 @@ public class ExperimentView extends javax.swing.JPanel {
     private javax.swing.JRadioButton jRadioButton2;
     private JTextField jTextField1;
     private javax.swing.JRadioButton rb_HandE_yes;
+    private javax.swing.JComboBox<String> optionalBgSub;
     private JTextField txtDir;
     private JTextField val1;
     private javax.swing.JComboBox<String> val10;
