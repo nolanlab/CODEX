@@ -510,16 +510,19 @@ public class Driffta {
                 fs.saveAsTiff(outStr);
             }
             else {
-                if(reorderedHyp != null) {
-                    String outStr = outDir + File.separator + FilenameUtils.removeExtension(Experiment.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width));
-                    File out = new File(outStr);
-                    if (!out.exists()) {
-                        out.mkdir();
-                    }
-
-                    log("Saving result file as image sequence: " + outStr);
-                    reorderedHyp.setTitle(FilenameUtils.removeExtension(Experiment.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width)));
+                String outStr = outDir + File.separator + FilenameUtils.removeExtension(exp.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width));
+                File out = new File(outStr);
+                if (!out.exists()) {
+                    out.mkdir();
+                }
+                log("Saving result file as image sequence: " + outStr);
+                if (reorderedHyp != null) {
+                    reorderedHyp.setTitle(FilenameUtils.removeExtension(exp.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width)));
                     IJ.run(reorderedHyp, "Image Sequence... ", "format=TIFF save=" + outStr);
+                }
+                else {
+                    hyp.setTitle(FilenameUtils.removeExtension(exp.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width)));
+                    IJ.run(hyp, "Image Sequence... ", "format=TIFF save=" + outStr);
                 }
             }
 

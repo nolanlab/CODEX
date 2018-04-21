@@ -394,10 +394,10 @@ public class Main {
         }
         Cell[] cellArr = cellsForTile.toArray(new Cell[cellsForTile.size()]);
         System.out.print("Building adj graph");
-        double[][] adjN = Neighborhood.buildAdjacencyMatrix((Cell[]) cellArr, (int) w, (int) h, (int) d, (boolean) true);
+        double[][] adjN = Neighborhood.buildAdjacencyMatrix(cellArr, w, h, d, true);
         cellsForTile.clear();
         System.out.println("Compensating:");
-        double[][] compRegionIntensities = Segmentation.compensatePositionalSpilloverOfExpressionMtx((SegmentedObject[]) cellsSegmentedObject, (double[][]) adjN, (double[][]) regionIntensities);
+        double[][] compRegionIntensities = Segmentation.compensatePositionalSpilloverOfExpressionMtx(cellsSegmentedObject, adjN, regionIntensities);
         for (int dt = 0; dt < compRegionIntensities.length; ++dt) {
             int id = dt + 1;
             Cell c = new Cell(id, cellsSegmentedObject[dt], tile, compRegionIntensities[dt], featurizedVec[dt]);

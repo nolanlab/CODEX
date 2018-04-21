@@ -187,7 +187,7 @@ public class Segmentation {
         DenseDoubleMatrix2D exp = new DenseDoubleMatrix2D(expressionMatrix);
         DenseDoubleMatrix2D adj = new DenseDoubleMatrix2D(adjMatrix);
         //double[][] out = new double[expressionMatrix[0].length][];
-        System.out.print("Solving matrix: " + adj.rows() + "x" + adj.columns());
+        System.out.println("Solving matrix: " + adj.rows() + "x" + adj.columns());
         //System.out.println(adj.toString());
         // System.out.println("Det:"+Algebra.DEFAULT.det(adj));
 

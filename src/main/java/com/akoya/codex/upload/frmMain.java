@@ -602,7 +602,7 @@ public class frmMain extends javax.swing.JFrame {
         return th;
     }//GEN-LAST:event_cmdStartActionPerformed
 
-    private void cmdStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
+    private void cmdStopActionPerformed(java.awt.event.ActionEvent evt) {
         new Thread(() -> {
             cmdStop.setEnabled(false);
             cmdStart.setEnabled(true);
