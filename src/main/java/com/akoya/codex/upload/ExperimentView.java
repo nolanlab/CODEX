@@ -903,24 +903,6 @@ public class ExperimentView extends javax.swing.JPanel {
     }
 
     /*
-    Method to find the total number of Cycle folders present in the experiment directory.
-     */
-    public static int getMaxCycNumberFromFolder(File dir) {
-        ArrayList<Integer> cycNumbers = new ArrayList<Integer>();
-        if (dir != null) {
-            for (File cyc : dir.listFiles()) {
-                if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
-                    String cycFolderName = cyc.getName();
-                    String[] cycVal = cycFolderName.split("_");
-                    cycNumbers.add(Integer.parseInt(cycVal[0].replaceAll("[^0-9]", "")));
-                }
-            }
-        }
-        Collections.sort(cycNumbers, Collections.reverseOrder());
-        return cycNumbers == null || cycNumbers.isEmpty() ? 0 : cycNumbers.get(0);
-    }
-
-    /*
     Method to check if channelNames.txt file is present in the experiment folder
      */
     public boolean isChannelNamesPresent(File dir) {
@@ -939,19 +921,9 @@ public class ExperimentView extends javax.swing.JPanel {
         boolean containsBcf = false;
         boolean hasHandE = false;
 
-        for (File f : dir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isDirectory() && pathname.getName().startsWith("Cyc");
-            }
-        })) {
+        for (File f : dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().toLowerCase().startsWith("cyc"))) {
             if (!containsBcf) {
-                containsBcf = f.listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(File pathname) {
-                        return pathname.getName().endsWith(".bcf");
-                    }
-                }).length > 0;
+                containsBcf = f.listFiles(pathname -> pathname.getName().endsWith(".bcf")).length > 0;
             }
             if (containsBcf) {
                 val3.setSelectedItem(MicroscopeTypeEnum.KEYENCE);
@@ -966,19 +938,9 @@ public class ExperimentView extends javax.swing.JPanel {
 
         int[][] occup_table = new int[maxCycle][maxRegion];
 
-        for (File f : dir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isDirectory() && pathname.getName().startsWith("Cyc");
-            }
-        })) {
+        for (File f : dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().toLowerCase().startsWith("cyc"))) {
             if (!containsBcf) {
-                containsBcf = f.listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(File pathname) {
-                        return pathname.getName().endsWith(".bcf");
-                    }
-                }).length > 0;
+                containsBcf = f.listFiles(pathname -> pathname.getName().endsWith(".bcf")).length > 0;
             }
             String[] s = f.getName().split("_");
             int cyc = Integer.parseInt(s[0].substring(3));
@@ -997,12 +959,7 @@ public class ExperimentView extends javax.swing.JPanel {
             }
         }
 
-        File[] hef = dir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isDirectory() && pathname.getName().startsWith("HandE");
-            }
-        });
+        File[] hef = dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().startsWith("HandE"));
 
         hasHandE = (hef.length == maxRegion)&&hef.length> 0;
 
@@ -1053,7 +1010,7 @@ public class ExperimentView extends javax.swing.JPanel {
         boolean flag = false;
         if(dir != null) {
             for (File cyc : dir.listFiles()) {
-                if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
+                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
                     val3.setSelectedItem(MicroscopeTypeEnum.KEYENCE);
                     flag = true;
                     break;
@@ -1110,12 +1067,15 @@ public class ExperimentView extends javax.swing.JPanel {
         //Calculate tile overlap
         if(dir != null) {
             for (File cyc : dir.listFiles()) {
-                if (cyc != null && cyc.isDirectory()) {
-                    File[] cycFiles = cyc.listFiles(tif->tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif"));
-                    ImagePlus imp = IJ.openImage(cycFiles[0].getAbsolutePath());
-                    val19.setText(String.valueOf(exp.tile_overlap_X * 100/imp.getWidth()));
-                    val20.setText(String.valueOf(exp.tile_overlap_Y * 100/imp.getHeight()));
-                    break;
+                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
+                    for(File file : cyc.listFiles()) {
+                        if(!file.isDirectory() && (file.getName().endsWith(".tif")||file.getName().endsWith(".tiff"))){
+                            ImagePlus imp = IJ.openImage(file.getAbsolutePath());
+                            val19.setText(String.valueOf(exp.tile_overlap_X * 100/imp.getWidth()));
+                            val20.setText(String.valueOf(exp.tile_overlap_Y * 100/imp.getHeight()));
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -1177,13 +1137,7 @@ public class ExperimentView extends javax.swing.JPanel {
 
         File dir = new File(txtDir.getText());
 
-        File[] subdir = dir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isDirectory() && pathname.getName().startsWith("Cyc");
-            }
-
-        });
+        File[] subdir = dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().startsWith("Cyc"));
 
         String projName = "p";
 

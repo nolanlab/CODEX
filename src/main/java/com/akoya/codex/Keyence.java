@@ -20,7 +20,7 @@ public class Keyence implements Microscope {
     public void guessZSlices(File dir, ExperimentView experimentView) {
         if(dir != null) {
             for (File cyc : dir.listFiles()) {
-                if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
+                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
                     File[] cycFiles = cyc.listFiles();
                     Arrays.sort(cycFiles, Collections.reverseOrder());
                     for (File tif : cycFiles) {
@@ -162,7 +162,7 @@ public class Keyence implements Microscope {
         ArrayList<Integer> cycNumbers = new ArrayList<Integer>();
         if (dir != null) {
             for (File cyc : dir.listFiles()) {
-                if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
+                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
                     String cycFolderName = cyc.getName();
                     String[] cycVal = cycFolderName.split("_");
                     cycNumbers.add(Integer.parseInt(cycVal[0].replaceAll("[^0-9]", "")));
@@ -176,7 +176,7 @@ public class Keyence implements Microscope {
     public boolean isTilesAProductOfRegionXAndY(File dir, ExperimentView expView) {
         if (dir != null) {
             for (File cyc : dir.listFiles()) {
-                if (cyc != null && cyc.isDirectory() && cyc.getName().startsWith("Cyc")) {
+                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
                     File[] cycFiles = cyc.listFiles();
                     Arrays.sort(cycFiles, Collections.reverseOrder());
                     for (File tif : cycFiles) {
@@ -193,7 +193,6 @@ public class Keyence implements Microscope {
                             }
                             break;
                         }
-
                     }
                     //break outer loop
                     break;
