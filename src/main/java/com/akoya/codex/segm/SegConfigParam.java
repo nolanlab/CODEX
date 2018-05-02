@@ -26,9 +26,18 @@ public class SegConfigParam {
     private boolean dont_inverse_memb = false;
     private boolean delaunay_graph = true;
     private int concentricCircles = 0;
+    private boolean anisotropic_reg_growth = true;
 
     public double getSizeCutoffFactor() {
         return sizeCutoffFactor;
+    }
+
+    public void setAnisotropicRegionGrowth(boolean anisotropic_reg_growth) {
+        this.anisotropic_reg_growth = anisotropic_reg_growth;
+    }
+
+    public boolean isAnisotropicRegionGrowth() {
+        return anisotropic_reg_growth;
     }
 
     public void setSizeCutoffFactor(double sizeCutoffFactor) {

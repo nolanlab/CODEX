@@ -299,6 +299,37 @@ public class SegmConfigFrm extends JPanel {
         gridBagConstraints.gridy = 8;
         mainPanel.add(membraneStainCycle, gridBagConstraints);
 
+        //Membrane Stain Cycle
+        anisotropic_Region_Growth_Label = new JLabel();
+        anisotropic_Region_Growth_Label.setText("Anisotropic region growth");
+        anisotropic_Region_Growth_Label.setMaximumSize(new java.awt.Dimension(3000, 20));
+        anisotropic_Region_Growth_Label.setMinimumSize(new java.awt.Dimension(100, 20));
+        anisotropic_Region_Growth_Label.setPreferredSize(new java.awt.Dimension(100, 20));
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+        //gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        mainPanel.add(anisotropic_Region_Growth_Label, gridBagConstraints);
+
+        anisotropic_Region_Growth = new JCheckBox();
+        anisotropic_Region_Growth.setText("<html>Restricts cell growth in Z, improves pos-neg separation on biaxials, but must be disabled for compatibility with CODEX1 Cell paper (Goltsev et al)</html>");
+        anisotropic_Region_Growth.setSelected(true);
+        anisotropic_Region_Growth.setMaximumSize(new java.awt.Dimension(500, 40));
+        anisotropic_Region_Growth.setMinimumSize(new java.awt.Dimension(100, 40));
+        anisotropic_Region_Growth.setPreferredSize(new java.awt.Dimension(100, 40));
+
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 9;
+        mainPanel.add(anisotropic_Region_Growth, gridBagConstraints);
+
         //Readout Channel
 //        readOutChannelsLabel = new JLabel();
 //        readOutChannelsLabel.setText("Readout Channels");
@@ -548,10 +579,20 @@ public class SegmConfigFrm extends JPanel {
         this.membraneStainCycle.setValue(Integer.parseInt(membraneStainCycle));
     }
 
+    public boolean isAnisotropicRegionGrowth() {
+        return anisotropic_Region_Growth.isSelected();
+    }
+    public void setAnisotropicRegionGrowth(boolean value) {
+        this.anisotropic_Region_Growth.setSelected(value);
+    }
+
     private JPanel mainPanel;
 
     private JSpinner CellSizeCutOff;
     private JLabel CellSizeCutOffLabel;
+
+    private JCheckBox anisotropic_Region_Growth;
+    private JLabel anisotropic_Region_Growth_Label;
 
 
 //    private JLabel readOutChannelsLabel;

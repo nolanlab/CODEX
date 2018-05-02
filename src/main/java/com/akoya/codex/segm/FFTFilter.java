@@ -123,9 +123,9 @@ public class FFTFilter {
         ip2 = fht.crop();
 
         System.out.println("not rescaling intensities: ");
-        //double factor = ImageStatistics.getStatistics(ip).mean/ImageStatistics.getStatistics(ip2).mean;
+        double factor = ImageStatistics.getStatistics(ip).mean/ImageStatistics.getStatistics(ip2).mean;
 
-        //ip2.multiply(factor);
+        ip2.multiply(factor);
 
         // convert back to original data type
         int bitDepth = imp.getBitDepth();

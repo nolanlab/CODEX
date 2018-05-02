@@ -48,7 +48,7 @@ public class MaximaFinder3D {
      * will be shown. Setting it to zero makes things faster
      * @return
      */
-    public static SegmentedObject[] findCellsByIntensityGradient(final ImagePlus in, int radius, double maxCutoff, double minCutoff, double relativeCutoff, boolean showImage, final double nuclMaskCutoff) {
+    public static SegmentedObject[] findCellsByIntensityGradient(final ImagePlus in, int radius, double maxCutoff, double minCutoff, double relativeCutoff, boolean showImage, final double nuclMaskCutoff, final boolean anisotropic_reg_growth) {
         final AtomicInteger xGlobal = new AtomicInteger(-1);
         final int w = in.getWidth();
         final int h = in.getHeight();
@@ -116,7 +116,7 @@ public class MaximaFinder3D {
                                         if (otherPoint.x >= 0 && otherPoint.x < w && otherPoint.y >= 0 && otherPoint.y < h && otherPoint.z >= 0 && otherPoint.z < d) {
                                             double currIntens = is.getVoxel(otherPoint.x, otherPoint.y, otherPoint.z);
 
-                                            if (currIntens <= lo_pass_ths) {
+                                            if (currIntens <= lo_pass_ths ) {
                                                 continue;
                                             }
 
@@ -223,8 +223,11 @@ public class MaximaFinder3D {
                                 if (linkMatrix[nextPoint.x][nextPoint.y][nextPoint.z] == null && maximaMatrix[nextPoint.x][nextPoint.y][nextPoint.z] >= 0) {
                                     int i = maximaMatrix[nextPoint.x][nextPoint.y][nextPoint.z];
                                     double normInt = is.getVoxel(x, y, z) / is.getVoxel(nextPoint.x, nextPoint.y, nextPoint.z);
-                                    if (normInt > relativeCutoff && normInt < nuclMaskCutoff) {
+
+                                    if (normInt > (anisotropic_reg_growth?1.0-((1.0-relativeCutoff)/Math.sqrt(1+Math.abs(nextPoint.z-z))):relativeCutoff)  && normInt < nuclMaskCutoff) {
                                         regions[i].add(new Point3D(x, y, z));
+                                    } else {
+                                        break;
                                     }
                                 }
                                 nextPoint = linkMatrix[nextPoint.x][nextPoint.y][nextPoint.z];

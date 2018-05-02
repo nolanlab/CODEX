@@ -256,7 +256,7 @@ public class SegmMain extends JFrame {
                         "relativeCutoff=" + segmConfigFrm.getRelativeCutOff(), "cell_size_cutoff_factor=" + segmConfigFrm.getCellSizeCutOff(), "nuclearStainChannel=" + segmConfigFrm.getNuclearStainChannel(),
                         "nuclearStainCycle=" + segmConfigFrm.getNuclearStainCycle(), "membraneStainChannel=" + segmConfigFrm.getMembraneStainChannel(),
                         "membraneStainCycle=" + segmConfigFrm.getMembraneStainCycle(), //"readoutChannels=1,2,3",
-                        "use_membrane=false", "inner_ring_size=1.0", "delaunay_graph=false");
+                        "use_membrane=false", "inner_ring_size=1.0", "delaunay_graph=false", "anisotropic_region_growth="+segmConfigFrm.isAnisotropicRegionGrowth());
 
                 Path file = Paths.get(dir.getCanonicalPath() + File.separator + "config.txt");
                 Files.write(file, lines, Charset.forName("UTF-8"));
@@ -328,6 +328,9 @@ public class SegmMain extends JFrame {
                         }
                         else if(st.contains("membraneStainCycle=")) {
                             segmConfigFrm.setMembraneStainCycle(st.replace("membraneStainCycle=",""));
+                        }
+                        else if(st.contains("anisotropic_region_growth=")) {
+                            segmConfigFrm.setAnisotropicRegionGrowth(Boolean.parseBoolean(st.replace("anisotropic_region_growth=","")));
                         }
                     }
 
