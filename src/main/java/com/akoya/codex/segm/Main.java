@@ -76,6 +76,9 @@ public class Main {
             int concentricCircles = Integer.parseInt(params.getProperty("concentric_circle_featurization_steps", "0").trim());
             boolean delaunay_graph = Boolean.parseBoolean(params.getProperty("delaunay_graph", "true").trim());
 
+            double size_cutoff_factor = Double.parseDouble(params.getProperty("cell_size_cutoff_factor", "1.0").trim());
+
+
             segParam.setRootDir(rootDir);
             segParam.setShowImage(showImage);
             segParam.setRadius(radius);
@@ -92,6 +95,7 @@ public class Main {
             segParam.setDont_inverse_memb(dont_inverse_memb);
             segParam.setConcentricCircles(concentricCircles);
             segParam.setDelaunay_graph(delaunay_graph);
+            segParam.setSizeCutoffFactor(size_cutoff_factor);
 
             System.out.printf("Using segmentation parameters:\n", new Object[0]);
             System.out.printf(params.toString().replace(',', '\n'), new Object[0]);
@@ -217,7 +221,7 @@ public class Main {
         }
 
         //Filter out small sized regions and remove that row from the txt file
-        double sizeCutoff = (segConfigParam.getRadius() * segConfigParam.getRadius() * segConfigParam.getRadius()) * Math.PI * (4.0 / 3.0);
+        double sizeCutoff = segConfigParam.getSizeCutoffFactor()*((segConfigParam.getRadius() * segConfigParam.getRadius() * segConfigParam.getRadius()) * Math.PI * (4.0 / 3.0));
         cellsSegmentedObject = Arrays.stream(cellsSegmentedObject).filter(c -> c.getPoints().length >= sizeCutoff).toArray(SegmentedObject[]::new);
         BufferedImage[] bi2 = null;
         if(currTiff != null && !imageSeq) {
