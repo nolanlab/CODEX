@@ -489,24 +489,23 @@ public class Driffta {
 
             DeconvolutionInterlockDispatcher.releaseLock();
 
-            if (hyp.getNChannels() == 4) {
-                ((CompositeImage) hyp).setLuts(new LUT[]{LUT.createLutFromColor(Color.WHITE), LUT.createLutFromColor(Color.RED), LUT.createLutFromColor(Color.GREEN), LUT.createLutFromColor(new Color(0, 70, 255))});
-            } else if (hyp.getNChannels() == 3) {
-                ((CompositeImage) hyp).setLuts(new LUT[]{LUT.createLutFromColor(Color.RED), LUT.createLutFromColor(Color.GREEN), LUT.createLutFromColor(new Color(0, 70, 255))});
-            }
-
             //Do background subtraction if needed
-            ImagePlus reorderedHyp = null;
+            ImagePlus reorderedHyp = hyp;
             if(exp.bgSub) {
                 reorderedHyp = backgroundSubtraction(hyp, exp, baseDir, channelNames);
             }
 
+            if (hyp.getNChannels() == 4) {
+                ((CompositeImage) reorderedHyp).setLuts(new LUT[]{LUT.createLutFromColor(Color.WHITE), LUT.createLutFromColor(Color.RED), LUT.createLutFromColor(Color.GREEN), LUT.createLutFromColor(new Color(0, 70, 255))});
+            } else if (hyp.getNChannels() == 3) {
+                ((CompositeImage) reorderedHyp).setLuts(new LUT[]{LUT.createLutFromColor(Color.RED), LUT.createLutFromColor(Color.GREEN), LUT.createLutFromColor(new Color(0, 70, 255))});
+            }
+
             //Save prcessed files as normal tiffs or image sequence
             if(!po.isExportImgSeq()) {
-                FileSaver fs = new FileSaver(hyp);
                 String outStr = outDir + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width);
-
                 log("Saving result tiff file: " + outStr);
+                FileSaver fs = new FileSaver(reorderedHyp);
                 fs.saveAsTiff(outStr);
             }
             else {
@@ -516,14 +515,9 @@ public class Driffta {
                     out.mkdir();
                 }
                 log("Saving result file as image sequence: " + outStr);
-                if (reorderedHyp != null) {
                     reorderedHyp.setTitle(FilenameUtils.removeExtension(exp.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width)));
                     IJ.run(reorderedHyp, "Image Sequence... ", "format=TIFF save=" + outStr);
-                }
-                else {
-                    hyp.setTitle(FilenameUtils.removeExtension(exp.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width)));
-                    IJ.run(hyp, "Image Sequence... ", "format=TIFF save=" + outStr);
-                }
+
             }
 
             if (copy) {
@@ -538,15 +532,15 @@ public class Driffta {
             }
             
             log("Running best focus");
-            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(hyp, bestFocusPlanes);
+            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(reorderedHyp, bestFocusPlanes);
             log("Saving the focused tiff");
             FileSaver fs = new FileSaver(focused);
             fs.saveAsTiff(bestFocus + File.separator + Experiment.getDestStackFileNameWithZIndex(exp.tiling_mode, tile, region, exp.region_width, bestFocusPlanes[0]));
             
             WindowManager.closeAllWindows();
 
-            exp.tile_width = hyp.getWidth();
-            exp.tile_height = hyp.getHeight();
+            exp.tile_width = reorderedHyp.getWidth();
+            exp.tile_height = reorderedHyp.getHeight();
 
             exp.saveToFile(expFile);
             

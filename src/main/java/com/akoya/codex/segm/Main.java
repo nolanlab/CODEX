@@ -136,12 +136,7 @@ public class Main {
     private static void doSeg(File f, ImagePlus imp, SegConfigParam segConfigParam, boolean imageSeq) throws Exception {
         int tile = 0;
         if(!imageSeq) {
-            for (File currTiff : f.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.endsWith(".tiff") || name.endsWith(".tif");
-                }
-            })) {
+            for (File currTiff : f.listFiles((dir, name) -> name.endsWith(".tiff") || name.endsWith(".tif"))) {
                 segmentTiff(currTiff, imp, tile, segConfigParam, imageSeq);
             }
         }

@@ -67,9 +67,6 @@ public class ConcatenateCSVCodexWeb {
         System.out.print("Creating FCS files");
 
         CSV2FCSApp.main(new String[]{"-InputFile:" + out.getAbsolutePath() + ""});
-
-
-        
     }
 
 }
