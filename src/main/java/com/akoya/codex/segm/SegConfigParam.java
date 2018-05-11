@@ -3,28 +3,46 @@ package com.akoya.codex.segm;
 import java.io.File;
 
 public class SegConfigParam {
-    File rootDir = null;
-    File config = null;
-    boolean use_membrane = false;
-    double maxCutoff = 0.99;
-    double minCutoff = 0.01;
-    double relativeCutoff = 0.4;
-    int nuclearStainChannel = -1;
-    int nuclearStainCycle = -1;
-    int membraneStainChannel = -1;
-    int membraneStainCycle = -1;
-    int radius = 2;
-    boolean count_puncta = false;
-    double inner_ring_size = 0.6;
-    int[] readoutChannels = null;
+    private File rootDir = null;
+    private File config = null;
+    private boolean use_membrane = false;
+    private double maxCutoff = 0.99;
+    private double minCutoff = 0.01;
+    private double relativeCutoff = 0.4;
+    private int nuclearStainChannel = -1;
+    private int nuclearStainCycle = -1;
+    private int membraneStainChannel = -1;
+    private int membraneStainCycle = -1;
+    private int radius = 2;
+    private boolean count_puncta = false;
+    private double inner_ring_size = 0.6;
+    //determines the lower bound for cell size (relative to the expected cell volume, i.e. (4/3)*PI*radius^3)) expected values are 0.1 to 10, default is 1
+    private double sizeCutoffFactor = 1.0;
+    private int[] readoutChannels = null;
     //this variable enables subtraction of the inner ring average
-    boolean subtractInnerRing = false;
+    private boolean subtractInnerRing = false;
     //eto to
-    boolean showImage = false;
-    boolean dont_inverse_memb = false;
-    boolean delaunay_graph = true;
-    int concentricCircles = 0;
+    private boolean showImage = false;
+    private boolean dont_inverse_memb = false;
+    private boolean delaunay_graph = true;
+    private int concentricCircles = 0;
+    private boolean anisotropic_reg_growth = true;
 
+    public double getSizeCutoffFactor() {
+        return sizeCutoffFactor;
+    }
+
+    public void setAnisotropicRegionGrowth(boolean anisotropic_reg_growth) {
+        this.anisotropic_reg_growth = anisotropic_reg_growth;
+    }
+
+    public boolean isAnisotropicRegionGrowth() {
+        return anisotropic_reg_growth;
+    }
+
+    public void setSizeCutoffFactor(double sizeCutoffFactor) {
+        this.sizeCutoffFactor = sizeCutoffFactor;
+    }
 
     public File getRootDir() {
         return rootDir;

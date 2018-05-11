@@ -74,12 +74,11 @@ public class FFTFilter {
         Rectangle roiRect = ip2.getRoi();
         int maxN = Math.max(roiRect.width, roiRect.height);
         double sharpness = (100.0 - toleranceDia) / 100.0;
-        boolean doScaling = doScalingDia;
-        boolean saturate = saturateDia;
+
 
         IJ.showProgress(1, 20);
 
-        /*  tile mirrored image to power of 2 size      
+        /*  tile mirrored image to power of 2 size
          first determine smallest power 2 >= 1.5 * image width/height
          factor of 1.5 to avoid wrap-around effects of Fourier Trafo */
         int i = 2;
@@ -91,7 +90,7 @@ public class FFTFilter {
         double filterLarge = 2.0 * filterLargeDia / (double) i;
         double filterSmall = 2.0 * filterSmallDia / (double) i;
 
-        // fit image into power of 2 size 
+        // fit image into power of 2 size
         Rectangle fitRect = new Rectangle();
         fitRect.x = (int) Math.round((i - roiRect.width) / 2.0);
         fitRect.y = (int) Math.round((i - roiRect.height) / 2.0);
@@ -109,39 +108,33 @@ public class FFTFilter {
         FHT fht = new FHT(ip2);
         fht.setShowProgress(false);
         fht.transform();
-        IJ.showProgress(9, 20);
-        //new ImagePlus("after fht",ip2.crop()).show(); 
 
         // filter out large and small structures
         showStatus("Filter in frequency domain");
         filterLargeSmall(fht, filterLarge, filterSmall, choiceIndex, sharpness);
-        //new ImagePlus("filter",ip2.crop()).show();
-        IJ.showProgress(11, 20);
 
         // transform backward
         showStatus("Inverse transform");
         fht.inverseTransform();
-        IJ.showProgress(19, 20);
-        //new ImagePlus("after inverse",ip2).show();    
 
         // crop to original size and do scaling if selected
         showStatus("Crop and convert to original type");
         fht.setRoi(fitRect);
         ip2 = fht.crop();
-        if (doScaling) {
-            ImagePlus imp2 = new ImagePlus(imp.getTitle() + "-filtered", ip2);
-            new ContrastEnhancer().stretchHistogram(imp2, saturate ? 1.0 : 0.0);
-            ip2 = imp2.getProcessor();
-        }
+
+        System.out.println("not rescaling intensities: ");
+        double factor = ImageStatistics.getStatistics(ip).mean/ImageStatistics.getStatistics(ip2).mean;
+
+        ip2.multiply(factor);
 
         // convert back to original data type
         int bitDepth = imp.getBitDepth();
         switch (bitDepth) {
             case 8:
-                ip2 = ip2.convertToByte(doScaling);
+                ip2 = ip2.convertToByte(false);
                 break;
             case 16:
-                ip2 = ip2.convertToShort(doScaling);
+                ip2 = ip2.convertToShort(false);
                 break;
             case 24:
                 ip.snapshot();
@@ -158,7 +151,6 @@ public class FFTFilter {
             ip.copyBits(ip2, roiRect.x, roiRect.y, Blitter.COPY);
         }
         ip.resetMinAndMax();
-        IJ.showProgress(20, 20);
     }
 
     void showStatus(String msg) {
@@ -191,7 +183,7 @@ public class FFTFilter {
         int j1 = (int) Math.ceil(y / (double) h2);
         int j2 = (int) Math.ceil((height - y) / (double) h2);
 
-        //tile      
+        //tile
         if ((i1 % 2) > 0.5) {
             ip2.flipHorizontal();
         }
@@ -233,7 +225,7 @@ public class FFTFilter {
     /*
      filterLarge: down to which size are large structures suppressed?
      filterSmall: up to which size are small structures suppressed?
-     filterLarge and filterSmall are given as fraction of the image size 
+     filterLarge and filterSmall are given as fraction of the image size
      in the original (untransformed) image.
      stripesHorVert: filter out: 0) nothing more  1) horizontal  2) vertical stripes
      (i.e. frequencies with x=0 / y=0)
@@ -332,7 +324,7 @@ public class FFTFilter {
                 break; // vert stripes
         }
 
-        //loop along row 0 and maxN/2   
+        //loop along row 0 and maxN/2
         rowFactLarge = (float) Math.exp(-(maxN / 2) * (maxN / 2) * scaleLarge);
         rowFactSmall = (float) Math.exp(-(maxN / 2) * (maxN / 2) * scaleSmall);
         for (col = 1; col < maxN / 2; col++) {
