@@ -489,8 +489,6 @@ public class Driffta {
 
             DeconvolutionInterlockDispatcher.releaseLock();
 
-
-
             //Do background subtraction if needed
             ImagePlus reorderedHyp = hyp;
             if(exp.bgSub) {
@@ -533,15 +531,15 @@ public class Driffta {
             }
             
             log("Running best focus");
-            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(hyp, bestFocusPlanes);
+            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(reorderedHyp, bestFocusPlanes);
             log("Saving the focused tiff");
             FileSaver fs = new FileSaver(focused);
             fs.saveAsTiff(bestFocus + File.separator + Experiment.getDestStackFileNameWithZIndex(exp.tiling_mode, tile, region, exp.region_width, bestFocusPlanes[0]));
             
             WindowManager.closeAllWindows();
 
-            exp.tile_width = hyp.getWidth();
-            exp.tile_height = hyp.getHeight();
+            exp.tile_width = reorderedHyp.getWidth();
+            exp.tile_height = reorderedHyp.getHeight();
 
             exp.saveToFile(expFile);
             
