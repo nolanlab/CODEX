@@ -500,6 +500,7 @@ public class Driffta {
             } else if (hyp.getNChannels() == 3) {
                 ((CompositeImage) reorderedHyp).setLuts(new LUT[]{LUT.createLutFromColor(Color.RED), LUT.createLutFromColor(Color.GREEN), LUT.createLutFromColor(new Color(0, 70, 255))});
             }
+
             //Save prcessed files as normal tiffs or image sequence
             if(!po.isExportImgSeq()) {
                 String outStr = outDir + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width);

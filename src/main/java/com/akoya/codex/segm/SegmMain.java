@@ -211,11 +211,7 @@ public class SegmMain extends JFrame {
                 else {
                     File dir = new File(configField.getText());
                     if(dir.exists() && dir.isDirectory()) {
-<<<<<<< HEAD
                         File[] regFolders = dir.listFiles(f -> (f.getName().startsWith("reg")&&f.isDirectory())||(f.getName().contains(".tif")));
-=======
-                        File[] regFolders = dir.listFiles(f -> (f.getName().startsWith("reg0")&&f.isDirectory())||(f.getName().contains(".tif")));
->>>>>>> 8c45ca9d2b069d0ff07c34b877285de63d337d73
                         if(regFolders == null || regFolders.length < 1) {
                             JOptionPane.showMessageDialog(configPanel, "No tif files present in the folder. Specify the folder with tif files and best focus folder.");
                             System.exit(0);
