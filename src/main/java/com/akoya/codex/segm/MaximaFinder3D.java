@@ -116,7 +116,7 @@ public class MaximaFinder3D {
                                         if (otherPoint.x >= 0 && otherPoint.x < w && otherPoint.y >= 0 && otherPoint.y < h && otherPoint.z >= 0 && otherPoint.z < d) {
                                             double currIntens = is.getVoxel(otherPoint.x, otherPoint.y, otherPoint.z);
 
-                                            if (currIntens <= lo_pass_ths) {
+                                            if (currIntens <= lo_pass_ths ) {
                                                 continue;
                                             }
 
