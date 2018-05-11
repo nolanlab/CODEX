@@ -495,9 +495,9 @@ public class Driffta {
                 reorderedHyp = backgroundSubtraction(hyp, exp, baseDir, channelNames);
             }
 
-            if (hyp.getNChannels() == 4) {
+            if (reorderedHyp.getNChannels() == 4) {
                 ((CompositeImage) reorderedHyp).setLuts(new LUT[]{LUT.createLutFromColor(Color.WHITE), LUT.createLutFromColor(Color.RED), LUT.createLutFromColor(Color.GREEN), LUT.createLutFromColor(new Color(0, 70, 255))});
-            } else if (hyp.getNChannels() == 3) {
+            } else if (reorderedHyp.getNChannels() == 3) {
                 ((CompositeImage) reorderedHyp).setLuts(new LUT[]{LUT.createLutFromColor(Color.RED), LUT.createLutFromColor(Color.GREEN), LUT.createLutFromColor(new Color(0, 70, 255))});
             }
 
@@ -515,8 +515,8 @@ public class Driffta {
                     out.mkdir();
                 }
                 log("Saving result file as image sequence: " + outStr);
-                    reorderedHyp.setTitle(FilenameUtils.removeExtension(exp.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width)));
-                    IJ.run(reorderedHyp, "Image Sequence... ", "format=TIFF save=" + outStr);
+                reorderedHyp.setTitle(FilenameUtils.removeExtension(exp.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width)));
+                IJ.run(reorderedHyp, "Image Sequence... ", "format=TIFF save=" + outStr);
 
             }
 
