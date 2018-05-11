@@ -144,6 +144,37 @@ public class SegmConfigFrm extends JPanel {
         gridBagConstraints.gridy = 3;
         mainPanel.add(relativeCutOff, gridBagConstraints);
 
+        //Cell Size Cutof
+        CellSizeCutOffLabel = new JLabel();
+        CellSizeCutOffLabel.setText("Cell Size cutoff factor (smaller values will keep smaller cells)");
+        CellSizeCutOffLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
+        CellSizeCutOffLabel.setMinimumSize(new java.awt.Dimension(100, 20));
+        CellSizeCutOffLabel.setPreferredSize(new java.awt.Dimension(250, 20));
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        mainPanel.add(CellSizeCutOffLabel, gridBagConstraints);
+
+        CellSizeCutOff = new JSpinner();
+        CellSizeCutOff.setModel(new SpinnerNumberModel(1.0, 0.1, 10, 0.1));
+        CellSizeCutOff.setMaximumSize(new java.awt.Dimension(500, 20));
+        CellSizeCutOff.setMinimumSize(new java.awt.Dimension(100, 20));
+        CellSizeCutOff.setPreferredSize(new java.awt.Dimension(100, 20));
+        CellSizeCutOff.setInputVerifier(floatVerifier);
+        ((JSpinner.DefaultEditor) CellSizeCutOff.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        mainPanel.add(CellSizeCutOff, gridBagConstraints);
+
         //Nuclear Stain Channel
         nuclearStainChannelLabel = new JLabel();
         nuclearStainChannelLabel.setText("Nuclear Stain Channel");
@@ -156,7 +187,7 @@ public class SegmConfigFrm extends JPanel {
         //gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 5;
         mainPanel.add(nuclearStainChannelLabel, gridBagConstraints);
 
         nuclearStainChannel = new JSpinner();
@@ -172,7 +203,7 @@ public class SegmConfigFrm extends JPanel {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 5;
         mainPanel.add(nuclearStainChannel, gridBagConstraints);
 
         //Nuclear stain cycle
@@ -187,7 +218,7 @@ public class SegmConfigFrm extends JPanel {
         //gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         mainPanel.add(nuclearStainCycleLabel, gridBagConstraints);
 
         nuclearStainCycle = new JSpinner();
@@ -203,7 +234,7 @@ public class SegmConfigFrm extends JPanel {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         mainPanel.add(nuclearStainCycle, gridBagConstraints);
 
         //Membrane Stain Channel
@@ -218,7 +249,7 @@ public class SegmConfigFrm extends JPanel {
         //gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         mainPanel.add(membraneStainChannelLabel, gridBagConstraints);
 
         membraneStainChannel = new JSpinner();
@@ -234,7 +265,7 @@ public class SegmConfigFrm extends JPanel {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         mainPanel.add(membraneStainChannel, gridBagConstraints);
 
         //Membrane Stain Cycle
@@ -249,7 +280,7 @@ public class SegmConfigFrm extends JPanel {
         //gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 8;
         mainPanel.add(membraneStainCycleLabel, gridBagConstraints);
 
         membraneStainCycle = new JSpinner();
@@ -265,8 +296,39 @@ public class SegmConfigFrm extends JPanel {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 8;
         mainPanel.add(membraneStainCycle, gridBagConstraints);
+
+        //Membrane Stain Cycle
+        anisotropic_Region_Growth_Label = new JLabel();
+        anisotropic_Region_Growth_Label.setText("Anisotropic region growth");
+        anisotropic_Region_Growth_Label.setMaximumSize(new java.awt.Dimension(3000, 20));
+        anisotropic_Region_Growth_Label.setMinimumSize(new java.awt.Dimension(100, 20));
+        anisotropic_Region_Growth_Label.setPreferredSize(new java.awt.Dimension(100, 20));
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+        //gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        mainPanel.add(anisotropic_Region_Growth_Label, gridBagConstraints);
+
+        anisotropic_Region_Growth = new JCheckBox();
+        anisotropic_Region_Growth.setText("<html>Restricts cell growth in Z, improves pos-neg separation on biaxials, but must be disabled for compatibility with CODEX1 Cell paper (Goltsev et al)</html>");
+        anisotropic_Region_Growth.setSelected(true);
+        anisotropic_Region_Growth.setMaximumSize(new java.awt.Dimension(500, 40));
+        anisotropic_Region_Growth.setMinimumSize(new java.awt.Dimension(100, 40));
+        anisotropic_Region_Growth.setPreferredSize(new java.awt.Dimension(100, 40));
+
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 9;
+        mainPanel.add(anisotropic_Region_Growth, gridBagConstraints);
 
         //Readout Channel
 //        readOutChannelsLabel = new JLabel();
@@ -445,6 +507,9 @@ public class SegmConfigFrm extends JPanel {
         this.maxCutOff.setValue(Float.parseFloat(maxCutOff));
     }
 
+
+
+
     private JLabel minCutOffLabel;
     private JSpinner minCutOff;
 
@@ -464,6 +529,15 @@ public class SegmConfigFrm extends JPanel {
     public void setRelativeCutOff(String relativeCutOff) {
         this.relativeCutOff.setValue(Float.parseFloat(relativeCutOff));
     }
+
+    public String getCellSizeCutOff() {
+        return CellSizeCutOff.getValue().toString();
+    }
+
+    public void setCellSizeCutOff(String cellSizeCutOff) {
+        this.CellSizeCutOff.setValue(Float.parseFloat(cellSizeCutOff));
+    }
+
 
     private JLabel nuclearStainChannelLabel;
     private JSpinner nuclearStainChannel;
@@ -505,7 +579,21 @@ public class SegmConfigFrm extends JPanel {
         this.membraneStainCycle.setValue(Integer.parseInt(membraneStainCycle));
     }
 
+    public boolean isAnisotropicRegionGrowth() {
+        return anisotropic_Region_Growth.isSelected();
+    }
+    public void setAnisotropicRegionGrowth(boolean value) {
+        this.anisotropic_Region_Growth.setSelected(value);
+    }
+
     private JPanel mainPanel;
+
+    private JSpinner CellSizeCutOff;
+    private JLabel CellSizeCutOffLabel;
+
+    private JCheckBox anisotropic_Region_Growth;
+    private JLabel anisotropic_Region_Growth_Label;
+
 
 //    private JLabel readOutChannelsLabel;
 //    private JTextField readOutChannels;

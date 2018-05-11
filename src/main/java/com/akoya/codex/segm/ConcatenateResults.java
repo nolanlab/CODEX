@@ -68,7 +68,6 @@ public class ConcatenateResults {
                 fileTo.createTileFromFileNameWithoutImage(FilenameUtils.removeExtension(f.getName()));
                 if(map == null || map.isEmpty()) {
                     logger.print("The map created from tileMap is empty. Please check the tileMap.txt file!");
-                    return;
                 }
                 List<Integer> a = map.get(fileTo);
                 if(a == null || a.isEmpty()) {
@@ -104,8 +103,15 @@ public class ConcatenateResults {
         String xPos = "";
         String yPos = "";
         LinkedHashMap<TileObject, ArrayList<Integer>> tifWithXposYpos = new LinkedHashMap<>();
+        File tileMapFile = new File(dir + File.separator + "tileMap.txt");
+        if(!tileMapFile.exists()){
+            System.out.println("!!!WARNING: TileMap.txt file could not be found, therefore coordinate remapping will be disabled \n cell coordinates will be relative to the top-left corner of each tile.");
+        }
+
+
         try {
-            br = new BufferedReader(new FileReader(dir + File.separator + "tileMap.txt"));
+
+            br = new BufferedReader(new FileReader(tileMapFile));
             boolean columnName= true;
             String currentLine;
             while ((currentLine = br.readLine()) != null) {
@@ -145,7 +151,7 @@ public class ConcatenateResults {
             }
         }
         catch(IOException e) {
-            logger.print(e.getMessage());
+           throw e;
         }
         finally {
             br.close();

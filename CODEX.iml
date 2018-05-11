@@ -7,10 +7,12 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:15.0" level="project" />
     <orderEntry type="library" name="Maven: org.nolanlab:sandbox:1.0" level="project" />
     <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.6" level="project" />
     <orderEntry type="library" name="Maven: com.github.rwl:optimization:1.1" level="project" />
@@ -101,6 +103,10 @@
     <orderEntry type="library" name="Maven: com.github.rwl:AMDJ:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.github.rwl:COLAMDJ:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.nolanlab:GlassComponents:1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains:annotations:15.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:16.0.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.testng:testng:6.8" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.beanshell:bsh:2.0b4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.beust:jcommander:1.27" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.yaml:snakeyaml:1.6" level="project" />
   </component>
 </module>

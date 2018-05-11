@@ -3,12 +3,9 @@ package com.akoya.codex.segm;
 import com.akoya.codex.DefaultOptionPane;
 import com.akoya.codex.OkayMockOptionPane;
 import com.akoya.codex.OptionPane;
-import com.akoya.codex.upload.Experiment;
 import com.akoya.codex.upload.TextAreaOutputStream;
 import com.akoya.codex.upload.logger;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -214,7 +211,7 @@ public class SegmMain extends JFrame {
                 else {
                     File dir = new File(configField.getText());
                     if(dir.exists() && dir.isDirectory()) {
-                        File[] regFolders = dir.listFiles(f -> f.getName().startsWith("reg0"));
+                        File[] regFolders = dir.listFiles(f -> (f.getName().startsWith("reg0")&&f.isDirectory())||(f.getName().contains(".tif")));
                         if(regFolders == null || regFolders.length < 1) {
                             JOptionPane.showMessageDialog(configPanel, "No tif files present in the folder. Specify the folder with tif files and best focus folder.");
                             System.exit(0);
@@ -256,10 +253,10 @@ public class SegmMain extends JFrame {
                 File dir = new File(configField.getText());
                 //Create importConfig.txt
                 List<String> lines = Arrays.asList("radius=" + segmConfigFrm.getRadius(), "maxCutoff=" + segmConfigFrm.getMaxCutOff(), "minCutoff=" + segmConfigFrm.getMinCutOff(),
-                        "relativeCutoff=" + segmConfigFrm.getRelativeCutOff(), "nuclearStainChannel=" + segmConfigFrm.getNuclearStainChannel(),
+                        "relativeCutoff=" + segmConfigFrm.getRelativeCutOff(), "cell_size_cutoff_factor=" + segmConfigFrm.getCellSizeCutOff(), "nuclearStainChannel=" + segmConfigFrm.getNuclearStainChannel(),
                         "nuclearStainCycle=" + segmConfigFrm.getNuclearStainCycle(), "membraneStainChannel=" + segmConfigFrm.getMembraneStainChannel(),
                         "membraneStainCycle=" + segmConfigFrm.getMembraneStainCycle(), //"readoutChannels=1,2,3",
-                        "use_membrane=false", "inner_ring_size=1.0", "delaunay_graph=false");
+                        "use_membrane=false", "inner_ring_size=1.0", "delaunay_graph=false", "anisotropic_region_growth="+segmConfigFrm.isAnisotropicRegionGrowth());
 
                 Path file = Paths.get(dir.getCanonicalPath() + File.separator + "config.txt");
                 Files.write(file, lines, Charset.forName("UTF-8"));
@@ -317,6 +314,9 @@ public class SegmMain extends JFrame {
                         else if(st.contains("relativeCutoff=")) {
                             segmConfigFrm.setRelativeCutOff(st.replace("relativeCutoff=",""));
                         }
+                        else if(st.contains("cell_size_cutoff_factor=")) {
+                            segmConfigFrm.setCellSizeCutOff(st.replace("cell_size_cutoff_factor=",""));
+                        }
                         else if(st.contains("nuclearStainChannel=")) {
                             segmConfigFrm.setNuclearStainChannel(st.replace("nuclearStainChannel=",""));
                         }
@@ -328,6 +328,9 @@ public class SegmMain extends JFrame {
                         }
                         else if(st.contains("membraneStainCycle=")) {
                             segmConfigFrm.setMembraneStainCycle(st.replace("membraneStainCycle=",""));
+                        }
+                        else if(st.contains("anisotropic_region_growth=")) {
+                            segmConfigFrm.setAnisotropicRegionGrowth(Boolean.parseBoolean(st.replace("anisotropic_region_growth=","")));
                         }
                     }
 
