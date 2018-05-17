@@ -137,11 +137,11 @@ public class Main {
         int tile = 0;
         if(!imageSeq) {
             for (File currTiff : f.listFiles((dir, name) -> name.endsWith(".tiff") || name.endsWith(".tif"))) {
-                segmentTiff(currTiff, imp, tile, segConfigParam, imageSeq);
+                segmentTiff(currTiff, imp, ++tile, segConfigParam, imageSeq);
             }
         }
         else {
-            segmentTiff(null, imp, tile, segConfigParam, imageSeq);
+            segmentTiff(null, imp, ++tile, segConfigParam, imageSeq);
         }
     }
 
@@ -149,7 +149,6 @@ public class Main {
         Duplicator dup = new Duplicator();
         int j;
         int i;
-        ++tile;
         if (!imageSeq) {
             System.out.print("\nprocessing file: " + currTiff.getName() + "\n");
         } else {

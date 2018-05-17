@@ -322,7 +322,7 @@ public class frmCluster extends JFrame {
 
     public static void createFcsFileListTxt(File dir) throws IOException{
         File[] fcsFiles = getFcsFiles(dir);
-        String compensated = "_Compensated_";
+        String compensated = "compensated";
         List<String> fcsLines = new ArrayList<>();
         for(File aFcsFile : fcsFiles) {
             if(aFcsFile.getName().contains(compensated)) {

@@ -30,12 +30,7 @@ public class MakeFCS {
 
         ArrayList<File> concatFiles = new ArrayList<>();
 
-        for (File f : dir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return f.getName().startsWith("reg") && (!f.getName().contains("_X")) && f.getName().contains("_Expression") && f.getName().endsWith(".txt");
-            }
-        })) {
+        for (File f : dir.listFiles(f -> f.getName().startsWith("reg") && (!f.getName().contains("_X")) && (f.getName().toLowerCase().contains("compensated")) && f.getName().endsWith(".txt"))) {
             concatFiles.add(f);
         }
 
@@ -48,12 +43,10 @@ public class MakeFCS {
             } else {
                 processFile(reg, config, null);
             }
-
         }
-
     }
 
-    public static void processFile(File f, File configFile, String blankCycIDXString) throws IOException, InterruptedException {
+    public static void processFile(File f, File configFile, String blankCycIDXString) throws Exception {
 
         CSVReader csv = new CSVReader(new FileReader(f), '\t');
         Iterator<String[]> it = csv.iterator();
@@ -83,7 +76,7 @@ public class MakeFCS {
 
         int offset = size_idx;
 
-        String outPath = f.getAbsolutePath().replaceAll("\\.txt", "_normalized_FCSsrc.csv");
+        String outPath = f.getAbsolutePath().replaceAll("\\.txt", ".csv");
         File out = new File(outPath);
         CSVWriter outWr = new CSVWriter(new FileWriter(out), ',');
 
@@ -125,23 +118,23 @@ public class MakeFCS {
         outWr.writeNext(splitHeader);
 
         while (it.hasNext()) {
-            String[] l = it.next();
-            if (l[l.length - 1].isEmpty()) {
-                l = Arrays.copyOf(l, l.length - 1);
+            String[] line = it.next();
+            if (line[line.length - 1].isEmpty()) {
+                line = Arrays.copyOf(line, line.length - 1);
             }
-            double size = getSize(l, offset);
+            //double size = getSize(line, offset);
 
-            String[] l2 = split(l, 1)[1];
+            String[] l2 = Arrays.copyOfRange(line,1, line.length);
 
             double sum = 0;
             double sumsq = 0;
-            for (int k = offset; k < l.length; k++) {
+            for (int k = offset; k < line.length; k++) {
                 try {
-                    double d = Double.parseDouble(l[k]);
+                    double d = Double.parseDouble(line[k]);
                     sum += d;
                     sumsq += d * d;
                 } catch (NumberFormatException e) {
-                    System.err.println("Corrupt number: " + (l[k]) + "\nRow length" + l.length + "\nheader len" + header.length + "\nindex:" + k + "\nString: " + Arrays.toString(l));
+                    System.err.println("Corrupt number: " + (line[k]) + "\nRow length" + line.length + "\nheader len" + header.length + "\nindex:" + k + "\nString: " + Arrays.toString(line));
                     e.printStackTrace();
                 }
             }
