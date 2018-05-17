@@ -5,6 +5,7 @@ import com.akoya.codex.upload.logger;
 import org.apache.commons.io.FilenameUtils;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -26,12 +27,7 @@ public class ConcatenateResults {
         
         ArrayList<String> regions = new ArrayList<>();
         
-        for (File f : dir.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File f) {
-                    return f.getName().startsWith("reg")&&f.getName().contains("_X")&&f.getName().contains("_Expression")&&(f.getName().endsWith(".txt")||f.getName().endsWith(".csv"));
-                }
-            })){
+        for (File f : dir.listFiles(f -> f.getName().startsWith("reg")&&f.getName().contains("_X")&&f.getName().contains("_Expression")&&(f.getName().endsWith(".txt")||f.getName().endsWith(".csv")))){
             String reg= f.getName().split("_")[0];
             if(!regions.contains(reg))regions.add(reg);
         }
@@ -44,15 +40,10 @@ public class ConcatenateResults {
 
         for (String reg : regions) {
             
-        for (String st : new String[]{"_Expression_Uncompensated.txt", "_Expression_Compensated.txt"}) {
-            String headerLine = null;
+        for (String st : new String[]{"_Uncompensated.txt", "_Compensated.txt"}) {
+            boolean headerAdded = false;
             BufferedWriter bw = new BufferedWriter(new FileWriter(dir.getAbsolutePath() + File.separator + reg + st));
-            for (File f : dir.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File f) {
-                    return f.getName().endsWith(st) && f.getName().startsWith(reg)&&f.getName().contains("_X")&&f.getName().contains("_Expression");
-                }
-            })) {
+            for (File f : dir.listFiles(f -> f.getName().endsWith(st) && f.getName().startsWith(reg)&&f.getName().contains("_X")&&f.getName().contains("_Expression"))) {
                 System.out.println("Concatenating: " + f.getName());
                 BufferedReader br = new BufferedReader(new FileReader(f));
 
@@ -60,12 +51,23 @@ public class ConcatenateResults {
                 if (s == null) {
                     continue;
                 }
-                if (headerLine == null) {
-                    headerLine = s;
-                    bw.write("Filename:Filename\t" + headerLine);
+                if (!headerAdded) {
+                    String[] sArr = s.split("\\t");
+                    String[] newArr = Arrays.copyOf(sArr, sArr.length+2);
+
+                    System.arraycopy(sArr,2,newArr,4,sArr.length-2);
+
+                    newArr[4] = "X_withinTile";
+                    newArr[5] = "Y_withinTile";
+
+                    bw.write("Filename:Filename" );
+                    for (int i = 0; i < newArr.length; i++) {
+                        bw.write("\t"+newArr[i] );
+                    }
+                    headerAdded = true;
                 }
-                TileObject fileTo = new TileObject();
-                fileTo.createTileFromFileNameWithoutImage(FilenameUtils.removeExtension(f.getName()));
+                TileObject fileTo = new TileObject(FilenameUtils.removeExtension(f.getName()));
+
                 if(map == null || map.isEmpty()) {
                     logger.print("The map created from tileMap is empty. Please check the tileMap.txt file!");
                 }
@@ -76,14 +78,18 @@ public class ConcatenateResults {
                 while ((s = br.readLine()) != null) {
                     String[] sArr = s.split("\\t");
 
+                    String[] newArr = Arrays.copyOf(sArr, sArr.length+2);
+
+                    System.arraycopy(sArr,2,newArr,4,sArr.length-2);
+
                     int x = Integer.parseInt(sArr[2]);
                     int y = Integer.parseInt(sArr[3]);
-                    int xOffset = a.get(0) + x;
-                    int yOffset = a.get(1) + y;
-                    sArr[2] = Integer.toString(xOffset);
-                    sArr[3] = Integer.toString(yOffset);
 
-                    s = String.join("\t", sArr);
+                    newArr[2] = Integer.toString(a.get(0) + x);
+                    newArr[3] = Integer.toString(a.get(1) + y);
+
+
+                    s = String.join("\t", newArr);
                     bw.write("\n" + f.getName().split("\\.tif")[0] + "\t" + s);
                 }
             }
@@ -134,8 +140,7 @@ public class ConcatenateResults {
                     yPos = aRow[4];
 
                     String fileName = String.format("reg%03d_X%02d_Y%02d", regInt, tileXInt, tileYInt);
-                    TileObject to = new TileObject();
-                    to = to.createTileFromFileNameWithoutImage(fileName);
+                    TileObject to = new TileObject(fileName);
 
                     //List to hold the X offset and Y offset
                     ArrayList<Integer> arr = new ArrayList<>();

@@ -263,7 +263,7 @@ public class SegmMain extends JFrame {
                 log("Config file for segmentation was successfully created.");
                 callSegm();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                logger.showException(e);
             }
         });
         th.start();
@@ -286,7 +286,11 @@ public class SegmMain extends JFrame {
 
         //3. Call MakeFCS
         log("Starting MakeFCS...");
-        MakeFCS.main(arg);
+        try {
+            MakeFCS.main(arg);
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
         log("MakeFCS done");
     }
 
