@@ -305,6 +305,7 @@ public class SegmConfigFrm extends JPanel {
         anisotropic_Region_Growth_Label.setMaximumSize(new java.awt.Dimension(3000, 20));
         anisotropic_Region_Growth_Label.setMinimumSize(new java.awt.Dimension(100, 20));
         anisotropic_Region_Growth_Label.setPreferredSize(new java.awt.Dimension(100, 20));
+
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = GridBagConstraints.LINE_START;

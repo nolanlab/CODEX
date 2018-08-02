@@ -667,6 +667,7 @@ public class Driffta {
         for(int i=0; i<channelNames.length; i++) {
             int channels_count = exp.channel_names.length;
             if(channelNames[i].contains("blank")) {
+                logger.print("identified blank channel #"+i+", "+channelNames[i]);
                 int ch = (i%channels_count) + 1;
                 //String ch = exp.channel_names[(i%channels_count)];
                 int cycle = (i/channels_count) + 1;
@@ -677,6 +678,8 @@ public class Driffta {
                 chVsCyc.get(ch).add(cycle);
             }
         }
+        logger.print("chVsCyc size "+ chVsCyc.size());
+        chVsCyc.entrySet().forEach(e->logger.print(e.getKey(), e.getValue()));
         return chVsCyc;
     }
 
@@ -718,6 +721,7 @@ public class Driffta {
      * @throws IOException
      */
     private static ImagePlus backgroundSubtraction(ImagePlus hyp, Experiment exp, String baseDir, String[] channelNames) throws IOException {
+        logger.print("doing BG subtraction");
         Duplicator dup = new Duplicator();
 
         File exposureTimesFile = new File(baseDir + File.separator + "exposure_times.txt");
@@ -731,6 +735,8 @@ public class Driffta {
             for(int j=0; j<exposureTimes[0].length; j++) {
                 if(expVsMs.containsKey(exposureTimes[i][j])) {
                     exposureTimes[i][j] = String.valueOf(expVsMs.get(exposureTimes[i][j]));
+                }else {
+                    throw new IllegalArgumentException("unknown exposure time: "+exposureTimes[i][j]);
                 }
             }
         }
@@ -742,6 +748,9 @@ public class Driffta {
         ArrayList<ImagePlus> stacks = new ArrayList<>();
 
         for(int ch = 1; ch <= hyp.getNChannels(); ch++) {
+
+            logger.print("doing BG subtraction for channel #"+ch);
+
             boolean sub = maxExpChVsCyc.containsKey(ch);
 
             //Get zSlices stack for the channel-cycle that has maximum exposure time.
