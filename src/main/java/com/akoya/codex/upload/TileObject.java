@@ -59,7 +59,7 @@ public class TileObject {
         this.fileName = FilenameUtils.removeExtension(tifFileName);
     }
 
-    public TileObject createTileFromFileNameWithoutImage(String tifFileName) {
+    public TileObject (String tifFileName) {
         String regionNumberStr = tifFileName.substring(3, 6);
         this.regionNumber = regionNumberStr == null? 0 : Integer.parseInt(regionNumberStr);
 
@@ -70,8 +70,6 @@ public class TileObject {
         this.yNumber = yNumberStr == null? 0 : Integer.parseInt(yNumberStr);
 
         this.fileName = FilenameUtils.removeExtension(tifFileName);
-
-        return this;
     }
 
     @Override

@@ -1066,14 +1066,16 @@ public class ExperimentView extends javax.swing.JPanel {
 
         //Calculate tile overlap
         if(dir != null) {
-            for (File cyc : dir.listFiles()) {
+            File [] dirList = dir.listFiles();
+            outer: for (File cyc : dirList) {
                 if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
-                    for(File file : cyc.listFiles()) {
+                    File [] cycList = cyc.listFiles();
+                    for(File file : cycList) {
                         if(!file.isDirectory() && (file.getName().endsWith(".tif")||file.getName().endsWith(".tiff"))){
                             ImagePlus imp = IJ.openImage(file.getAbsolutePath());
                             val19.setText(String.valueOf(exp.tile_overlap_X * 100/imp.getWidth()));
                             val20.setText(String.valueOf(exp.tile_overlap_Y * 100/imp.getHeight()));
-                            break;
+                            break outer;
                         }
                     }
                 }

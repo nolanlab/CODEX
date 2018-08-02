@@ -299,7 +299,7 @@ public class SegmConfigFrm extends JPanel {
         gridBagConstraints.gridy = 8;
         mainPanel.add(membraneStainCycle, gridBagConstraints);
 
-        //Membrane Stain Cycle
+        //Anisotrropic region growth label
         anisotropic_Region_Growth_Label = new JLabel();
         anisotropic_Region_Growth_Label.setText("Anisotropic region growth");
         anisotropic_Region_Growth_Label.setMaximumSize(new java.awt.Dimension(3000, 20));
