@@ -113,8 +113,8 @@ public class Main {
         if (!rootDir.exists()) {
             throw new IllegalArgumentException("Error: Cannot find the input directoty");
         }
-        
-        File[] regFolder = rootDir.listFiles(r -> r.isDirectory() && r.getName().startsWith("reg0"));
+
+        File[] regFolder = rootDir.listFiles(r -> r.isDirectory() && r.getName().startsWith("reg0")&& r.getName().contains("_X")&& r.getName().contains("_Y"));
         if (regFolder != null && regFolder.length != 0) {
             File expJSON = new File(segParam.getRootDir() + File.separator + "Experiment.json");
             Experiment exp = Experiment.loadFromJSON(expJSON);

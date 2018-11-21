@@ -27,7 +27,8 @@ public class SegmMainTest {
         seg = new SegmMain();
         seg.setOptionPane(new OkayMockOptionPane());
         configField = seg.getConfigField();
-        configField.setText("F:\\exp2TestPro");
+        //configField.setText("F:\\exp2TestPro");
+        configField.setText("C:\\exp2TestProcessed");
         seg.initComponents();
         segFrm = seg.getSegmConfigFrm();
         inDir = configField.getText();
