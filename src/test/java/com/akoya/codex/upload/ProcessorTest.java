@@ -22,9 +22,9 @@ public class ProcessorTest {
     private static Experiment exp;
     private static ProcessingOptions po;
 
-    private String testExp = "F:\\exp2Test";
-    private String outDir = "F:\\exp2TestPro";
-
+    private String testExp = "C:\\exp2Test";
+    //private String outDir = "F:\\exp2TestPro";
+    private String outDir = "C:\\exp2TestProcessed";
     @BeforeTest
     public void setUp() throws Exception {
         frm = new frmMain();

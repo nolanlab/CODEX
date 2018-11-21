@@ -26,7 +26,8 @@ public class ClusteringTest {
         frm = new frmCluster();
         frm.setOptionPane(new OkayMockOptionPane());
         fcsFolderField = frm.getFcsFolderField();
-        fcsFolderField.setText("F:\\exp2TestPro");
+//        fcsFolderField.setText("F:\\exp2TestPro");
+        fcsFolderField.setText("C:\\exp2TestProcessed");
         frm.initComponents();
         importConfigFrm = frm.getImpConfigFrm();
         inDir = fcsFolderField.getText();

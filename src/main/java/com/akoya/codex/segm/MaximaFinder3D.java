@@ -72,8 +72,12 @@ public class MaximaFinder3D {
         double max =  stats.max;
         double range = max - min;
 
-        double lo_pass_ths = min + (range * minCutoff);
-        double hi_pass_ths = min + (range * maxCutoff);
+//        older version of segmentation
+//        double lo_pass_ths = min + (range * minCutoff);
+//        double hi_pass_ths = min + (range * maxCutoff);
+
+        double lo_pass_ths = 0 + (65536 * minCutoff);
+        double hi_pass_ths = 0 + (65536 * maxCutoff);
 
         System.out.println("lo_pass_ths " + lo_pass_ths);
         System.out.println("hi_pass_ths " + hi_pass_ths);
