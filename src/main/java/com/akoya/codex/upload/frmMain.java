@@ -361,7 +361,7 @@ public class frmMain extends javax.swing.JFrame {
     private void replaceTileOverlapInExp(File dir, Experiment exp) {
         if(dir != null) {
             for (File cyc : dir.listFiles()) {
-                if (cyc != null && cyc.isDirectory()) {
+                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
                     File[] cycFiles = cyc.listFiles(tif->tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif"));
                     ImagePlus imp = IJ.openImage(cycFiles[0].getAbsolutePath());
                     exp.tile_overlap_X  = (int)((double)(exp.tile_overlap_X *imp.getWidth()/100));
@@ -438,19 +438,7 @@ public class frmMain extends javax.swing.JFrame {
                 cmdStart.setEnabled(false);
                 cmdStop.setEnabled(true);
 
-                Uploader upl = doUpload ? new Uploader(po.getDestinationUrl(), po.getNumThreads()) : null;
 
-                if (doUpload) {
-                    log("\nAuthorizing..."); 
-                }
-                final String token = doUpload ? upl.sendAuthRequest(po.getUsername(), po.getPassword()) : null;
-                if (doUpload) {
-                    log("\nCreating new experiment...");
-                }
-                Uploader.FileShareAccess fsa = doUpload ? upl.sendExpCreateRequest(token, experimentJS) : null;
-                if (doUpload) {
-                    log("\nStarting upload...");
-                }
 
                 log("Verifying names...");
 
@@ -525,20 +513,6 @@ public class frmMain extends javax.swing.JFrame {
 
                         if (!d.exists()) {
                             log("Tile processing failed 3 times in a row: " + d.getName());
-                        }
-
-                        if (doUpload) {
-                            d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
-                            if (!d.exists()) {
-                                throw new IllegalStateException("Driftcompensation completed, but the result file does not exist:" + d.getPath());
-                            } else {
-                                logger.print("File exists:" + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
-                                upl.uploadFilesMultith(d, fsa, reg, tile, token, 1);
-                                if (chNamesUpl) {
-                                    upl.uploadFilesMultith(new File(experimentView.getPath() + File.separator + "channelNames.txt"), fsa, 0, 0, token, 1);
-                                    chNamesUpl = false;
-                                }
-                            }
                         }
                         prg.setValue(currCnt++);
                         frmMain.this.repaint();

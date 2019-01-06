@@ -75,6 +75,7 @@ public class Main {
             boolean dont_inverse_memb = Boolean.parseBoolean(params.getProperty("dont_inverse_membrane", "false").trim());
             int concentricCircles = Integer.parseInt(params.getProperty("concentric_circle_featurization_steps", "0").trim());
             boolean delaunay_graph = Boolean.parseBoolean(params.getProperty("delaunay_graph", "true").trim());
+            boolean single_plane_quant = Boolean.parseBoolean(params.getProperty("single_plane_quantification", "false").trim());
 
             boolean anisotropic_reg_growth = Boolean.parseBoolean(params.getProperty("anisotropic_region_growth", "true").trim());
             double size_cutoff_factor = Double.parseDouble(params.getProperty("cell_size_cutoff_factor", "1.0").trim());
@@ -98,6 +99,7 @@ public class Main {
             segParam.setDelaunay_graph(delaunay_graph);
             segParam.setSizeCutoffFactor(size_cutoff_factor);
             segParam.setAnisotropicRegionGrowth(anisotropic_reg_growth);
+            segParam.setSingle_plane_quant(single_plane_quant);
 
             System.out.printf("Using segmentation parameters:\n", new Object[0]);
             System.out.printf(params.toString().replace(',', '\n'), new Object[0]);
@@ -113,8 +115,8 @@ public class Main {
         if (!rootDir.exists()) {
             throw new IllegalArgumentException("Error: Cannot find the input directoty");
         }
-        
-        File[] regFolder = rootDir.listFiles(r -> r.isDirectory() && r.getName().startsWith("reg0"));
+
+        File[] regFolder = rootDir.listFiles(r -> r.isDirectory() && r.getName().startsWith("reg0")&& r.getName().contains("_X")&& r.getName().contains("_Y"));
         if (regFolder != null && regFolder.length != 0) {
             File expJSON = new File(segParam.getRootDir() + File.separator + "Experiment.json");
             Experiment exp = Experiment.loadFromJSON(expJSON);
@@ -334,9 +336,11 @@ public class Main {
 
                 double[] intens = null;
                 if (!segConfigParam.isCount_puncta()) {
-                    intens = segConfigParam.isUse_membrane() ? Segmentation.computeMembraneIntensityOfRegions((ImageStack) readout.getImageStack(), (ImageStack) mem.getImageStack(), (SegmentedObject[]) cellsSegmentedObject) : Segmentation.computeMeanIntensityOfRegions((ImageStack) readout.getImageStack(), (SegmentedObject[]) cellsSegmentedObject);
+                    intens = segConfigParam.isUse_membrane() ? Segmentation.computeMembraneIntensityOfRegions((ImageStack) readout.getImageStack(),
+                            (ImageStack) mem.getImageStack(), (SegmentedObject[]) cellsSegmentedObject) :
+                            Segmentation.computeMeanIntensityOfRegions((ImageStack) readout.getImageStack(), (SegmentedObject[]) cellsSegmentedObject, segConfigParam.isSingle_plane_quant());
                     if (segConfigParam.isSubtractInnerRing()) {
-                        double[] innerRingIntens = Segmentation.computeMeanIntensityOfRegions((ImageStack) readout.getImageStack(), (SegmentedObject[]) innerRings);
+                        double[] innerRingIntens = Segmentation.computeMeanIntensityOfRegions((ImageStack) readout.getImageStack(), (SegmentedObject[]) innerRings , segConfigParam.isSingle_plane_quant());
                         for (int i4 = 0; i4 < intens.length; ++i4) {
                             intens[i4] -= innerRingIntens[i4];
                         }
@@ -396,7 +400,7 @@ public class Main {
         }
         Cell[] cellArr = cellsForTile.toArray(new Cell[cellsForTile.size()]);
         System.out.print("Building adj graph");
-        double[][] adjN = Neighborhood.buildAdjacencyMatrix(cellArr, w, h, d, true);
+        double[][] adjN = Neighborhood.buildAdjacencyMatrix(cellArr, w, h, d, true , segConfigParam.isSingle_plane_quant());
         cellsForTile.clear();
         System.out.println("Compensating:");
         double[][] compRegionIntensities = Segmentation.compensatePositionalSpilloverOfExpressionMtx(cellsSegmentedObject, adjN, regionIntensities);

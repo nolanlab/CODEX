@@ -33,11 +33,6 @@
             <version>2.7</version>
         </dependency>
         <dependency>
-            <groupId>com.microsoft.azure</groupId>
-            <artifactId>azure-storage</artifactId>
-            <version>5.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp</artifactId>
             <version>1.0</version>
@@ -128,7 +123,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.akoya.codex.upload.frmMain</mainClass>
+                            <mainClass>org.nolanlab.codex.upload.frmMain</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

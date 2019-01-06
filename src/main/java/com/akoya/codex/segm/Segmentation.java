@@ -101,14 +101,13 @@ public class Segmentation {
         return ret;
     }
 
-    public static double dist(Point3D a, Point3D b) {
-        double dist = (a.x - b.x) * (a.x - b.x);
+    public static double dist(Point3D a, Point3D b) { double dist = (a.x - b.x) * (a.x - b.x);
         dist += (a.y - b.y) * (a.y - b.y);
         dist += (a.z - b.z) * (a.z - b.z);
         return Math.sqrt(dist);
     }
 
-    public static double[] computeMeanIntensityOfRegions(ImageStack img, SegmentedObject[] segmentedObjects) {
+    public static double[] computeMeanIntensityOfRegions(ImageStack img, SegmentedObject[] segmentedObjects, boolean central_plane_quant) {
         double[] out = new double[segmentedObjects.length];
         for (int i = 0; i < out.length; i++) {
             SegmentedObject r = segmentedObjects[i];
@@ -117,9 +116,11 @@ public class Segmentation {
                 if (p.color.equals(Color.BLUE)) {
                     continue;
                 }
-                double vox = img.getVoxel(p.x, p.y, p.z);
-                out[i] += vox;
-                cnt++;
+                if(!central_plane_quant || p.z==r.getCenter().z) {
+                    double vox = img.getVoxel(p.x, p.y, p.z);
+                    out[i] += vox;
+                    cnt++;
+                }
             }
             out[i] /= cnt;
         }

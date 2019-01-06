@@ -75,10 +75,11 @@ public class Neighborhood {
         return out;
     }
 
-    public static double[][] buildAdjacencyMatrix(Cell[] input, int w, int h, int d, boolean normalize) {
+    public static double[][] buildAdjacencyMatrix(Cell[] input, int w, int h, int d, boolean normalize, boolean single_plane_quant) {
         int len = input.length;
         final double[][] adjMtx = new double[len][len];
         final int[][][] regionMap = new int[w][h][d];
+
 
         for (int i = 0; i < input.length; i++) {
             for (Point3D p : input[i].getSegmentedObject().getPoints()) {
@@ -108,6 +109,12 @@ public class Neighborhood {
                                 if (currReg == 0) {
                                     continue;
                                 }
+
+                                if(single_plane_quant && z!=input[currReg-1].getSegmentedObject().getCenter().z){
+                                    continue;
+                                }
+
+
                                 boolean border = false;
                                 for (int[] offset : new int[][]{{-1, 0, 0}, {1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, -1, 0}, {0, 1, 0}}) {
                                     int otherReg = regionMap[x + offset[0]][y + offset[1]][z + offset[2]];

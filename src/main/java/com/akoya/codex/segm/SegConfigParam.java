@@ -27,6 +27,15 @@ public class SegConfigParam {
     private boolean delaunay_graph = true;
     private int concentricCircles = 0;
     private boolean anisotropic_reg_growth = true;
+    private boolean single_plane_quant = false;
+
+    public boolean isSingle_plane_quant() {
+        return single_plane_quant;
+    }
+
+    public void setSingle_plane_quant(boolean single_plane_quant) {
+        this.single_plane_quant = single_plane_quant;
+    }
 
     public double getSizeCutoffFactor() {
         return sizeCutoffFactor;

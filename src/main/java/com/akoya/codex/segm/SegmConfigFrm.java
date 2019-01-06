@@ -9,8 +9,15 @@ import java.awt.*;
  */
 public class SegmConfigFrm extends JPanel {
 
+    private JCheckBox single_plane;
+
     public SegmConfigFrm() {
         initComponents();
+    }
+
+
+    public boolean isSinglePlaneQuant(){
+        return single_plane.isSelected();
     }
 
     private void initComponents() {
@@ -160,7 +167,7 @@ public class SegmConfigFrm extends JPanel {
         mainPanel.add(CellSizeCutOffLabel, gridBagConstraints);
 
         CellSizeCutOff = new JSpinner();
-        CellSizeCutOff.setModel(new SpinnerNumberModel(1.0, 0.1, 10, 0.1));
+        CellSizeCutOff.setModel(new SpinnerNumberModel(0.1, 0, 1, 0.01));
         CellSizeCutOff.setMaximumSize(new java.awt.Dimension(500, 20));
         CellSizeCutOff.setMinimumSize(new java.awt.Dimension(100, 20));
         CellSizeCutOff.setPreferredSize(new java.awt.Dimension(100, 20));
@@ -317,7 +324,7 @@ public class SegmConfigFrm extends JPanel {
 
         anisotropic_Region_Growth = new JCheckBox();
         anisotropic_Region_Growth.setText("<html>Restricts cell growth in Z, improves pos-neg separation on biaxials, but must be disabled for compatibility with CODEX1 Cell paper (Goltsev et al)</html>");
-        anisotropic_Region_Growth.setSelected(true);
+        anisotropic_Region_Growth.setSelected(false);
         anisotropic_Region_Growth.setMaximumSize(new java.awt.Dimension(500, 40));
         anisotropic_Region_Growth.setMinimumSize(new java.awt.Dimension(100, 40));
         anisotropic_Region_Growth.setPreferredSize(new java.awt.Dimension(100, 40));
@@ -330,6 +337,38 @@ public class SegmConfigFrm extends JPanel {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 9;
         mainPanel.add(anisotropic_Region_Growth, gridBagConstraints);
+
+        //Anisotrropic region growth label
+        JLabel single_plane_lbl = new JLabel();
+        single_plane_lbl.setText("Single plane quantification");
+        single_plane_lbl.setMaximumSize(new java.awt.Dimension(3000, 20));
+        single_plane_lbl.setMinimumSize(new java.awt.Dimension(100, 20));
+        single_plane_lbl.setPreferredSize(new java.awt.Dimension(100, 20));
+
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+        //gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        mainPanel.add(single_plane_lbl, gridBagConstraints);
+
+        single_plane = new JCheckBox();
+        single_plane.setText("<html>integrates the signal only based on the central plane of the cell</html>");
+        single_plane.setSelected(true);
+        single_plane.setMaximumSize(new java.awt.Dimension(500, 40));
+        single_plane.setMinimumSize(new java.awt.Dimension(100, 40));
+        single_plane.setPreferredSize(new java.awt.Dimension(100, 40));
+
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 10;
+        mainPanel.add(single_plane, gridBagConstraints);
 
         //Readout Channel
 //        readOutChannelsLabel = new JLabel();

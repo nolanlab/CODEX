@@ -37,6 +37,7 @@ public class SegmMain extends JFrame {
     private JButton cmdCreate;
     private OptionPane optionPane = new DefaultOptionPane();
 
+
     public SegmMain() throws Exception {
         System.setOut(new PrintStream(taOutputStream));
         //initComponents();
@@ -256,7 +257,8 @@ public class SegmMain extends JFrame {
                         "relativeCutoff=" + segmConfigFrm.getRelativeCutOff(), "cell_size_cutoff_factor=" + segmConfigFrm.getCellSizeCutOff(), "nuclearStainChannel=" + segmConfigFrm.getNuclearStainChannel(),
                         "nuclearStainCycle=" + segmConfigFrm.getNuclearStainCycle(), "membraneStainChannel=" + segmConfigFrm.getMembraneStainChannel(),
                         "membraneStainCycle=" + segmConfigFrm.getMembraneStainCycle(), //"readoutChannels=1,2,3",
-                        "use_membrane=false", "inner_ring_size=1.0", "delaunay_graph=false", "anisotropic_region_growth="+segmConfigFrm.isAnisotropicRegionGrowth());
+                        "use_membrane=false", "inner_ring_size=1.0", "delaunay_graph=false", "anisotropic_region_growth="+segmConfigFrm.isAnisotropicRegionGrowth(),
+                        "single_plane_quantification="+segmConfigFrm.isSinglePlaneQuant());
 
                 Path file = Paths.get(dir.getCanonicalPath() + File.separator + "config.txt");
                 Files.write(file, lines, Charset.forName("UTF-8"));
