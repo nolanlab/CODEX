@@ -1,0 +1,23 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="TestAll">
+
+    <test name="ProcessorTest">
+        <classes>
+            <class name="com.akoya.codex.upload.ProcessorTest" />
+        </classes>
+    </test>
+
+    <test name="SegmentationTest">
+        <classes>
+            <class name="com.akoya.codex.segm.SegmMainTest" />
+        </classes>
+    </test>
+
+    <test name="ClusteringTest">
+        <classes>
+            <class name="com.akoya.codex.clustering.ClusteringTest" />
+        </classes>
+    </test>
+
+</suite>

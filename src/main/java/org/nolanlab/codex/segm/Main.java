@@ -1,7 +1,5 @@
 package org.nolanlab.codex.segm;
 
-import com.akoya.codex.upload.Experiment;
-import com.akoya.codex.upload.logger;
 import com.opencsv.CSVReader;
 import ij.IJ;
 import ij.ImageJ;
@@ -15,9 +13,10 @@ import ij.plugin.FolderOpener;
 import ij.plugin.HyperStackConverter;
 import ij.plugin.ImageCalculator;
 import ij.process.ImageProcessor;
-import ij.process.ImageStatistics;
 import org.apache.commons.io.FilenameUtils;
-import javax.swing.*;
+import org.nolanlab.codex.upload.Experiment;
+import org.nolanlab.codex.upload.logger;
+
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
@@ -185,14 +184,13 @@ public class Main {
                 ip.add(1);
             }
 
-            ImageCalculator ic = new ImageCalculator();
+             ImageCalculator ic = new ImageCalculator();
             mult =  ic.run("Divide stack float create", nucl, memb);
 
             for (int i2 = 1; i2 <= mult.getStack().getSize(); ++i2) {
                 double ratio = nucl.getStack().getProcessor(i2).getStatistics().mean/mult.getStack().getProcessor(i2).getStatistics().mean;
                 mult.getStack().getProcessor(i2).multiply(ratio);
             }
-
             memb = null;
         }
         nucl = null;

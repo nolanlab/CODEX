@@ -30,9 +30,6 @@ public class ProcessingOptions {
     private boolean exportTiff;
     private boolean exportImgSeq;
     private int numThreads;
-    
-    
-
     private static String encoder = "encode";
 
     public static ProcessingOptions load(File f) throws FileNotFoundException {
@@ -46,8 +43,6 @@ public class ProcessingOptions {
         return numThreads;
     }
 
-    
-    
     public ProcessingOptions(File tempDir, boolean useBleachMinimizingCrop, boolean useBlindDeconvolution, int numThreads, URL destinationUrl, String username, String password, boolean doUpload, boolean exportTiff, boolean exportImgSeq) {
         this.tempDir = tempDir;
         this.useBleachMinimizingCrop = useBleachMinimizingCrop;

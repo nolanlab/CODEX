@@ -43,7 +43,7 @@ public class ProcessingOptionsView extends javax.swing.JPanel {
                 rbBoth.isSelected(),
                 rbExportTiff.isSelected(),
                 rbImageSeq.isSelected()
-                );
+        );
                 
     }
 

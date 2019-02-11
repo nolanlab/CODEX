@@ -1,0 +1,2 @@
+Segmentation supports printing out comp matrices
+Segmentation now scales min and max thresholds to the absolute bit depth of the image

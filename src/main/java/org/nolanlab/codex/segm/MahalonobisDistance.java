@@ -4,10 +4,11 @@
  */
 package org.nolanlab.codex.segm;
 
-import cern.colt.matrix.tdouble.DoubleMatrix2D;
-import cern.colt.matrix.tdouble.algo.DenseDoubleAlgebra;
-import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
-import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix2D;
+
+import cern.colt.matrix.DoubleMatrix2D;
+import cern.colt.matrix.impl.DenseDoubleMatrix1D;
+import cern.colt.matrix.impl.DenseDoubleMatrix2D;
+import cern.colt.matrix.linalg.Algebra;
 
 import java.util.Arrays;
 
@@ -24,7 +25,7 @@ public class MahalonobisDistance {
     public MahalonobisDistance(DenseDoubleMatrix1D center, DenseDoubleMatrix2D covMtx) {
         this.covMtx = covMtx;
         this.center = center;
-        this.invCovMtx = DenseDoubleAlgebra.DEFAULT.inverse(covMtx);
+        this.invCovMtx = Algebra.DEFAULT.inverse(covMtx);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class MahalonobisDistance {
         //Compute covariance matrix of the cluster
         //Take the inverse cov matrix
         try {
-            invCovMtx = DenseDoubleAlgebra.DEFAULT.inverse(covMtx);
+            invCovMtx = Algebra.DEFAULT.inverse(covMtx);
         } catch (IllegalArgumentException e) {
             System.out.println("Singular matrix. Using identity matrix instead");
             invCovMtx = new DenseDoubleMatrix2D(3, 3);
@@ -76,7 +77,7 @@ public class MahalonobisDistance {
 
         covMtx = new DenseDoubleMatrix2D(CovarianceMatrix.covarianceMatrix(dataTable));
 
-        invCovMtx = DenseDoubleAlgebra.DEFAULT.inverse(covMtx);
+        invCovMtx = Algebra.DEFAULT.inverse(covMtx);
     }
 
     public double distTo(double[] x) {
@@ -84,7 +85,7 @@ public class MahalonobisDistance {
         for (int i = 0; i < x.length; i++) {
             diff.setQuick(i, x[i] - center.getQuick(i));
         }
-        double dist = DenseDoubleAlgebra.DEFAULT.mult(diff, DenseDoubleAlgebra.DEFAULT.mult(invCovMtx, diff));
+        double dist = Algebra.DEFAULT.mult(diff, Algebra.DEFAULT.mult(invCovMtx, diff));
         return Math.sqrt(dist);
     }
 }

@@ -1,8 +1,8 @@
 package org.nolanlab.codex.segm;
 
-import cern.colt.matrix.tdouble.DoubleMatrix2D;
-import cern.colt.matrix.tdouble.algo.DenseDoubleAlgebra;
-import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix2D;
+import cern.colt.matrix.DoubleMatrix2D;
+import cern.colt.matrix.impl.DenseDoubleMatrix2D;
+import cern.colt.matrix.linalg.Algebra;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.plugin.filter.MaximumFinder;
@@ -209,7 +209,7 @@ public class Segmentation {
         DoubleMatrix2D out = new DenseDoubleMatrix2D(expressionMatrix);
 
         try {
-            out = DenseDoubleAlgebra.DEFAULT.solve(adj, exp);
+            out = Algebra.DEFAULT.solve(adj, exp);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
             System.out.println("Using the source matrix");

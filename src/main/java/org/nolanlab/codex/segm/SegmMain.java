@@ -1,14 +1,10 @@
 package org.nolanlab.codex.segm;
 
-import com.akoya.codex.DefaultOptionPane;
-import com.akoya.codex.OkayMockOptionPane;
-import com.akoya.codex.OptionPane;
-import com.akoya.codex.segm.ConcatenateResults;
-import com.akoya.codex.segm.Main;
-import com.akoya.codex.segm.MakeFCS;
-import com.akoya.codex.segm.SegmConfigFrm;
-import com.akoya.codex.upload.TextAreaOutputStream;
-import com.akoya.codex.upload.logger;
+import org.nolanlab.codex.DefaultOptionPane;
+import org.nolanlab.codex.OkayMockOptionPane;
+import org.nolanlab.codex.OptionPane;
+import org.nolanlab.codex.upload.TextAreaOutputStream;
+import org.nolanlab.codex.upload.logger;
 
 
 import javax.swing.*;
@@ -37,7 +33,7 @@ public class SegmMain extends JFrame {
     private static int version = 1;
     private JTextArea textArea = new JTextArea(15,30);
     private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "");
-    private com.akoya.codex.segm.SegmConfigFrm segmConfigFrm;
+    private SegmConfigFrm segmConfigFrm;
     private JButton cmdCreate;
     private OptionPane optionPane = new DefaultOptionPane();
 
@@ -48,7 +44,7 @@ public class SegmMain extends JFrame {
     }
 
     public void initComponents() throws Exception {
-        segmConfigFrm = new com.akoya.codex.segm.SegmConfigFrm();
+        segmConfigFrm = new SegmConfigFrm();
         inputFolderDialog();
         cmdCreate = new JButton();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -246,7 +242,7 @@ public class SegmMain extends JFrame {
         } catch (IllegalAccessException e) {
             // handle exception
         }
-        com.akoya.codex.segm.SegmMain segmMain = new com.akoya.codex.segm.SegmMain();
+        SegmMain segmMain = new SegmMain();
         segmMain.initComponents();
         segmMain.setVisible(true);
     }
@@ -351,7 +347,7 @@ public class SegmMain extends JFrame {
         }
     }
 
-    public com.akoya.codex.segm.SegmConfigFrm getSegmConfigFrm() {
+    public SegmConfigFrm getSegmConfigFrm() {
         return segmConfigFrm;
     }
 

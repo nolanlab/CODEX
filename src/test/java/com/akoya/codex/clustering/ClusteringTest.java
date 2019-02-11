@@ -1,6 +1,8 @@
 package com.akoya.codex.clustering;
 
-import com.akoya.codex.OkayMockOptionPane;
+import org.nolanlab.codex.OkayMockOptionPane;
+import org.nolanlab.codex.clustering.ImportConfigFrm;
+import org.nolanlab.codex.clustering.frmCluster;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
