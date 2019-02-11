@@ -96,7 +96,6 @@
     <orderEntry type="library" name="Maven: org.gephi:gephi-toolkit:0.9.2" level="project" />
     <orderEntry type="library" name="Maven: myssj:myssj:2.5" level="project" />
     <orderEntry type="library" name="Maven: csv2fcs:csv2fcs:4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains:annotations:17.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.testng:testng:6.8" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.beanshell:bsh:2.0b4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.beust:jcommander:1.27" level="project" />
