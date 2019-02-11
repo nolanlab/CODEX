@@ -361,7 +361,7 @@ public class frmMain extends javax.swing.JFrame {
     private void replaceTileOverlapInExp(File dir, Experiment exp) {
         if(dir != null) {
             for (File cyc : dir.listFiles()) {
-                if (cyc != null && cyc.isDirectory()) {
+                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
                     File[] cycFiles = cyc.listFiles(tif->tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif"));
                     ImagePlus imp = IJ.openImage(cycFiles[0].getAbsolutePath());
                     exp.tile_overlap_X  = (int)((double)(exp.tile_overlap_X *imp.getWidth()/100));
