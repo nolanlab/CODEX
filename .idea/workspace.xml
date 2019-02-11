@@ -6,104 +6,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="688757ff-0dcb-4d61-9cc6-df70ee5ba54b" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/artifacts/CODEX_jar_with_dependencies_jar.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_rwl_optimization_1_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_codec_commons_codec_1_10.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_pool_commons_pool_1_6.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__cytobank_fcsoutput_cytobank_fcsoutput_1_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/ConcatAndMakeFCS.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/DefaultOptionPane.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/Keyence.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/Microscope.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/MicroscopeFactory.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/MicroscopeTypeEnum.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/OkayMockOptionPane.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/OptionPane.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/Zeiss.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/clustering/ImportConfigFrm.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/clustering/frmCluster.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/Cell.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/CellViewer.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/ConcatenateCSVCodexWeb.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/ConcatenateResults.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/CovarianceMatrix.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/FFTFilter.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/GMM.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/GrahamScan.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/Kernel3D.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/MahalonobisDistance.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/Main.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/MakeFCS.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/MatrixOp.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/MaximaFinder3D.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/Neighborhood.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/Point2D.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/Point3D.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/ProfileAverager.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/RegionImageWriter.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/SegConfigParam.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/SegmConfigFrm.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/SegmMain.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/Segmentation.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/SegmentedObject.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/StackNormalizer.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/TIFFtoJPEG.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/XMLParse.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/segm/newXMLDocument.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/CellTypeCooccurence.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/DelaunayGraph.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/FeaturizeCellTypesKNN.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/GrahamScan.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/Matrix.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/Point2D.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/Strelochki.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/Toolkit.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/VerifyDelaunayGraph.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/circularlayout/Bundle.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/circularlayout/CircleLayout.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/circularlayout/CircleLayoutBuilder.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/circularlayout/LayoutHelper.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/circularlayout/NodeComparator.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/toolkit/circularlayout/TempLayoutData.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/CODEXwebToken.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/EncryptUtils.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/Experiment.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/ExperimentView.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/HandEmapper.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/ProcessingOptions.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/ProcessingOptionsView.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/RescaleImages.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/TextAreaOutputStream.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/TileObject.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/driffta/BestFocus.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/driffta/DeconvolutionInterlockDispatcher.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/driffta/DeconvolutionTask.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/driffta/Deconvolve_mult.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/driffta/Driffta.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/driffta/Driftcomp.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/driffta/DriftcompInterlockDispatcher.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/driffta/Find_focused_slices.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/driffta/MakeMontage.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/driffta/OpenImage.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/driffta/RescaleImages.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/driffta/SessionIdentifierGenerator.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/frmMain.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/logger.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/akoya/codex/upload/util.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CODEX.iml" afterPath="$PROJECT_DIR$/CODEX.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/GMM.java" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/GMM.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/MahalonobisDistance.java" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/MahalonobisDistance.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/Main.java" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/SegmMain.java" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/SegmMain.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/Segmentation.java" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/Segmentation.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/ProcessingOptions.java" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/ProcessingOptions.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/ProcessingOptionsView.java" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/ProcessingOptionsView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/com/akoya/codex/clustering/ClusteringTest.java" afterPath="$PROJECT_DIR$/src/test/java/com/akoya/codex/clustering/ClusteringTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/com/akoya/codex/segm/SegmMainTest.java" afterPath="$PROJECT_DIR$/src/test/java/com/akoya/codex/segm/SegmMainTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/com/akoya/codex/upload/ProcessorTest.java" afterPath="$PROJECT_DIR$/src/test/java/com/akoya/codex/upload/ProcessorTest.java" />
-    </list>
+    <list default="true" id="688757ff-0dcb-4d61-9cc6-df70ee5ba54b" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -140,7 +43,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/ProcessingOptionsView.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="402">
-              <caret line="43" column="42" lean-forward="true" selection-start-line="43" selection-start-column="42" selection-end-line="43" selection-end-column="42" />
+              <caret line="43" column="42" lean-forward="false" selection-start-line="43" selection-start-column="42" selection-end-line="43" selection-end-column="42" />
               <folding />
             </state>
           </provider>
@@ -149,8 +52,8 @@
       <file leaf-file-name="ProcessingOptions.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/ProcessingOptions.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1273">
-              <caret line="105" column="5" lean-forward="true" selection-start-line="105" selection-start-column="5" selection-end-line="105" selection-end-column="5" />
+            <state relative-caret-position="423">
+              <caret line="54" column="33" lean-forward="true" selection-start-line="54" selection-start-column="33" selection-end-line="54" selection-end-column="33" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2147#2148#0" expanded="true" />
@@ -226,6 +129,7 @@
       <find>paral</find>
       <find>colt</find>
       <find>myssj</find>
+      <find>gitignore</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -614,7 +518,7 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.38139534" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38139534" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -708,9 +612,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4386">
           <caret line="258" column="163" lean-forward="false" selection-start-line="258" selection-start-column="163" selection-end-line="258" selection-end-column="163" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -767,9 +668,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4386">
           <caret line="258" column="163" lean-forward="false" selection-start-line="258" selection-start-column="163" selection-end-line="258" selection-end-column="163" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -959,9 +857,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="442">
           <caret line="46" column="44" lean-forward="false" selection-start-line="46" selection-start-column="44" selection-end-line="46" selection-end-column="44" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -969,9 +864,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3383">
           <caret line="211" column="50" lean-forward="false" selection-start-line="211" selection-start-column="50" selection-end-line="211" selection-end-column="50" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1015,7 +907,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="9" column="43" lean-forward="false" selection-start-line="9" selection-start-column="43" selection-end-line="9" selection-end-column="43" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1038,7 +929,7 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/ProcessingOptionsView.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="402">
-          <caret line="43" column="42" lean-forward="true" selection-start-line="43" selection-start-column="42" selection-end-line="43" selection-end-column="42" />
+          <caret line="43" column="42" lean-forward="false" selection-start-line="43" selection-start-column="42" selection-end-line="43" selection-end-column="42" />
           <folding />
         </state>
       </provider>
@@ -1053,8 +944,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/ProcessingOptions.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1273">
-          <caret line="105" column="5" lean-forward="true" selection-start-line="105" selection-start-column="5" selection-end-line="105" selection-end-column="5" />
+        <state relative-caret-position="423">
+          <caret line="54" column="33" lean-forward="true" selection-start-line="54" selection-start-column="33" selection-end-line="54" selection-end-column="33" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2147#2148#0" expanded="true" />
