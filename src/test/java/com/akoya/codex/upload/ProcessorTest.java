@@ -1,11 +1,10 @@
-package com.akoya.codex.upload;
+package org.nolanlab.codex;
 
-import com.akoya.codex.MicroscopeTypeEnum;
-import com.akoya.codex.TestHelper;
+
+import org.nolanlab.codex.upload.*;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import org.testng.annotations.AfterTest;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.*;

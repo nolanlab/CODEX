@@ -1,11 +1,12 @@
 package com.akoya.codex.segm;
 
 
-import com.akoya.codex.OkayMockOptionPane;
+import org.nolanlab.codex.OkayMockOptionPane;
+import org.nolanlab.codex.segm.SegmConfigFrm;
+import org.nolanlab.codex.segm.SegmMain;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import org.testng.annotations.AfterTest;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
