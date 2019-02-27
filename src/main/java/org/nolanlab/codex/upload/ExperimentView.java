@@ -869,6 +869,7 @@ public class ExperimentView extends javax.swing.JPanel {
                     load(Experiment.loadFromJSON(expJS), jfc.getSelectedFile());
                 } catch (Exception e) {
                     logger.showException(e);
+                    System.out.println(e.getMessage());
                 }
             } else {
                 String err = guessValues(jfc.getSelectedFile());

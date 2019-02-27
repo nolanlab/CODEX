@@ -87,6 +87,7 @@ public class MakeMontage {
 
                 } catch (Exception e) {
                     logger.showException(e);
+                    System.out.println(e.getMessage());
                 }
             }
 
@@ -128,7 +129,18 @@ public class MakeMontage {
                 ((CompositeImage) hyp).setLuts(new LUT[]{LUT.createLutFromColor(Color.WHITE), LUT.createLutFromColor(Color.RED), LUT.createLutFromColor(Color.GREEN), LUT.createLutFromColor(new Color(0, 70, 255))});
             }
 
-            IJ.saveAsTiff(hyp, file.getAbsolutePath() + File.separator + regname + "_montage.tif");
+            if(!file.getAbsolutePath().contains("tiles")) {
+                logger.print("Saving in regular folder structure...");
+                IJ.saveAsTiff(hyp, file.getAbsolutePath() + File.separator + regname + "_montage.tif");
+            } else {
+                // Image sequence folder structure
+                logger.print("Saving in image sequence folder structure...");
+                File mkMonLoc = new File(file.getParentFile().getParentFile() + File.separator + "stitched");
+                if(!mkMonLoc.exists()) {
+                    mkMonLoc.mkdirs();
+                }
+                IJ.saveAsTiff(hyp, mkMonLoc + File.separator + regname + "_montage.tif");
+            }
 
         });
 

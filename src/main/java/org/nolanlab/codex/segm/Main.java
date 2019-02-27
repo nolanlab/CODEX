@@ -33,6 +33,7 @@ public class Main {
         File rootDir = null;
         File config = null;
         boolean showImage = false;
+        boolean isImgSeqFolder = false;
 
         SegConfigParam segParam = new SegConfigParam();
         try {
@@ -41,6 +42,12 @@ public class Main {
             }
             if (args.length == 3) {
                 rootDir = new File(args[0]);
+                File tilesDir = new File(rootDir + File.separator + "tiles");
+                if(tilesDir.exists()) {
+                    System.out.println("Image sequence input folder directory structure recognized...");
+                    isImgSeqFolder = true;
+                    rootDir = new File(rootDir + File.separator + "tiles");
+                }
                 showImage = Boolean.parseBoolean(args[1]);
                 printParams = Boolean.parseBoolean(args[2]);
             }
@@ -53,7 +60,15 @@ public class Main {
             }
 
             if (rootDir != null) {
-                config = new File(rootDir + File.separator + "config.txt");
+                if(!isImgSeqFolder) {
+                    config = new File(rootDir + File.separator + "config.txt");
+                } else {
+                    File segOut = new File(rootDir.getParentFile() + File.separator + "segm");
+                    if(!segOut.exists()) {
+                        segOut.mkdirs();
+                    }
+                    config = new File(segOut + File.separator + "config.txt");
+                }
                 if (!config.exists()) {
                     throw new IllegalArgumentException("Config file not found:\n" + config.getPath());
                 }
@@ -117,9 +132,9 @@ public class Main {
             throw new IllegalArgumentException("Error: Cannot find the input directoty");
         }
 
-        File[] regFolder = rootDir.listFiles(r -> r.isDirectory() && r.getName().startsWith("reg0")&& r.getName().contains("_X")&& r.getName().contains("_Y"));
+        File[] regFolder = rootDir.listFiles(r -> r.isDirectory() && r.getName().startsWith("reg0") && r.getName().contains("_X") && r.getName().contains("_Y"));
         if (regFolder != null && regFolder.length != 0) {
-            File expJSON = new File(segParam.getRootDir() + File.separator + "Experiment.json");
+            File expJSON = new File(segParam.getRootDir().getParentFile() + File.separator + "Experiment.json");
             Experiment exp = Experiment.loadFromJSON(expJSON);
             for (int reg = 0; reg < regFolder.length; reg++) {
                 if(segParam != null) {
@@ -184,7 +199,7 @@ public class Main {
                 ip.add(1);
             }
 
-             ImageCalculator ic = new ImageCalculator();
+            ImageCalculator ic = new ImageCalculator();
             mult =  ic.run("Divide stack float create", nucl, memb);
 
             for (int i2 = 1; i2 <= mult.getStack().getSize(); ++i2) {
@@ -226,12 +241,12 @@ public class Main {
         //Filter out small sized regions and remove that row from the txt file
 
         double sizeCutoff = (segConfigParam.getSizeCutoffFactor())*((segConfigParam.getRadius() * segConfigParam.getRadius() * segConfigParam.getRadius()) * Math.PI * (4.0 / 3.0));
-        logger.print("Filtering small objects by size, cutoff = " + sizeCutoff + " init number of objects: "+cellsSegmentedObject.length);
+        System.out.println("Filtering small objects by size, cutoff = " + sizeCutoff + " init number of objects: "+cellsSegmentedObject.length);
         cellsSegmentedObject = Arrays.stream(cellsSegmentedObject).filter(c -> c.getPoints().length >= sizeCutoff).toArray(SegmentedObject[]::new);
-        logger.print("# of objects left after filtering = " + cellsSegmentedObject.length);
-    if(cellsSegmentedObject.length<10){
-        logger.print("too few cell objects were found in this image. Try decreasing the cell_size_cutoff_factor, for instanece try setting it to 0.1 or 0.05");
-    }
+        System.out.println("# of objects left after filtering = " + cellsSegmentedObject.length);
+        if(cellsSegmentedObject.length<10){
+            System.out.println("too few cell objects were found in this image. Try decreasing the cell_size_cutoff_factor, for instanece try setting it to 0.1 or 0.05");
+        }
 
         BufferedImage[] bi2 = null;
         if(currTiff != null && !imageSeq) {
@@ -254,7 +269,13 @@ public class Main {
             fs.saveAsTiff(currTiff.getAbsolutePath());
         }
         else {
-            bi2 = RegionImageWriter.writeRegionImage(cellsSegmentedObject, mult, imp.getTitle(), new File(segConfigParam.getRootDir()+File.separator+imp.getTitle()));
+            String regMaskName = imp.getTitle();
+            File masksLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "segm"
+                    + File.separator + "masks" + File.separator + regMaskName);
+            if(!masksLoc.exists()) {
+                masksLoc.mkdirs();
+            }
+            bi2 = RegionImageWriter.writeRegionImage(cellsSegmentedObject, mult, imp.getTitle(), masksLoc);
         }
 
         File dir = (currTiff == null) ? segConfigParam.getRootDir() : currTiff.getParentFile();
@@ -284,6 +305,28 @@ public class Main {
 
         int numFrames = imp.getNFrames();
         String title = imp.getTitle();
+        File fcsLoc = null;
+        File compLoc = null;
+        File uncompLoc = null;
+        if(imageSeq) {
+            fcsLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "segm"
+                    + File.separator + "FCS");
+            if (!fcsLoc.exists()) {
+                fcsLoc.mkdirs();
+            }
+            compLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "segm"
+                    + File.separator + "FCS" + File.separator + "compensated");
+            if (!compLoc.exists()) {
+                compLoc.mkdirs();
+            }
+            uncompLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "segm"
+                    + File.separator + "FCS" + File.separator + "uncompensated");
+            if (!uncompLoc.exists()) {
+                uncompLoc.mkdirs();
+            }
+        }
+
+
         if (cellsSegmentedObject.length == 0) {
             System.out.println("Didn't find any cells here. exiting");
 
@@ -295,8 +338,8 @@ public class Main {
                 bwComp = new BufferedWriter(new FileWriter(currTiff.getPath() + "_Expression_Compensated.txt"));
             }
             else {
-                bwUncomp = new BufferedWriter(new FileWriter(new File(segConfigParam.getRootDir()+File.separator+title) + "_Expression_Uncompensated.txt"));
-                bwComp = new BufferedWriter(new FileWriter(new File(segConfigParam.getRootDir()+File.separator+title) + "_Expression_Compensated.txt"));
+                bwUncomp = new BufferedWriter(new FileWriter(new File(uncompLoc + File.separator + title) + "_Expression_Uncompensated.txt"));
+                bwComp = new BufferedWriter(new FileWriter(new File(compLoc + File.separator + title) + "_Expression_Compensated.txt"));
             }
 
             for (BufferedWriter bw : new BufferedWriter[]{bwUncomp, bwComp}) {
@@ -320,7 +363,7 @@ public class Main {
                 bwGN = new BufferedWriter(new FileWriter(currTiff.getPath() + "_GabrielGraph.txt"));
             }
             else {
-                bwGN = new BufferedWriter(new FileWriter(new File(segConfigParam.getRootDir()+File.separator+title) + "_GabrielGraph.txt"));
+                bwGN = new BufferedWriter(new FileWriter(new File(fcsLoc + File.separator + title) + "_GabrielGraph.txt"));
             }
             bwGN.write("");
             bwGN.flush();
@@ -430,8 +473,8 @@ public class Main {
             bwComp = new BufferedWriter(new FileWriter(currTiff.getPath() + "_Expression_Compensated.txt"));
         }
         else {
-            bwUncomp = new BufferedWriter(new FileWriter(new File(segConfigParam.getRootDir()+File.separator+title) + "_Expression_Uncompensated.txt"));
-            bwComp = new BufferedWriter(new FileWriter(new File(segConfigParam.getRootDir()+File.separator+title) + "_Expression_Compensated.txt"));
+            bwUncomp = new BufferedWriter(new FileWriter(new File(uncompLoc+File.separator+title) + "_Expression_Uncompensated.txt"));
+            bwComp = new BufferedWriter(new FileWriter(new File(compLoc+File.separator+title) + "_Expression_Compensated.txt"));
         }
         for (BufferedWriter bw22 : new BufferedWriter[]{bwUncomp, bwComp}) {
             bw22.write("cell_id\ttile_nr\tX\tY\tZ\tsize");
@@ -482,7 +525,7 @@ public class Main {
                 bwGN = new BufferedWriter(new FileWriter(currTiff.getPath() + "_DelaunayGraph.txt"));
             }
             else {
-                bwGN = new BufferedWriter(new FileWriter(segConfigParam.getRootDir().getPath() + "_DelaunayGraph.txt"));
+                bwGN = new BufferedWriter(new FileWriter(fcsLoc + "_DelaunayGraph.txt"));
             }
             for (int i7 = 0; i7 < gn.length; ++i7) {
                 for (Cell cell : gn[i7]) {

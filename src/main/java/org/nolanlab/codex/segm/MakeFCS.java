@@ -20,33 +20,62 @@ import java.util.Properties;
  */
 public class MakeFCS {
 
+    private static File segmDir = null;
     public static void main(String[] args) throws Exception {
 
         //args = new String[]{"I:\\Nikolay\\41-parameter 16 cycles melanoma Nikolay 4-18-17"};
         
         File dir = new File(args[0]);
-        File config = new File(args[0] + File.separator + "config.txt");
-        File chNames = new File(args[0] + File.separator + "channelNames.txt");
+        File config;
+        File fcsDir = null;
+        File compDir = null;
+        File uncompDir = null;
+        boolean isImgSeqFolder = false;
+
+        File tilesDir = new File(dir + File.separator + "tiles");
+        if(tilesDir.exists()) {
+            System.out.println("Image sequence input folder directory structure recognized...");
+            isImgSeqFolder = true;
+        }
+
+        if(isImgSeqFolder) {
+            segmDir = new File(dir + File.separator + "segm");
+            fcsDir = new File(segmDir + File.separator + "FCS");
+            compDir = new File(fcsDir + File.separator + "compensated");
+            uncompDir = new File(fcsDir + File.separator + "uncompensated");
+        }
+        if(isImgSeqFolder) {
+            config = new File(segmDir + File.separator + "config.txt");
+        } else {
+            config = new File(args[0] + File.separator + "config.txt");
+        }
 
         ArrayList<File> concatFiles = new ArrayList<>();
-
-        for (File f : dir.listFiles(f -> f.getName().startsWith("reg") && (!f.getName().contains("_X")) && (f.getName().toLowerCase().contains("compensated")) && f.getName().endsWith(".txt"))) {
-            concatFiles.add(f);
+        if(isImgSeqFolder) {
+            for (File f : compDir.listFiles(f -> f.getName().startsWith("reg") && (!f.getName().contains("_X")) && (f.getName().toLowerCase().contains("compensated"))  && f.getName().endsWith(".txt"))) {
+                concatFiles.add(f);
+            }
+            for (File f : uncompDir.listFiles(f -> f.getName().startsWith("reg") && (!f.getName().contains("_X")) && (f.getName().toLowerCase().contains("compensated"))  && f.getName().endsWith(".txt"))) {
+                concatFiles.add(f);
+            }
+        } else {
+            for (File f : dir.listFiles(f -> f.getName().startsWith("reg") && (!f.getName().contains("_X")) && (f.getName().toLowerCase().contains("compensated")) && f.getName().endsWith(".txt"))) {
+                concatFiles.add(f);
+            }
         }
 
         System.out.println("Found regions: " + concatFiles.toString());
 
         for (File reg : concatFiles) {
-
             if (args.length > 1) {
-                processFile(reg, config, args[1]);
+                processFile(reg, config, args[1], isImgSeqFolder);
             } else {
-                processFile(reg, config, null);
+                processFile(reg, config, null, isImgSeqFolder);
             }
         }
     }
 
-    public static void processFile(File f, File configFile, String blankCycIDXString) throws Exception {
+    public static void processFile(File f, File configFile, String blankCycIDXString, boolean isImgSeqFolder) throws Exception {
 
         CSVReader csv = new CSVReader(new FileReader(f), '\t');
         Iterator<String[]> it = csv.iterator();
@@ -87,20 +116,30 @@ public class MakeFCS {
         }
 
         String[][] chNames = null;
-        File chNamesF = new File(f.getParent() + File.separator + "channelNames.txt");
-        if (chNamesF.exists()) {
-            System.out.println("Found channel names file!");
-            java.util.List<String[]> chNamesL = new CSVReader(new FileReader(chNamesF), '\t').readAll();
-            chNames = chNamesL.toArray(new String[chNamesL.size()][]);
-        } else {
-            chNamesF = new File(f.getParentFile().getParent() + File.separator + "channelNames.txt");
-            if(chNamesF.exists()) {
+        if(isImgSeqFolder) {
+            File chNamesF = new File(segmDir.getParent() + File.separator + "channelNames.txt");
+            if (chNamesF.exists()) {
                 System.out.println("Found channel names file!");
                 java.util.List<String[]> chNamesL = new CSVReader(new FileReader(chNamesF), '\t').readAll();
                 chNames = chNamesL.toArray(new String[chNamesL.size()][]);
-            }
-            else {
+            } else {
                 throw new IllegalStateException("channelNames.txt file does not exist! Exiting...");
+            }
+        } else {
+            File chNamesF = new File(f.getParent() + File.separator + "channelNames.txt");
+            if (chNamesF.exists()) {
+                System.out.println("Found channel names file!");
+                java.util.List<String[]> chNamesL = new CSVReader(new FileReader(chNamesF), '\t').readAll();
+                chNames = chNamesL.toArray(new String[chNamesL.size()][]);
+            } else {
+                chNamesF = new File(f.getParentFile().getParent() + File.separator + "channelNames.txt");
+                if (chNamesF.exists()) {
+                    System.out.println("Found channel names file!");
+                    java.util.List<String[]> chNamesL = new CSVReader(new FileReader(chNamesF), '\t').readAll();
+                    chNames = chNamesL.toArray(new String[chNamesL.size()][]);
+                } else {
+                    throw new IllegalStateException("channelNames.txt file does not exist! Exiting...");
+                }
             }
         }
 

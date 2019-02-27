@@ -24,7 +24,7 @@ public class SegmConfigFrm extends JPanel {
         GridBagConstraints gridBagConstraints;
 
         mainPanel = new JPanel();
-        mainPanel.setBorder(BorderFactory.createTitledBorder("Clustering Configuration"));
+        mainPanel.setBorder(BorderFactory.createTitledBorder("Segmentation setup"));
         mainPanel.setLayout(new GridBagLayout());
 
         //Radius

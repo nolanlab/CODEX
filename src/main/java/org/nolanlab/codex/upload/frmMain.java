@@ -82,6 +82,7 @@ public class frmMain extends javax.swing.JFrame {
             }
         } catch (Exception e) {
             logger.showException(e);
+            System.out.println(e.getMessage());
             System.exit(0);
         }
 
@@ -105,6 +106,7 @@ public class frmMain extends javax.swing.JFrame {
             }
         } catch(Exception e) {
             logger.showException(e);
+            System.out.println(e.getMessage());
         }
 
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.PAGE_AXIS));
@@ -349,6 +351,7 @@ public class frmMain extends javax.swing.JFrame {
             }
             catch(IOException e) {
                logger.showException(e);
+               System.out.println(e.getMessage());
                JOptionPane.showMessageDialog(this,"Could not save the config.txt file");
                System.exit(0);
             }
@@ -421,6 +424,9 @@ public class frmMain extends javax.swing.JFrame {
 
                 //Copy Experiment.JSON to processed folder.
                 if(expJSON != null) {
+                    if(po.isExportImgSeq()) {
+                        copyFileFromSourceToDest(expJSON, new File(po.getTempDir() + File.separator + "tiles"));
+                    }
                     copyFileFromSourceToDest(expJSON, po.getTempDir());
                 }
 
@@ -433,8 +439,10 @@ public class frmMain extends javax.swing.JFrame {
                 log("Copying channelNames.txt file from experiment folder to processed folder location");
 
                 File source = new File(dir + File.separator + "channelNames.txt");
-                File dest = po.getTempDir();
-                copyFileFromSourceToDest(source, dest);
+                if(po.isExportImgSeq()) {
+                    copyFileFromSourceToDest(source, new File(po.getTempDir() + File.separator + "tiles"));
+                }
+                copyFileFromSourceToDest(source, po.getTempDir());
 
                 cmdStart.setEnabled(false);
                 cmdStop.setEnabled(true);
@@ -495,13 +503,13 @@ public class frmMain extends javax.swing.JFrame {
                             d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
                         }
                         else {
-                            d = new File(po.getTempDir() + File.separator + FilenameUtils.removeExtension(Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width)));
+                            d = new File(po.getTempDir() + File.separator + "tiles" + File.separator + FilenameUtils.removeExtension(Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width)));
                         }
                         int numTrial = 0;
                         while (!d.exists() && numTrial < 3) {
                             numTrial++;
                             if(SystemUtils.IS_OS_WINDOWS) {
-                                ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
+                                ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" org.nolanlab.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
                                 pb.redirectErrorStream(true);
 
                                 log("Starting process: " + pb.command().toString());
@@ -512,7 +520,7 @@ public class frmMain extends javax.swing.JFrame {
                                 log("Driffta done");
                             }
                             else if(SystemUtils.IS_OS_LINUX) {
-                                ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \"./*\" Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
+                                ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \"./*\" org.nolanlab.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
                                 pb.redirectErrorStream(true);
 
                                 log("Starting process: " + pb.command().toString());
@@ -551,13 +559,20 @@ public class frmMain extends javax.swing.JFrame {
 
                 log("Checking if bestFocus folder is present...");
 
-                File bf = new File(po.getTempDir() + File.separator + "bestFocus");
+                String bfDirStr = "";
+                if(po.isExportImgSeq()) {
+                    bfDirStr = po.getTempDir() + File.separator + "tiles" + File.separator + "bestFocus";
+                } else {
+                    bfDirStr = po.getTempDir() + File.separator + "bestFocus";
+                }
+
+                File bf = new File(bfDirStr);
                 if(!bf.exists()) {
                     log("Best focus folder is not present. Running it for all the tiffs inside the processed folder.");
                     File processed = new File(po.getTempDir().getPath());
-                    String bestFocus = po.getTempDir() + File.separator + "bestFocus";
+                    String bestFocus = bfDirStr;
                     File mkBestFocus = new File(bestFocus);
-                    mkBestFocus.mkdir();
+                    mkBestFocus.mkdirs();
                     if(processed.isDirectory()) {
                         File[] procTiff = processed.listFiles(fName -> (fName.getName().endsWith(".tiff") || fName.getName().endsWith(".tif")));
                         for(File aTif : procTiff) {
@@ -579,8 +594,15 @@ public class frmMain extends javax.swing.JFrame {
                 }
 
                 log("Creating montages");
+                String mkMonIn = null;
+                if(po.isExportImgSeq()) {
+                    log("Image sequence folder structure recognized...");
+                    mkMonIn = po.getTempDir() + File.separator + "tiles" + File.separator + "bestFocus";
+                } else {
+                    mkMonIn = po.getTempDir() + File.separator + "bestFocus";
+                }
                 if(SystemUtils.IS_OS_WINDOWS) {
-                    ProcessBuilder pb = new ProcessBuilder("cmd", "/C start /B /belownormal java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
+                    ProcessBuilder pb = new ProcessBuilder("cmd", "/C start /B /belownormal java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" org.nolanlab.codex.upload.driffta.MakeMontage \"" + mkMonIn + "\" 2");
                     log("Starting process: " + pb.command().toString());
                     pb.redirectErrorStream(true);
                     Process proc = pb.start();
@@ -589,7 +611,7 @@ public class frmMain extends javax.swing.JFrame {
                 }
 
                 else if(SystemUtils.IS_OS_LINUX) {
-                    ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \"./*\" MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
+                    ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \"./*\" org.nolanlab.codex.upload.driffta.MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
                     log("Starting process: " + pb.command().toString());
                     pb.redirectErrorStream(true);
                     Process proc = pb.start();
@@ -685,6 +707,7 @@ public class frmMain extends javax.swing.JFrame {
                     frm.setVisible(true);
                 } catch (Throwable e) {
                     logger.showException(e);
+                    System.out.println(e.getMessage());
                 }
             }
         });

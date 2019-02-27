@@ -91,6 +91,10 @@ public class Driffta {
             final Experiment exp = Experiment.loadFromJSON(expFile);
 
             ProcessingOptions po = ProcessingOptions.load(propFile);
+            if(po.isExportImgSeq()) {
+                log("Image sequence folder strucutre recognized...");
+                outDir += File.separator + "tiles";
+            }
 
             color = exp.channel_arrangement.toLowerCase().trim().equals("color");
 
@@ -512,7 +516,7 @@ public class Driffta {
                 String outStr = outDir + File.separator + FilenameUtils.removeExtension(exp.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width));
                 File out = new File(outStr);
                 if (!out.exists()) {
-                    out.mkdir();
+                    out.mkdirs();
                 }
                 log("Saving result file as image sequence: " + outStr);
                 reorderedHyp.setTitle(FilenameUtils.removeExtension(exp.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width)));
