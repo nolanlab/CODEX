@@ -60,6 +60,7 @@ public class SegmMain extends JFrame {
             }
         } catch(Exception e) {
             logger.showException(e);
+            System.out.println(e.getMessage());
         }
 
         getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
@@ -212,16 +213,20 @@ public class SegmMain extends JFrame {
                 else {
                     File dir = new File(configField.getText());
                     if(dir.exists() && dir.isDirectory()) {
-                        File[] regFolders = dir.listFiles(f -> (f.getName().startsWith("reg")&&f.isDirectory())||(f.getName().contains(".tif")));
-                        if(regFolders == null || regFolders.length < 1) {
-                            JOptionPane.showMessageDialog(configPanel, "No tif files present in the folder. Specify the folder with tif files and best focus folder.");
-                            System.exit(0);
+                        File tilesDir = new File(dir + File.separator + "tiles");
+                        if(!tilesDir.exists()) {
+                            File[] regFolders = dir.listFiles(f -> (f.getName().startsWith("reg") && f.isDirectory()) || (f.getName().contains(".tif")));
+                            if (regFolders == null || regFolders.length < 1) {
+                                JOptionPane.showMessageDialog(configPanel, "No tif files/image sequence folder structure recognized in the folder. Choose the right folder!");
+                                System.exit(0);
+                            }
                         }
                     }
                 }
             }
             catch(Exception e) {
                 logger.showException(e);
+                System.out.println(e.getMessage());
                 JOptionPane.showMessageDialog(configPanel,"Could not locate directory. Try again!");
                 System.exit(0);
             }
@@ -251,7 +256,16 @@ public class SegmMain extends JFrame {
     public Thread cmdCreateButtonClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
         Thread th = new Thread(() -> {
             try {
-                File dir = new File(configField.getText());
+                File dir;
+                File tilesDir = new File(configField.getText() + File.separator + "tiles");
+                if(tilesDir.exists()) {
+                    dir = new File(configField.getText() + File.separator + "segm");
+                    if(!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                } else {
+                    dir = new File(configField.getText());
+                }
                 //Create importConfig.txt
                 List<String> lines = Arrays.asList("radius=" + segmConfigFrm.getRadius(), "maxCutoff=" + segmConfigFrm.getMaxCutOff(), "minCutoff=" + segmConfigFrm.getMinCutOff(),
                         "relativeCutoff=" + segmConfigFrm.getRelativeCutOff(), "cell_size_cutoff_factor=" + segmConfigFrm.getCellSizeCutOff(), "nuclearStainChannel=" + segmConfigFrm.getNuclearStainChannel(),
@@ -266,6 +280,7 @@ public class SegmMain extends JFrame {
                 callSegm();
             } catch (Exception e) {
                 logger.showException(e);
+                System.out.println(e.getMessage());
             }
         });
         th.start();
@@ -301,7 +316,13 @@ public class SegmMain extends JFrame {
     }
 
     private void configFieldMouseReleased(java.awt.event.MouseEvent evt) {
-        File configTxt = new File(configField.getText()+File.separator+"config.txt");
+        File configTxt;
+        File tilesDir = new File(configField.getText() + File.separator + "tiles");
+        if(tilesDir.exists()) {
+            configTxt = new File(configField.getText() + File.separator + "segm" + File.separator + "config.txt");
+        } else {
+            configTxt = new File(configField.getText() + File.separator + "config.txt");
+        }
         if (configTxt.exists()) {
             try {
                 //set values here
@@ -343,6 +364,7 @@ public class SegmMain extends JFrame {
             }
             catch (Exception e) {
                 logger.showException(e);
+                System.out.println(e.getMessage());
             }
         }
     }

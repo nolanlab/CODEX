@@ -308,6 +308,7 @@ public class FeaturizeCellTypesKNN {
             es.awaitTermination(1000, TimeUnit.DAYS);
         } catch (InterruptedException e) {
             logger.showException(e);
+            System.out.println(e.getMessage());
         }
         return sortedDp;
     }

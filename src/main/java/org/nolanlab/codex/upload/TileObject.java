@@ -94,4 +94,19 @@ public class TileObject {
             return false;
         }
     }
+
+    public TileObject createTileFromFileNameWithoutImage(String tifFileName) {
+        String regionNumberStr = tifFileName.substring(3, 6);
+        this.regionNumber = regionNumberStr == null? 0 : Integer.parseInt(regionNumberStr);
+
+        String xNumberStr = tifFileName.substring(8, 10);
+        this.xNumber = xNumberStr == null? 0 : Integer.parseInt(xNumberStr);
+
+        String yNumberStr = tifFileName.substring(12, 14);
+        this.yNumber = yNumberStr == null? 0 : Integer.parseInt(yNumberStr);
+
+        this.fileName = FilenameUtils.removeExtension(tifFileName);
+
+        return this;
+    }
 }

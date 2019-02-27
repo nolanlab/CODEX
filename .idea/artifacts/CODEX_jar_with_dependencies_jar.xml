@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" build-on-make="true" name="CODEX-jar-with-dependencies:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/CODEX_jar</output-path>
+    <output-path>$PROJECT_DIR$/target</output-path>
     <root id="archive" name="CODEX.jar">
       <element id="module-output" name="CODEX" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/github/jai-imageio/jai-imageio-core/1.3.1/jai-imageio-core-1.3.1.jar" path-in-jar="/" />
