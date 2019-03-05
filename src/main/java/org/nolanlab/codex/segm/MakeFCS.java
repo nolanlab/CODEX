@@ -39,7 +39,7 @@ public class MakeFCS {
         }
 
         if(isImgSeqFolder) {
-            segmDir = new File(dir + File.separator + "segm");
+            segmDir = new File(dir + File.separator + "segm" + File.separator + args[3]);
             fcsDir = new File(segmDir + File.separator + "FCS");
             compDir = new File(fcsDir + File.separator + "compensated");
             uncompDir = new File(fcsDir + File.separator + "uncompensated");
@@ -117,7 +117,7 @@ public class MakeFCS {
 
         String[][] chNames = null;
         if(isImgSeqFolder) {
-            File chNamesF = new File(segmDir.getParent() + File.separator + "channelNames.txt");
+            File chNamesF = new File(segmDir.getParentFile().getParent() + File.separator + "channelNames.txt");
             if (chNamesF.exists()) {
                 System.out.println("Found channel names file!");
                 java.util.List<String[]> chNamesL = new CSVReader(new FileReader(chNamesF), '\t').readAll();

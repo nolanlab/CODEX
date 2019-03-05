@@ -27,6 +27,7 @@ public class Main {
     public static boolean printParams = false;
     public static final String revision = "CODEX-segm rev 6-JAN-2019";
     public static Properties params;
+    public static String configName = null;
 
     public static void main(String[] args) throws Exception {
 
@@ -40,7 +41,7 @@ public class Main {
             if (args.length < 2) {
                 throw new IllegalArgumentException("Invalid number of arguments");
             }
-            if (args.length == 3) {
+            if (args.length == 4) {
                 rootDir = new File(args[0]);
                 File tilesDir = new File(rootDir + File.separator + "tiles");
                 if(tilesDir.exists()) {
@@ -50,6 +51,7 @@ public class Main {
                 }
                 showImage = Boolean.parseBoolean(args[1]);
                 printParams = Boolean.parseBoolean(args[2]);
+                configName = args[3];
             }
             if (args.length == 2) {
                 //inputFolderDialog();
@@ -63,7 +65,7 @@ public class Main {
                 if(!isImgSeqFolder) {
                     config = new File(rootDir + File.separator + "config.txt");
                 } else {
-                    File segOut = new File(rootDir.getParentFile() + File.separator + "segm");
+                    File segOut = new File(rootDir.getParentFile() + File.separator + "segm" + File.separator + configName);
                     if(!segOut.exists()) {
                         segOut.mkdirs();
                     }
@@ -271,7 +273,7 @@ public class Main {
         else {
             String regMaskName = imp.getTitle();
             File masksLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "segm"
-                    + File.separator + "masks" + File.separator + regMaskName);
+                    + File.separator + configName + File.separator + "masks" + File.separator + regMaskName);
             if(!masksLoc.exists()) {
                 masksLoc.mkdirs();
             }
@@ -310,17 +312,17 @@ public class Main {
         File uncompLoc = null;
         if(imageSeq) {
             fcsLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "segm"
-                    + File.separator + "FCS");
+                    + File.separator + configName + File.separator + "FCS");
             if (!fcsLoc.exists()) {
                 fcsLoc.mkdirs();
             }
             compLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "segm"
-                    + File.separator + "FCS" + File.separator + "compensated");
+                    + File.separator + configName + File.separator + "FCS" + File.separator + "compensated");
             if (!compLoc.exists()) {
                 compLoc.mkdirs();
             }
             uncompLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "segm"
-                    + File.separator + "FCS" + File.separator + "uncompensated");
+                    + File.separator + configName + File.separator + "FCS" + File.separator + "uncompensated");
             if (!uncompLoc.exists()) {
                 uncompLoc.mkdirs();
             }
