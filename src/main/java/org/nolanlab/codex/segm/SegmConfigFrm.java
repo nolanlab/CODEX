@@ -72,7 +72,7 @@ public class SegmConfigFrm extends JPanel {
         mainPanel.add(maxCutOffLabel, gridBagConstraints);
 
         maxCutOff = new JSpinner();
-        maxCutOff.setModel(new SpinnerNumberModel(0.99, 0, 1, 0.01));
+        maxCutOff.setModel(new SpinnerNumberModel(0.99, 0, 1, 1e-3));
         maxCutOff.setInputVerifier(integerVerifier);
         ((JSpinner.DefaultEditor) maxCutOff.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
         maxCutOff.setMaximumSize(new java.awt.Dimension(500, 20));
@@ -105,7 +105,7 @@ public class SegmConfigFrm extends JPanel {
         mainPanel.add(minCutOffLabel, gridBagConstraints);
 
         minCutOff = new JSpinner();
-        minCutOff.setModel(new SpinnerNumberModel(0.05, 0, 1, 0.01));
+        minCutOff.setModel(new SpinnerNumberModel(0.05, 0, 1, 1e-3));
         minCutOff.setMaximumSize(new java.awt.Dimension(100, 20));
         minCutOff.setMinimumSize(new java.awt.Dimension(100, 20));
         minCutOff.setPreferredSize(new java.awt.Dimension(100, 20));
@@ -136,7 +136,7 @@ public class SegmConfigFrm extends JPanel {
         mainPanel.add(relativeCutOffLabel, gridBagConstraints);
 
         relativeCutOff = new JSpinner();
-        relativeCutOff.setModel(new SpinnerNumberModel(0.2, 0.0001, 0.9, 0.1));
+        relativeCutOff.setModel(new SpinnerNumberModel(0.2, 0, 1, 1e-3));
         relativeCutOff.setMaximumSize(new java.awt.Dimension(500, 20));
         relativeCutOff.setMinimumSize(new java.awt.Dimension(100, 20));
         relativeCutOff.setPreferredSize(new java.awt.Dimension(100, 20));

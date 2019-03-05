@@ -29,6 +29,7 @@ import java.util.List;
 public class SegmMain extends JFrame {
 
     private JTextField configField = new JTextField(5);
+    private JTextField configName = new JTextField(5);
     private JPanel configPanel = new JPanel();
     private static int version = 1;
     private JTextArea textArea = new JTextArea(15,30);
@@ -172,9 +173,38 @@ public class SegmMain extends JFrame {
             // handle exception
         }
 
-        configPanel.setLayout(new BoxLayout(configPanel, BoxLayout.X_AXIS));
-        configPanel.add(new JLabel("Select input folder to be segmented: "));
-        configPanel.add(configField);
+        GridBagLayout gridBag = new GridBagLayout();
+        configPanel.setLayout(gridBag);
+        GridBagConstraints c = new GridBagConstraints();
+
+        c.gridx=0;
+        c.gridy=0;
+        c.fill  = GridBagConstraints.BOTH;
+        c.weightx =1;
+        c.weighty =1;
+        configPanel.add(new JLabel("For image sequence format, save configuration as: "), c);
+
+        c.gridx=1;
+        c.gridy=0;
+        c.fill  = GridBagConstraints.BOTH;
+        c.weightx =1;
+        c.weighty =1;
+        configName.setText("segm1");
+        configPanel.add(configName, c);
+
+        c.gridx=0;
+        c.gridy=1;
+        c.fill  = GridBagConstraints.BOTH;
+        c.weightx =1;
+        c.weighty =1;
+        configPanel.add(new JLabel("Select input folder to be segmented: "), c);
+
+        c.gridx=1;
+        c.gridy=1;
+        c.fill  = GridBagConstraints.BOTH;
+        c.weightx =1;
+        c.weighty =1;
+        configPanel.add(configField, c);
 
         if(!(optionPane instanceof OkayMockOptionPane)) {
             configField.setText("...");
@@ -199,12 +229,23 @@ public class SegmMain extends JFrame {
             }
         });
 
+        c.gridx=0;
+        c.gridy=2;
+        c.fill  = GridBagConstraints.BOTH;
+        c.weightx =1;
+        c.weighty =1;
+        configPanel.add(new JLabel("If your input folder is not in image sequence format, you can leave the configuration name as is..."), c);
+
         int result = optionPane.showConfirmDialog(null, configPanel,
                 "Specify folder", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
             System.exit(0);
         }
         else {
+            if(configField.getText().equals(null) || configName.getText().equals("")) {
+                JOptionPane.showMessageDialog(configPanel,"The configuration name cannot be blank. Try again!");
+                System.exit(0);
+            }
             try {
                 if(configField.getText().equals(null) || configField.getText().equalsIgnoreCase("...")) {
                     JOptionPane.showMessageDialog(configPanel,"Please specify directory before proceeding!");
@@ -256,12 +297,15 @@ public class SegmMain extends JFrame {
     public Thread cmdCreateButtonClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
         Thread th = new Thread(() -> {
             try {
+                cmdCreate.setEnabled(false);
                 File dir;
                 File tilesDir = new File(configField.getText() + File.separator + "tiles");
                 if(tilesDir.exists()) {
-                    dir = new File(configField.getText() + File.separator + "segm");
+                    dir = new File(configField.getText() + File.separator + "segm" + File.separator + configName.getText());
                     if(!dir.exists()) {
                         dir.mkdirs();
+                    } else {
+
                     }
                 } else {
                     dir = new File(configField.getText());
@@ -289,8 +333,9 @@ public class SegmMain extends JFrame {
 
     private void callSegm() throws Exception {
         log("Segmentation version: " + version);
-        String[] arg = new String[3];
+        String[] arg = new String[4];
         arg[0] = configField.getText();
+        arg[3] = configName.getText();
         //1. Call Main
         log("Starting Main Segmentation...");
         Main.main(arg);
@@ -319,7 +364,7 @@ public class SegmMain extends JFrame {
         File configTxt;
         File tilesDir = new File(configField.getText() + File.separator + "tiles");
         if(tilesDir.exists()) {
-            configTxt = new File(configField.getText() + File.separator + "segm" + File.separator + "config.txt");
+            configTxt = new File(configField.getText() + File.separator + "segm" + File.separator + configName.getText() + File.separator + "config.txt");
         } else {
             configTxt = new File(configField.getText() + File.separator + "config.txt");
         }
