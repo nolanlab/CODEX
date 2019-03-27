@@ -8,7 +8,7 @@ If you are planning to clone/fork this repository, make sure to download the non
 
 # Prerequisites
 * Processing computer
-* Java 64bit version pre-installed. Link to java 64 bit: https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
+* Java 64bit version. Link to java 64 bit: https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
 * Make sure "Java" folder is present inside C:\Program Files and not in C:\Program Files(x86)
 * Download the latest .msi installer from the releases section of this repository: https://github.com/nolanlab/CODEX/releases
 
