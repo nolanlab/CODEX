@@ -17,6 +17,9 @@ If you are planning to clone/fork this repository, make sure to download the non
 * A new CODEXToolkit folder containing 3 differnt files would be created in Desktop and Win Start -> Applications
 * From the CODEXToolkit folder: use CODEXUploader.exe to run process the raw experiments and use CODEXSegm.exe to segment the processed data
 
+# Issues or problems?
+If you encounter any issues with the CODEX software, please feel free to create a new issue from the issues section of this repository: https://github.com/nolanlab/CODEX/issues
+
 
 
 
