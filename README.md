@@ -42,12 +42,12 @@ If you are planning to clone/fork this repository, make sure to download the non
 * While creating issues in CODEX Nolanlab repository in Github, please give relevant errors or exceptions that get thrown from the console or log. This is available both in Uploader and CodexSegm
 * If no errors were given in the console area either in uploader or segmentation tool, open command window and use command "cd" to browse and point to the location where you actually installed the CODEXtoolkit application(not start programs or desktop); this is where the CODEX-1.0-jar-with-dependencies.jar should be present. Now, do the following:
 
-  * To run uploader, use the java command:
-  `java -cp CODEX-1.0-jar-with-dependencies.jar org.nolanlab.codex.upload.frmMain`
+  * To run uploader, use the java command:                                                                                                
+  `java -cp CODEX-1.0-jar-with-dependencies.jar org.nolanlab.codex.upload.frmMain`                                                        
   Check the command window for any exceptions being thrown during the error and send a screenshot of this information
      
-  * To run segmentation, use the java command:
-  `java -cp CODEX-1.0-jar-with-dependencies.jar org.nolanlab.codex.segm.SegmMain`
+  * To run segmentation, use the java command:                                                                                            
+  `java -cp CODEX-1.0-jar-with-dependencies.jar org.nolanlab.codex.segm.SegmMain`                                                        
   Check the command window for any exceptions being thrown during the error and send a screenshot of this information
 
 
