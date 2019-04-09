@@ -31,6 +31,7 @@ If you are planning to clone/fork this repository, make sure to download the non
 * Once the experiment is processed successfully without any issues, use CODEXSegm.exe to run segmentation 
 * From the initial segmentation window, choose the processed experiment folder and if the processed data is in image sequence format, enter the configuration name for the segmentation run. This is useful when you try to analyze the data in CodexMAV. If the processed data is in regular tif file format, ignore the configuration name field, also regular tif file format cannot be used to analyze with CodexMAV
 * Make sure all the parameters you set are right and hit the "Start" button
+* Once segmentation is completed, you will see that the FCS files were created successfully
 
 # CodexMAV - Visualize & analyze processed and segmented data
 * CodexMAV is a Fiji plugin developed at Akoya Biosciences Inc., used for analyzing the processed Codex data
