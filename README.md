@@ -4,7 +4,7 @@
 
 If you are planning to clone/fork this repository, make sure to download the non-public maven dependencies, otherwise there will be compilation issues.
 
-# CODEX - code dependencies
+# Code dependencies for CODEX
 *Non-public maven dependencies can be found here:* https://1drv.ms/u/s!AmLT3VlVj2P_lf09PpFz6KxhKNboOw
 
 # Prerequisites
