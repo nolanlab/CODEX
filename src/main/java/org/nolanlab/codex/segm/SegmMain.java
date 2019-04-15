@@ -182,29 +182,29 @@ public class SegmMain extends JFrame {
         c.fill  = GridBagConstraints.BOTH;
         c.weightx =1;
         c.weighty =1;
-        configPanel.add(new JLabel("For image sequence format, save configuration as: "), c);
+        configPanel.add(new JLabel("Select input folder to be segmented: "), c);
 
         c.gridx=1;
         c.gridy=0;
         c.fill  = GridBagConstraints.BOTH;
         c.weightx =1;
         c.weighty =1;
-        configName.setText("segm1");
-        configPanel.add(configName, c);
+        configPanel.add(configField, c);
 
         c.gridx=0;
         c.gridy=1;
         c.fill  = GridBagConstraints.BOTH;
         c.weightx =1;
         c.weighty =1;
-        configPanel.add(new JLabel("Select input folder to be segmented: "), c);
+        configPanel.add(new JLabel("For image sequence format, save configuration as: "), c);
 
         c.gridx=1;
         c.gridy=1;
         c.fill  = GridBagConstraints.BOTH;
         c.weightx =1;
         c.weighty =1;
-        configPanel.add(configField, c);
+        configName.setText("segm1");
+        configPanel.add(configName, c);
 
         if(!(optionPane instanceof OkayMockOptionPane)) {
             configField.setText("...");
@@ -301,7 +301,7 @@ public class SegmMain extends JFrame {
                 File dir;
                 File tilesDir = new File(configField.getText() + File.separator + "tiles");
                 if(tilesDir.exists()) {
-                    dir = new File(configField.getText() + File.separator + "segm" + File.separator + configName.getText());
+                    dir = new File(configField.getText() + File.separator + "segmented_" + configName.getText());
                     if(!dir.exists()) {
                         dir.mkdirs();
                     } else {
@@ -364,7 +364,7 @@ public class SegmMain extends JFrame {
         File configTxt;
         File tilesDir = new File(configField.getText() + File.separator + "tiles");
         if(tilesDir.exists()) {
-            configTxt = new File(configField.getText() + File.separator + "segm" + File.separator + configName.getText() + File.separator + "config.txt");
+            configTxt = new File(configField.getText() + File.separator + "segmented_" + configName.getText() + File.separator + "config.txt");
         } else {
             configTxt = new File(configField.getText() + File.separator + "config.txt");
         }

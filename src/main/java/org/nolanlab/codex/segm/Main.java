@@ -28,6 +28,7 @@ public class Main {
     public static final String revision = "CODEX-segm rev 6-JAN-2019";
     public static Properties params;
     public static String configName = null;
+    public static String segOutLoc = null;
 
     public static void main(String[] args) throws Exception {
 
@@ -52,6 +53,7 @@ public class Main {
                 showImage = Boolean.parseBoolean(args[1]);
                 printParams = Boolean.parseBoolean(args[2]);
                 configName = args[3];
+                segOutLoc = "segmented_" + configName;
             }
             if (args.length == 2) {
                 //inputFolderDialog();
@@ -65,7 +67,7 @@ public class Main {
                 if(!isImgSeqFolder) {
                     config = new File(rootDir + File.separator + "config.txt");
                 } else {
-                    File segOut = new File(rootDir.getParentFile() + File.separator + "segm" + File.separator + configName);
+                    File segOut = new File(rootDir.getParentFile() + File.separator + segOutLoc);
                     if(!segOut.exists()) {
                         segOut.mkdirs();
                     }
@@ -272,8 +274,7 @@ public class Main {
         }
         else {
             String regMaskName = imp.getTitle();
-            File masksLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "segm"
-                    + File.separator + configName + File.separator + "masks" + File.separator + regMaskName);
+            File masksLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + segOutLoc + File.separator + "masks" + File.separator + regMaskName);
             if(!masksLoc.exists()) {
                 masksLoc.mkdirs();
             }
@@ -311,18 +312,18 @@ public class Main {
         File compLoc = null;
         File uncompLoc = null;
         if(imageSeq) {
-            fcsLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "segm"
-                    + File.separator + configName + File.separator + "FCS");
+            fcsLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + segOutLoc +
+                    File.separator + "FCS");
             if (!fcsLoc.exists()) {
                 fcsLoc.mkdirs();
             }
-            compLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "segm"
-                    + File.separator + configName + File.separator + "FCS" + File.separator + "compensated");
+            compLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + segOutLoc +
+                    File.separator + "FCS" + File.separator + "compensated");
             if (!compLoc.exists()) {
                 compLoc.mkdirs();
             }
-            uncompLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "segm"
-                    + File.separator + configName + File.separator + "FCS" + File.separator + "uncompensated");
+            uncompLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + segOutLoc +
+                    File.separator + "FCS" + File.separator + "uncompensated");
             if (!uncompLoc.exists()) {
                 uncompLoc.mkdirs();
             }

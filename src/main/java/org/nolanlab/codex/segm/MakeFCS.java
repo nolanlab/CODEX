@@ -39,7 +39,7 @@ public class MakeFCS {
         }
 
         if(isImgSeqFolder) {
-            segmDir = new File(dir + File.separator + "segm" + File.separator + args[3]);
+            segmDir = new File(dir + File.separator + "segmented_" + args[3]);
             fcsDir = new File(segmDir + File.separator + "FCS");
             compDir = new File(fcsDir + File.separator + "compensated");
             uncompDir = new File(fcsDir + File.separator + "uncompensated");
