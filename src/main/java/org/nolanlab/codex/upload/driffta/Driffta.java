@@ -731,12 +731,13 @@ public class Driffta {
 
         for(int i=0; i<exposureTimes.length; i++) {
             for(int j=0; j<exposureTimes[0].length; j++) {
+                if(i == 0 || j == 0) {
+                    continue;
+                }
                 if(expVsMs.containsKey(exposureTimes[i][j])) {
                     exposureTimes[i][j] = String.valueOf(expVsMs.get(exposureTimes[i][j]));
                 }else {
-                    if(i != 0) {
-                        throw new IllegalArgumentException("unknown exposure time: " + exposureTimes[i][j]);
-                    }
+                    throw new IllegalArgumentException("unknown exposure time: " + exposureTimes[i][j]);
                 }
             }
         }
