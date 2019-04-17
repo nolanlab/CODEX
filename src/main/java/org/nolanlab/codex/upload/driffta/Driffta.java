@@ -92,7 +92,7 @@ public class Driffta {
 
             ProcessingOptions po = ProcessingOptions.load(propFile);
             if(po.isExportImgSeq()) {
-                log("Image sequence folder strucutre recognized...");
+                log("Image sequence folder structure recognized...");
                 outDir += File.separator + "tiles";
             }
 
@@ -734,7 +734,9 @@ public class Driffta {
                 if(expVsMs.containsKey(exposureTimes[i][j])) {
                     exposureTimes[i][j] = String.valueOf(expVsMs.get(exposureTimes[i][j]));
                 }else {
-                    throw new IllegalArgumentException("unknown exposure time: "+exposureTimes[i][j]);
+                    if(i != 0) {
+                        throw new IllegalArgumentException("unknown exposure time: " + exposureTimes[i][j]);
+                    }
                 }
             }
         }
