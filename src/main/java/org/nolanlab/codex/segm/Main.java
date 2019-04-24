@@ -13,6 +13,7 @@ import ij.plugin.FolderOpener;
 import ij.plugin.HyperStackConverter;
 import ij.plugin.ImageCalculator;
 import ij.process.ImageProcessor;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.nolanlab.codex.upload.Experiment;
 import org.nolanlab.codex.upload.logger;
@@ -604,6 +605,168 @@ public class Main {
         int[] regAssignments = new int[userPoints.length];
         for (int i2 = 0; i2 < userPoints.length; ++i2) {
             Point3D point3D = userPoints[i2];
+        }
+    }
+
+    /*
+    Preview segmentation for a tile of user's choice
+    TO DO: Refactor code with doSegm() and runSegm() to avoid redundancy
+     */
+    public static void previewSegm(SegConfigParam segConfigParam, boolean imageSeq) throws Exception {
+        File expJSON = null;
+        Experiment exp = null;
+        ImagePlus imp = null;
+        if(imageSeq) {
+            FolderOpener fo = new FolderOpener();
+            fo.openAsVirtualStack(true);
+            expJSON = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "Experiment.json");
+            exp = Experiment.loadFromJSON(expJSON);
+            ImagePlus impImageSeq = fo.openFolder(segConfigParam.getRootDir().getPath());
+            imp = HyperStackConverter.toHyperStack(impImageSeq, exp.channel_names.length, exp.num_z_planes, exp.num_cycles, "default", "Composite");
+        }
+        else {
+            if (segConfigParam.getRootDir() != null && !segConfigParam.getRootDir().exists()) {
+                throw new IllegalArgumentException("Error: Cannot find the region:" + segConfigParam.getRootDir().getName());
+            }
+            if (!imageSeq) {
+                imp = IJ.openImage(segConfigParam.getRootDir().getAbsolutePath());
+            }
+            if (imp == null) {
+                throw new IllegalStateException("Couldn't open the image file: " + segConfigParam.getRootDir().getName());
+            }
+        }
+        Duplicator dup = new Duplicator();
+        if (!imageSeq) {
+            System.out.print("\nprocessing file: " + segConfigParam.getRootDir().getName() + "\n");
+        } else {
+            System.out.print("\nprocessing image seq: " + imp.getTitle() + "\n");
+        }
+
+        int[] readoutChannels = new int[imp.getNChannels()];
+        for (int x = 0; x < imp.getNChannels(); x++) {
+            readoutChannels[x] = x + 1;
+        }
+        imp.getNFrames();
+        ImagePlus nucl = dup.run(imp, segConfigParam.getNuclearStainChannel(), segConfigParam.getNuclearStainChannel(), 1, imp.getNSlices(), segConfigParam.getNuclearStainCycle(), segConfigParam.getNuclearStainCycle());
+        ImagePlus mult = nucl;
+        if (Math.min(segConfigParam.getMembraneStainCycle(), segConfigParam.getMembraneStainChannel()) > 0) {
+            System.out.println("Dividing by the membrane signal membrane");
+            ImagePlus memb = dup.run(imp, segConfigParam.getMembraneStainChannel(), segConfigParam.getMembraneStainChannel(), 1, imp.getNSlices(), segConfigParam.getMembraneStainCycle(), segConfigParam.getMembraneStainCycle());
+
+            for (int i2 = 1; i2 <= memb.getNSlices(); ++i2) {
+                ImageProcessor ip = memb.getStack().getProcessor(i2);
+                ip.add(1);
+            }
+
+            ImageCalculator ic = new ImageCalculator();
+            mult =  ic.run("Divide stack float create", nucl, memb);
+
+            for (int i2 = 1; i2 <= mult.getStack().getSize(); ++i2) {
+                double ratio = nucl.getStack().getProcessor(i2).getStatistics().mean/mult.getStack().getProcessor(i2).getStatistics().mean;
+                mult.getStack().getProcessor(i2).multiply(ratio);
+            }
+            memb = null;
+        }
+        nucl = null;
+
+        System.gc();
+        FFTFilter filter = new FFTFilter();
+        filter.setup(10000.0, (double) segConfigParam.getRadius(), 0, 5.0, false, false, false);
+        System.out.print("running FFT bandpass filter");
+        filter.run(mult);
+
+        boolean anisotropic_reg_growth = segConfigParam.isAnisotropicRegionGrowth();
+
+        //GaussianBlur3D.blur(mult, radius, radius, radius);
+        SegmentedObject[] cellsSegmentedObject = MaximaFinder3D.findCellsByIntensityGradient((ImagePlus) mult, segConfigParam.getRadius(), (double) segConfigParam.getMaxCutoff(), (double) segConfigParam.getMinCutoff(), (double) segConfigParam.getRelativeCutoff(), (boolean) segConfigParam.isShowImage(), segConfigParam.isSubtractInnerRing() ? 1.0 : segConfigParam.getInner_ring_size(), anisotropic_reg_growth);
+        if (segConfigParam.isSubtractInnerRing()) {
+            segConfigParam.setUse_membrane(false);
+        }
+        SegmentedObject[] innerRings = null;
+
+        if (segConfigParam.isSubtractInnerRing()) {
+            innerRings = MaximaFinder3D.findCellsByIntensityGradient((ImagePlus) mult, segConfigParam.getRadius(), (double) segConfigParam.getMaxCutoff(), (double) segConfigParam.getMinCutoff(), (double) segConfigParam.getInner_ring_size(), (boolean) segConfigParam.isShowImage(), 1.0, anisotropic_reg_growth);
+        }
+
+        if (segConfigParam.isShowImage()) {
+            try {
+                new ImageJ();
+                mult.show();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+
+        //Filter out small sized regions and remove that row from the txt file
+        double sizeCutoff = (segConfigParam.getSizeCutoffFactor())*((segConfigParam.getRadius() * segConfigParam.getRadius() * segConfigParam.getRadius()) * Math.PI * (4.0 / 3.0));
+        System.out.println("Filtering small objects by size, cutoff = " + sizeCutoff + " init number of objects: "+cellsSegmentedObject.length);
+        cellsSegmentedObject = Arrays.stream(cellsSegmentedObject).filter(c -> c.getPoints().length >= sizeCutoff).toArray(SegmentedObject[]::new);
+        System.out.println("# of objects left after filtering = " + cellsSegmentedObject.length);
+        if(cellsSegmentedObject.length<10){
+            System.out.println("too few cell objects were found in this image. Try decreasing the cell_size_cutoff_factor, for instanece try setting it to 0.1 or 0.05");
+        }
+
+        BufferedImage[] bi2;
+        if(!imageSeq) {
+            //Apply overlay to the different Z stacks of the actual tif file based on different masks.
+            bi2 = RegionImageWriter.writeRegionImage(cellsSegmentedObject, mult, segConfigParam.getRootDir().getName(),
+                    segConfigParam.getRootDir().getParentFile());
+            ImagePlus copy = IJ.openImage(segConfigParam.getRootDir().getAbsolutePath());
+            Overlay overlay = new Overlay();
+
+            for (int z = 0; z < bi2.length; z++) {
+                ImagePlus im2 = new ImagePlus("Image Slice: " + z, bi2[z]);
+                ImageRoi imgRoi = new ImageRoi(0, 0, im2.getProcessor());
+                imgRoi.setNonScalable(true);
+                imgRoi.setZeroTransparent(true);
+                imgRoi.setOpacity(1);
+                imgRoi.setPosition(0, z + 1, 0);
+                overlay.add(imgRoi);
+            }
+            copy.setOverlay(overlay);
+            //Delete masks png that was created
+            File[] masksPng = segConfigParam.getRootDir().getParentFile().listFiles(t -> !t.isDirectory() && t.getName().toLowerCase().endsWith(".png"));
+            for(int i=0; i<masksPng.length; i++) {
+                if(masksPng[i].exists()) {
+                    masksPng[i].delete();
+                }
+            }
+            copy.show();
+        }
+        else {
+            if (segConfigParam.getRootDir() != null) {
+                String regMaskName = imp.getTitle();
+                File masksLoc = new File(segConfigParam.getRootDir().getParentFile() + File.separator + "preview" +
+                        File.separator + "masks" + File.separator + regMaskName);
+                if (!masksLoc.exists()) {
+                    masksLoc.mkdirs();
+                }
+                bi2 = RegionImageWriter.writeRegionImage(cellsSegmentedObject, mult, imp.getTitle(), masksLoc);
+
+                //convert imp to hyp
+                ImagePlus hyp = HyperStackConverter.toHyperStack(imp, imp.getNChannels(), exp.num_z_planes, exp.num_cycles);
+                if (hyp.getOverlay() != null) {
+                    hyp.getOverlay().clear();
+                }
+
+                Overlay overlay = new Overlay();
+
+                for (int zIndex = 0; zIndex < bi2.length; zIndex++) {
+                    ImagePlus im2 = new ImagePlus(hyp.getTitle(), bi2[zIndex]);
+                    ImageRoi imgRoi = new ImageRoi(0, 0, im2.getProcessor());
+                    imgRoi.setNonScalable(true);
+                    imgRoi.setZeroTransparent(true);
+                    imgRoi.setOpacity(1.0);
+                    imgRoi.setPosition(0, zIndex + 1, 0);
+                    overlay.add(imgRoi);
+                }
+                hyp.setOverlay(overlay);
+                // Delete masks that were created
+                if (masksLoc.exists()) {
+                    FileUtils.deleteDirectory(masksLoc.getParentFile().getParentFile());
+                }
+                hyp.show();
+            }
         }
     }
 }

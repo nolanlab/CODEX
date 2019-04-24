@@ -36,7 +36,11 @@ public class SegmMain extends JFrame {
     private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "");
     private SegmConfigFrm segmConfigFrm;
     private JButton cmdCreate;
+    private JButton cmdPreview;
     private OptionPane optionPane = new DefaultOptionPane();
+    private OptionPane previewOptionPane = new DefaultOptionPane();
+    private JPanel previewPanel = new JPanel();
+    private JComboBox<String> previewRegion = new JComboBox<>();
 
 
     public SegmMain() throws Exception {
@@ -48,6 +52,7 @@ public class SegmMain extends JFrame {
         segmConfigFrm = new SegmConfigFrm();
         inputFolderDialog();
         cmdCreate = new JButton();
+        cmdPreview = new JButton();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Create Segmentation configuration");
 
@@ -108,6 +113,25 @@ public class SegmMain extends JFrame {
                 cmdCreateButtonClicked(evt);
             }
         });
+
+        cmdPreview.setText("Preview for one tile");
+        cmdPreview.setAlignmentX(0.5F);
+        cmdPreview.setAlignmentY(0.0F);
+        cmdPreview.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        cmdPreview.setMaximumSize(new java.awt.Dimension(150, 150));
+        cmdPreview.setMinimumSize(new java.awt.Dimension(150, 30));
+        cmdPreview.setPreferredSize(new java.awt.Dimension(150, 30));
+        cmdPreview.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdPreviewButtonClicked(evt);
+            }
+        });
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+        buttonPanel.add(cmdCreate);
+        buttonPanel.add(cmdPreview);
+
         c = new GridBagConstraints();
 
         c.gridx=0;
@@ -117,7 +141,7 @@ public class SegmMain extends JFrame {
         c.anchor = GridBagConstraints.NORTH;
         c.fill  = GridBagConstraints.NONE;
 
-        newPanel.add(cmdCreate, c);
+        newPanel.add(buttonPanel, c);
 
         pane.setMaximumSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
 
@@ -325,6 +349,115 @@ public class SegmMain extends JFrame {
             } catch (Exception e) {
                 logger.showException(e);
                 System.out.println(e.getMessage());
+            }
+        });
+        th.start();
+        return th;
+    }
+
+    public Thread cmdPreviewButtonClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdStartActionPerformed
+        Thread th = new Thread(() -> {
+            try {
+                // Set System L&F
+                UIManager.setLookAndFeel(
+                        UIManager.getSystemLookAndFeelClassName());
+            } catch (UnsupportedLookAndFeelException e) {
+                // handle exception
+            } catch (ClassNotFoundException e) {
+                // handle exception
+            } catch (InstantiationException e) {
+                // handle exception
+            } catch (IllegalAccessException e) {
+                // handle exception
+            }
+            boolean imgSeq = false;
+            File[] regNamesFolder = null;
+            String[] regNames = null;
+            File dir;
+            File tilesDir = new File(configField.getText() + File.separator + "tiles");
+            // For image sequence
+            if(tilesDir.exists()) {
+                imgSeq = true;
+                regNamesFolder = tilesDir.listFiles(t -> t.isDirectory() && t.getName().startsWith("re"));
+            }
+            // Regular tiff
+            else {
+                imgSeq = false;
+                File oldFileSt = new File(configField.getText());
+                regNamesFolder = oldFileSt.listFiles(t -> t.isFile() && t.getName().toLowerCase().startsWith("re") && t.getName().toLowerCase().endsWith(".tif"));
+            }
+            regNames = new String[regNamesFolder.length];
+            for (int i = 0; i < regNamesFolder.length; i++) {
+                regNames[i] = regNamesFolder[i].getName();
+            }
+
+            GridBagLayout gridBag = new GridBagLayout();
+            previewPanel.setLayout(gridBag);
+            GridBagConstraints c = new GridBagConstraints();
+
+            c.gridx=0;
+            c.gridy=0;
+            c.fill  = GridBagConstraints.BOTH;
+            c.weightx =1;
+            c.weighty =1;
+            previewPanel.add(new JLabel("Choose region from the experiment: "), c);
+
+            c.gridx=1;
+            c.gridy=0;
+            c.fill  = GridBagConstraints.BOTH;
+            c.weightx =1;
+            c.weighty =1;
+            previewPanel.add(previewRegion, c);
+
+            previewRegion.setModel(new DefaultComboBoxModel<>(regNames));
+            previewRegion.setMaximumSize(new java.awt.Dimension(300, 20));
+            previewRegion.setMinimumSize(new java.awt.Dimension(300, 20));
+            previewRegion.setPreferredSize(new java.awt.Dimension(300, 20));
+
+            int result = optionPane.showConfirmDialog(null, previewPanel,
+                    "Specify region for preview", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
+                System.exit(0);
+            }
+            else {
+                if(previewRegion.getSelectedItem().toString().equals(null) || previewRegion.getSelectedItem().toString().equals("")) {
+                    JOptionPane.showMessageDialog(previewPanel,"Please specify region before proceeding!");
+                    System.exit(0);
+                }
+                try {
+                    SegConfigParam segParam = new SegConfigParam();
+                    segParam.setRootDir(regNamesFolder[previewRegion.getSelectedIndex()]);
+                    segParam.setShowImage(false);
+                    segParam.setRadius(Integer.parseInt(segmConfigFrm.getRadius()));
+                    segParam.setUse_membrane(false);
+                    segParam.setMaxCutoff(Double.parseDouble(segmConfigFrm.getMaxCutOff()));
+                    segParam.setMinCutoff(Double.parseDouble(segmConfigFrm.getMinCutOff()));
+                    segParam.setRelativeCutoff(Double.parseDouble(segmConfigFrm.getRelativeCutOff()));
+                    segParam.setNuclearStainChannel(Integer.parseInt(segmConfigFrm.getNuclearStainChannel()));
+                    segParam.setNuclearStainCycle(Integer.parseInt(segmConfigFrm.getNuclearStainCycle()));
+                    segParam.setMembraneStainChannel(Integer.parseInt(segmConfigFrm.getMembraneStainChannel()));
+                    segParam.setMembraneStainCycle(Integer.parseInt(segmConfigFrm.getMembraneStainCycle()));
+                    segParam.setInner_ring_size(1.0);
+                    segParam.setCount_puncta(false);
+                    segParam.setDont_inverse_memb(false);
+                    segParam.setConcentricCircles(0);
+                    segParam.setDelaunay_graph(true);
+                    segParam.setSizeCutoffFactor(Double.parseDouble(segmConfigFrm.getCellSizeCutOff()));
+                    segParam.setAnisotropicRegionGrowth(segmConfigFrm.isAnisotropicRegionGrowth());
+                    segParam.setSingle_plane_quant(segmConfigFrm.isSinglePlaneQuant());
+                    log("Segmentation version: " + version);
+                    log("Starting segmentation preview for region: " + previewRegion.getSelectedItem().toString());
+                    log("----------------------------");
+                    Main.previewSegm(segParam, imgSeq);
+                    log("Preview done");
+                    log("----------------------------");
+                }
+                catch(Exception e) {
+                    logger.showException(e);
+                    System.out.println(e.getMessage());
+                    JOptionPane.showMessageDialog(previewPanel,"Could not locate directory. Try again!");
+                    System.exit(0);
+                }
             }
         });
         th.start();
