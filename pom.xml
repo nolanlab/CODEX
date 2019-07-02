@@ -25,7 +25,7 @@
         <dependency>
             <groupId>microvolution</groupId>
             <artifactId>microvolution</artifactId>
-            <version>2016.10-beta2</version>
+            <version>win_2019.03</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -57,6 +57,11 @@
             <groupId>sc.fiji</groupId>
             <artifactId>imagescience</artifactId>
             <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>sc.fiji</groupId>
+            <artifactId>Stitching_</artifactId>
+            <version>3.1.7-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.sun.media</groupId>
