@@ -8,8 +8,8 @@ package org.nolanlab.codex.upload.driffta;
 import com.microvolution.DeconParameters;
 import com.microvolution.PSFModel;
 import com.microvolution.PreFilter;
-import com.microvolution.Scaling;
 import com.microvolution.dispatch.DeconvolutionDispatch;
+import com.microvolution.dispatch.ErrorHandler;
 import ij.ImagePlus;
 import ij.plugin.Duplicator;
 
@@ -42,8 +42,23 @@ public class Deconvolve_mult {
         Driffta.log("Creating deconvolution dispatcher with "+ numDevices + " GPU devices");
        if(!disableDecon){
            dispatch = DeconvolutionDispatch.GetInstance();
+           // Added for error handling
+           ErrorHandler eh = new ErrorHandler() {
+               @Override
+               public void error(Throwable e) {
+                  e.printStackTrace(System.err);
+                  Driffta.log(e.getMessage());
+               }
+
+               @Override
+               public void error(String s) {
+                   super.error(s);
+                   Driffta.log(s);
+               }
+           };
+           dispatch.setErrorHandler(eh);
            dispatch.setDevices(dev);
-       }else{
+       } else{
            dispatch = null;
        }
         
@@ -63,8 +78,12 @@ public class Deconvolve_mult {
                         
                         DeconvolutionTask task = new DeconvolutionTask(dup, frame, ch, stack);
                         // Make sure params have been set, either here or inside task itself. Otherwise, expect exceptions thrown.
+                        // SpinningDiskParameters, Pinhole, PinholeSpacing
+
                         DeconParameters params = new DeconParameters();
-                        params.scaling(Scaling.U16);
+
+                        // removed because of Marc's advice
+                        // params.scaling(Scaling.U16);
                         params.background(0);
                         params.preFilter(PreFilter.None);
                         params.generatePsf(true);
@@ -84,7 +103,7 @@ public class Deconvolve_mult {
                         params.nx(stack.getWidth());
                         params.ny(stack.getHeight());
                         params.nz(stack.getNSlices());
-                        params.scaling(com.microvolution.Scaling.U16);
+                        // params.scaling(com.microvolution.Scaling.U16);
 
                         task.setParams(params);
                         // Add to queue
@@ -112,10 +131,6 @@ public class Deconvolve_mult {
             es.submit(r);
             es.shutdown();
             es.awaitTermination(5, TimeUnit.MINUTES);
-            
-           
-            
-            
         } catch (Exception e) {
             Driffta.log("Fatal exception in Deconvolve.java: " + e.getMessage() + "\n" + e.getStackTrace()[0].toString());
             dispatch.shutdown();
@@ -125,9 +140,7 @@ public class Deconvolve_mult {
             if (dispatch != null) {
                 dispatch.shutdown();
             }
-
         }
-
     }
 
 }

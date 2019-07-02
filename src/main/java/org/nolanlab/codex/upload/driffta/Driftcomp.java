@@ -83,13 +83,15 @@ public class Driftcomp {
         shift[2] = (int) (absShift * Math.signum(shift[2]));
         
         int slicesToAddAtTheBeginning = Math.max(0, shift[2]);
-        
+
         for (int i = 0; i < slicesToAddAtTheBeginning; i++) {
             ImageProcessor ip = imp.getImageStack().getProcessor(1);
-            ImageProcessor ip2 = ip.createProcessor(imp.getWidth(), imp.getHeight());
-            out.addSlice(ip2);
+//            ImageProcessor ip2 = ip.createProcessor(imp.getWidth(), imp.getHeight());
+//            out.addSlice(ip2);
+            out.addSlice(ip);
         }
-        
+
+        // XY drift compensation happens here - ip2 is a single slice where we insert ip with x-shift[0] and y-shift[1]
         int startingSlice = Math.max(0, -shift[2]);
         for (int slice = startingSlice + 1; slice <= imp.getNSlices(); slice++) {
             ImageProcessor ip = imp.getImageStack().getProcessor(slice);
@@ -100,13 +102,15 @@ public class Driftcomp {
                 break;
             }
         }
-        
+
         int slicesToAdd = imp.getNSlices() - out.size();
-        
+
         for (int i = 0; i < slicesToAdd; i++) {
-            ImageProcessor ip = imp.getImageStack().getProcessor(1);
-            ImageProcessor ip2 = ip.createProcessor(imp.getWidth(), imp.getHeight());
-            out.addSlice(ip2);
+//            ImageProcessor ip = imp.getImageStack().getProcessor(1);
+            ImageProcessor ip = imp.getImageStack().getProcessor(imp.getNSlices());
+//            ImageProcessor ip2 = ip.createProcessor(imp.getWidth(), imp.getHeight());
+//            out.addSlice(ip2);
+            out.addSlice(ip);
         }
 
         //ImagePlus dc = new ImagePlus("After Driftcomp", out);

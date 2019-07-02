@@ -5,8 +5,10 @@
  */
 package org.nolanlab.codex.upload;
 
+import org.nolanlab.codex.DefaultOptionPane;
 import org.nolanlab.codex.Microscope;
 import org.nolanlab.codex.MicroscopeFactory;
+import org.nolanlab.codex.OptionPane;
 import org.nolanlab.codex.upload.driffta.BestFocus;
 import ij.IJ;
 import ij.ImagePlus;
@@ -16,6 +18,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import plugin.Stitching_Grid;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
 
 /**
  *
@@ -92,6 +96,7 @@ public class frmMain extends javax.swing.JFrame {
         prg = new javax.swing.JProgressBar();
         cmdStart = new javax.swing.JButton();
         cmdStop = new JButton();
+//        cmdMontage = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("CODEXuploader");
@@ -196,6 +201,24 @@ public class frmMain extends javax.swing.JFrame {
             }
         });
 
+//        // Montage button
+//        cmdMontage.setText("Create pre-processed montage");
+//        cmdMontage.setAlignmentX(0.5F);
+//        cmdMontage.setAlignmentY(0.0F);
+//        cmdMontage.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+//        cmdMontage.setMaximumSize(new java.awt.Dimension(150, 30));
+//        cmdMontage.setMinimumSize(new java.awt.Dimension(150, 30));
+//        cmdMontage.setPreferredSize(new java.awt.Dimension(150, 30));
+//        cmdMontage.addActionListener(new java.awt.event.ActionListener() {
+//            public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                try {
+//                    cmdMontageActionPerformed(evt);
+//                } catch (Exception e) {
+//                    System.out.println(e.getMessage());
+//                }
+//            }
+//        });
+
         //Stop button
         cmdStop.setText("Stop");
         cmdStop.setEnabled(false);
@@ -215,6 +238,7 @@ public class frmMain extends javax.swing.JFrame {
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.add(cmdStart);
         buttonPanel.add(cmdStop);
+//        buttonPanel.add(cmdMontage);
 
         c = new GridBagConstraints();
         c.gridx=0;
@@ -626,7 +650,79 @@ public class frmMain extends javax.swing.JFrame {
         });
         th.start();
         return th;
-    }//GEN-LAST:event_cmdStartActionPerformed
+    }
+
+//    public Thread cmdMontageActionPerformed(java.awt.event.ActionEvent evt) throws Exception {//GEN-FIRST:cmdMontageActionPerformed
+//        Thread th = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    File dir = new File(experimentView.getPath());
+//                    File outputDir = new File(uploadOptionsView.getTxtTempDir().getText());
+//                    if(dir == null || dir.getName().equals("...") || outputDir == null || outputDir.getName().equals("...")) {
+//                        JOptionPane.showMessageDialog(null, "Please select input experiment location and output location before running pre-processing montage!");
+//                    }
+//                    else {
+//                        GridBagLayout gridBag = new GridBagLayout();
+//                        preMontagePanel.setLayout(gridBag);
+//                        GridBagConstraints c = new GridBagConstraints();
+//
+//                        c.gridx = 0;
+//                        c.gridy = 0;
+//                        c.fill = GridBagConstraints.BOTH;
+//                        c.weightx = 1;
+//                        c.weighty = 1;
+//                        preMontagePanel.add(new JLabel("Choose a z-slice: "), c);
+//
+//                        c.gridx = 1;
+//                        c.gridy = 0;
+//                        c.fill = GridBagConstraints.BOTH;
+//                        c.weightx = 1;
+//                        c.weighty = 1;
+//                        preMontagePanel.add(preMontageZ, c);
+//
+//                        preMontageZ.setMaximumSize(new java.awt.Dimension(300, 20));
+//                        preMontageZ.setMinimumSize(new java.awt.Dimension(300, 20));
+//                        preMontageZ.setPreferredSize(new java.awt.Dimension(300, 20));
+//                        preMontageZ.setInputVerifier(integerVerifier);
+//
+//                        int result = optionPane.showConfirmDialog(null, preMontagePanel,
+//                                "Choose z-slice", JOptionPane.OK_CANCEL_OPTION);
+//                        if (result == JOptionPane.OK_OPTION) {
+//                            if (preMontageZ.getText().toString().equals(null) || preMontageZ.getText().toString().equals("")) {
+//                                JOptionPane.showMessageDialog(preMontagePanel, "Please specify a valid z-slice before proceeding!");
+//                            }
+//                            int z = Integer.parseInt(preMontageZ.getText().toString());
+//                            String zSlice = "";
+//                            if(z > 0 && z < 10) {
+//                                zSlice = "00"+preMontageZ.getText().toString();
+//                            } else {
+//                                zSlice = "0"+preMontageZ.getText().toString();
+//                            }
+//
+//                            File[] cycFolders = dir.listFiles(t -> t.getName().toLowerCase().contains("cyc"));
+////                            String stitchingOptions = "type=[Grid: snake by rows] order=[Right & Down                ] " +
+////                                    "grid_size_x=" + experimentView.getVal17().getText() + " grid_size_y=" + experimentView.getVal18().getText() +
+////                                    " tile_overlap=" + experimentView.getVal19().getText()+ " first_file_index_i=1 " +
+////                                    "directory=" + cycFolders[0] + " file_names=HE_000{ii}_Z" + zSlice+ "_CH1.tif " +
+////                                    "output_textfile_name=TileConfiguration.txt fusion_method=[Linear Blending] " +
+////                                    "regression_threshold=0.30 max/avg_displacement_threshold=2.50 absolute_displacement_threshold=3.50 " +
+////                                    "compute_overlap computation_parameters=[Save computation time (but use more RAM)] " +
+////                                    "image_output=[Write to disk] output_directory=" + cycFolders[0];
+////                            IJ.run("Grid/Collection stitching", stitchingOptions);
+//
+//                            IJ.run("Grid/Collection stitching", "type=[Grid: snake by rows] order=[Right & Down                ] grid_size_x=3 grid_size_y=1 tile_overlap=30 first_file_index_i=1 directory=C:/exp2Test/Cyc1_reg1 file_names=HE_000{ii}_Z007_CH1.tif output_textfile_name=TileConfiguration.txt fusion_method=[Linear Blending] regression_threshold=0.30 max/avg_displacement_threshold=2.50 absolute_displacement_threshold=3.50 compute_overlap computation_parameters=[Save computation time (but use more RAM)] image_output=[Write to disk] output_directory=C:/exp2Test/Cyc1_reg1/");
+//                        }
+//                    }
+//
+//                } catch (Exception e) {
+//                    System.out.println(new Error(e));
+//                }
+//            }
+//        });
+//        th.start();
+//        return th;
+//    }
 
     private void cmdStopActionPerformed(java.awt.event.ActionEvent evt) {
         new Thread(() -> {
@@ -716,6 +812,10 @@ public class frmMain extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton cmdStart;
+//    private javax.swing.JButton cmdMontage;
+//    private JPanel preMontagePanel = new JPanel();
+//    private JTextField preMontageZ = new JTextField();
+//    private OptionPane optionPane = new DefaultOptionPane();
     private ExperimentView experimentView;
     private javax.swing.JProgressBar prg;
     private ProcessingOptionsView uploadOptionsView;
@@ -748,5 +848,21 @@ public class frmMain extends javax.swing.JFrame {
         this.cmdStart = cmdStart;
     }
 
+//    private final InputVerifier integerVerifier = new InputVerifier() {
+//        @Override
+//        public boolean verify(JComponent input) {
+//            JTextField tf = (JTextField) input;
+//            try {
+//                int val = Integer.parseInt(tf.getText());
+//                if (val < 1) {
+//                    throw new NumberFormatException("the number must be 1 or greater");
+//                }
+//                return true;
+//            } catch (NumberFormatException e) {
+//                JOptionPane.showMessageDialog(frmMain.this, "Not a valid integer: " + e.getMessage());
+//                return false;
+//            }
+//        }
+//    };
     // End of variables declaration//GEN-END:variables
 }
