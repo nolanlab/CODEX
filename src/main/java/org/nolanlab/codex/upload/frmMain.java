@@ -44,14 +44,13 @@ import java.util.Properties;
 public class frmMain extends javax.swing.JFrame {
 
     private JTextArea textArea = new JTextArea(15,30);
-    private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "");
+    private TextAreaOutputStream taOutputStream;
     private ArrayList<Process> allProcess = new ArrayList<>();
 
     /**
      * Creates new form frmMain
      */
     public frmMain() {
-        System.setOut(new PrintStream(taOutputStream));
         initComponents();
         experimentView.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -62,6 +61,11 @@ public class frmMain extends javax.swing.JFrame {
                     //Directly replace ProcessionOptions content
                     ProcessingOptions po = ProcessingOptions.load(poFile);
                     uploadOptionsView.load(po);
+                    File uploaderLogFile = new File(uploadOptionsView.getTxtTempDir().getText() + File.separator + "uploader-console.log");
+                    taOutputStream = new TextAreaOutputStream(textArea, "", uploaderLogFile);
+                    PrintStream consoleOut = new PrintStream(taOutputStream);
+                    System.setOut(consoleOut);
+                    System.setErr(consoleOut);
                 } catch (Exception e) {
                     log("Failed to load processingOptions.json file");
                 }

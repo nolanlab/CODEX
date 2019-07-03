@@ -45,7 +45,7 @@ public class Driftcomp {
             final int idx = i;
             es.execute(() -> {
                 System.out.println("Driftcompensating cycle: " + idx);
-                int[] shift = computeShift(stacks[zeroBasedReferenceCycle][zeroBasedDriftCompChannel], stacks[idx][zeroBasedDriftCompChannel]);
+                int[] shift = computeShift(stacks[zeroBasedReferenceCycle][zeroBasedDriftCompChannel], stacks[idx][zeroBasedDriftCompChannel], idx);
 
                 for (int ch = 0; ch < stacks[idx].length; ch++) {
                     stacks[idx][ch] = applyShift3D(shift, stacks[idx][ch]);
@@ -63,14 +63,14 @@ public class Driftcomp {
         }
     }
     
-    private static int[] computeShift(ImagePlus imp1, ImagePlus imp2) {
+    private static int[] computeShift(ImagePlus imp1, ImagePlus imp2, int idx) {
         PhaseCorrelation phc = new PhaseCorrelation(ImagePlusAdapter.wrap(imp1), ImagePlusAdapter.wrap(imp2), 1, false);
 
         phc.setNumThreads(Runtime.getRuntime().availableProcessors());
         phc.setComputeFFTinParalell(true);
         phc.process();
         int[] p = phc.getShift().getPosition();
-        Driffta.log("Phase correlation: " + Arrays.toString(p));
+        Driffta.log("Cycle: " + idx + " Phase correlation: " + Arrays.toString(p));
         return p;
     }
     
@@ -85,10 +85,13 @@ public class Driftcomp {
         int slicesToAddAtTheBeginning = Math.max(0, shift[2]);
 
         for (int i = 0; i < slicesToAddAtTheBeginning; i++) {
+ //         here we get  a copy of first slice of non-deconvolved frame
             ImageProcessor ip = imp.getImageStack().getProcessor(1);
-//            ImageProcessor ip2 = ip.createProcessor(imp.getWidth(), imp.getHeight());
-//            out.addSlice(ip2);
-            out.addSlice(ip);
+//          here we create a new blank processor with same dimensions as the frame
+            ImageProcessor ip2 = ip.createProcessor(imp.getWidth(), imp.getHeight());
+//          here we insert into the blank processor the first slice with a shift
+            ip2.insert(ip, shift[0], shift[1]);
+            out.addSlice(ip2);
         }
 
         // XY drift compensation happens here - ip2 is a single slice where we insert ip with x-shift[0] and y-shift[1]
@@ -107,10 +110,11 @@ public class Driftcomp {
 
         for (int i = 0; i < slicesToAdd; i++) {
 //            ImageProcessor ip = imp.getImageStack().getProcessor(1);
+//         here we get  a copy of the last slice of non-deconvolved frame
             ImageProcessor ip = imp.getImageStack().getProcessor(imp.getNSlices());
-//            ImageProcessor ip2 = ip.createProcessor(imp.getWidth(), imp.getHeight());
-//            out.addSlice(ip2);
-            out.addSlice(ip);
+            ImageProcessor ip2 = ip.createProcessor(imp.getWidth(), imp.getHeight());
+            ip2.insert(ip, shift[0], shift[1]);
+            out.addSlice(ip2);
         }
 
         //ImagePlus dc = new ImagePlus("After Driftcomp", out);
