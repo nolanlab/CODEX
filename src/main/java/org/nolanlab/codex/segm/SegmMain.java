@@ -33,7 +33,7 @@ public class SegmMain extends JFrame {
     private JPanel configPanel = new JPanel();
     private static int version = 1;
     private JTextArea textArea = new JTextArea(15,30);
-    private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "");
+    private TextAreaOutputStream taOutputStream;
     private SegmConfigFrm segmConfigFrm;
     private JButton cmdCreate;
     private JButton cmdPreview;
@@ -44,7 +44,6 @@ public class SegmMain extends JFrame {
 
 
     public SegmMain() throws Exception {
-        System.setOut(new PrintStream(taOutputStream));
         //initComponents();
     }
 
@@ -334,6 +333,10 @@ public class SegmMain extends JFrame {
                 } else {
                     dir = new File(configField.getText());
                 }
+                File segmLogFile = new File(dir + File.separator + "segm-console.log");
+                taOutputStream = new TextAreaOutputStream(textArea, "", segmLogFile);
+                System.setOut(new PrintStream(taOutputStream));
+                System.setErr(new PrintStream(taOutputStream));
                 //Create importConfig.txt
                 List<String> lines = Arrays.asList("radius=" + segmConfigFrm.getRadius(), "maxCutoff=" + segmConfigFrm.getMaxCutOff(), "minCutoff=" + segmConfigFrm.getMinCutOff(),
                         "relativeCutoff=" + segmConfigFrm.getRelativeCutOff(), "cell_size_cutoff_factor=" + segmConfigFrm.getCellSizeCutOff(), "nuclearStainChannel=" + segmConfigFrm.getNuclearStainChannel(),

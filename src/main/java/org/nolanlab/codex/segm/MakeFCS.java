@@ -117,13 +117,20 @@ public class MakeFCS {
 
         String[][] chNames = null;
         if(isImgSeqFolder) {
-            File chNamesF = new File(segmDir.getParentFile().getParent() + File.separator + "channelNames.txt");
+            File chNamesF = new File(segmDir.getParent() + File.separator + "channelNames.txt");
             if (chNamesF.exists()) {
                 System.out.println("Found channel names file!");
                 java.util.List<String[]> chNamesL = new CSVReader(new FileReader(chNamesF), '\t').readAll();
                 chNames = chNamesL.toArray(new String[chNamesL.size()][]);
             } else {
-                throw new IllegalStateException("channelNames.txt file does not exist! Exiting...");
+                chNamesF = new File(segmDir.getParentFile().getParent() + File.separator + "channelNames.txt");
+                if (chNamesF.exists()) {
+                    System.out.println("Found channel names file!");
+                    java.util.List<String[]> chNamesL = new CSVReader(new FileReader(chNamesF), '\t').readAll();
+                    chNames = chNamesL.toArray(new String[chNamesL.size()][]);
+                } else {
+                    throw new IllegalStateException("channelNames.txt file does not exist! Exiting...");
+                }
             }
         } else {
             File chNamesF = new File(f.getParent() + File.separator + "channelNames.txt");

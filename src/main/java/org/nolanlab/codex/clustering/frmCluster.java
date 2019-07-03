@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class frmCluster extends JFrame {
     private JTextArea textArea = new JTextArea(15,30);
-    private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "");
+    private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "", null);
     private String[] colNames = null;
     private static int version = 1;
     private ImportConfigFrm impConfigFrm;
