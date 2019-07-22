@@ -2,26 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6dbd53b7-1df8-49c3-9f00-43904c514362" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/TextAreaOutputStream$1.class" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/clustering/frmCluster.class" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/clustering/frmCluster.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/segm/SegmMain.class" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/segm/SegmMain.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/TextAreaOutputStream.class" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/TextAreaOutputStream.class" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$7$1.class" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$1.class" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$1.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$2.class" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$2.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$3.class" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$3.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$4.class" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$4.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$5.class" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$5.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$6.class" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$6.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$7$1.class" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$7$1.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$7.class" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$7.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$8.class" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$8.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain.class" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/clustering/frmCluster.java" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/clustering/frmCluster.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/MakeFCS.java" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/MakeFCS.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/SegmMain.java" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/SegmMain.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/TextAreaOutputStream.java" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/TextAreaOutputStream.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driftcomp.java" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driftcomp.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CODEX.iml" afterPath="$PROJECT_DIR$/CODEX.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/frmMain.java" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/frmMain.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
@@ -53,7 +46,7 @@
       <file leaf-file-name="Deconvolve_mult.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Deconvolve_mult.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="321">
+            <state relative-caret-position="0">
               <caret line="98" column="43" lean-forward="false" selection-start-line="98" selection-start-column="43" selection-end-line="98" selection-end-column="43" />
               <folding>
                 <element signature="e#0#5606#0" expanded="true" />
@@ -66,32 +59,54 @@
       <file leaf-file-name="Driffta.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="468">
-              <caret line="327" column="46" lean-forward="true" selection-start-line="327" selection-start-column="46" selection-end-line="327" selection-end-column="46" />
+            <state relative-caret-position="199">
+              <caret line="462" column="0" lean-forward="false" selection-start-line="462" selection-start-column="0" selection-end-line="463" selection-end-column="147" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/Main.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="233">
-              <caret line="151" column="13" lean-forward="false" selection-start-line="151" selection-start-column="13" selection-end-line="151" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="frmMain.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="frmMain.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/frmMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="561">
-              <caret line="80" column="34" lean-forward="true" selection-start-line="80" selection-start-column="34" selection-end-line="80" selection-end-column="34" />
+            <state relative-caret-position="587">
+              <caret line="939" column="9" lean-forward="true" selection-start-line="939" selection-start-column="9" selection-end-line="939" selection-end-column="9" />
               <folding>
-                <element signature="e#2869#2958#0" expanded="true" />
-                <element signature="e#35455#35542#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#2830#2860#0" expanded="true" />
+                <element signature="e#41716#42306#0" expanded="true" />
+                <element signature="e#42305#42306#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MakeMontage.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/MakeMontage.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="202">
+              <caret line="79" column="57" lean-forward="false" selection-start-line="79" selection-start-column="57" selection-end-line="79" selection-end-column="57" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SegmMain.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/SegmMain.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="31" column="31" lean-forward="false" selection-start-line="31" selection-start-column="31" selection-end-line="31" selection-end-column="31" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="505">
+              <caret line="64" column="35" lean-forward="true" selection-start-line="64" selection-start-column="35" selection-end-line="64" selection-end-column="35" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -99,8 +114,8 @@
       <file leaf-file-name="Driftcomp.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driftcomp.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="63" column="5" lean-forward="true" selection-start-line="63" selection-start-column="5" selection-end-line="63" selection-end-column="5" />
+            <state relative-caret-position="833">
+              <caret line="63" column="5" lean-forward="false" selection-start-line="63" selection-start-column="5" selection-end-line="63" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -110,7 +125,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/TextAreaOutputStream.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="493">
-              <caret line="35" column="0" lean-forward="true" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+              <caret line="35" column="0" lean-forward="false" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -119,7 +134,7 @@
       <file leaf-file-name="ProcessingOptionsView.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/ProcessingOptionsView.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="80">
+            <state relative-caret-position="153">
               <caret line="16" column="30" lean-forward="false" selection-start-line="16" selection-start-column="30" selection-end-line="16" selection-end-column="30" />
               <folding />
             </state>
@@ -129,7 +144,7 @@
       <file leaf-file-name="DeconvolutionTask.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/DeconvolutionTask.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1088">
+            <state relative-caret-position="1037">
               <caret line="66" column="47" lean-forward="false" selection-start-line="66" selection-start-column="47" selection-end-line="66" selection-end-column="47" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -152,15 +167,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>start</find>
-      <find>&quot;prev</find>
-      <find>JTextField</find>
-      <find>region size</find>
-      <find>tile over</find>
-      <find>integerV</find>
-      <find>HyperSta</find>
-      <find>stitching</find>
-      <find>pom.xml</find>
       <find>scijava</find>
       <find>grid</find>
       <find>plugins.dir</find>
@@ -182,6 +188,15 @@
       <find>Start</find>
       <find>crop</find>
       <find>temporary s</find>
+      <find>.getAbs</find>
+      <find>StackCom</find>
+      <find>contains</find>
+      <find>cycF</find>
+      <find>exp</find>
+      <find>Experiment ex</find>
+      <find>segmMa</find>
+      <find>configNa</find>
+      <find>log</find>
     </findStrings>
     <replaceStrings>
       <replace>org.nolanlab.codex.upload.driffta.Driffta</replace>
@@ -213,12 +228,14 @@
         <option value="$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-SNAPSHOT.pom" />
         <option value="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Deconvolve_mult.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/DeconvolutionTask.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/clustering/frmCluster.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/TextAreaOutputStream.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/SegmMain.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/MakeFCS.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driftcomp.java" />
+        <option value="$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/plugins.config" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/plugin/Stitching_Grid.class" />
         <option value="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/frmMain.java" />
       </list>
     </option>
@@ -255,6 +272,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -355,19 +373,66 @@
               <item name="codex" type="462c0819:PsiDirectoryNode" />
               <item name="upload" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="CODEX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="CODEX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; 1.8 &gt;" type="70bed36:NamedLibraryElementNode" />
+            </path>
+            <path>
+              <item name="CODEX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; 1.8 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="resources.jar" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CODEX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; 1.8 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="resources.jar" type="462c0819:PsiDirectoryNode" />
+              <item name="javax" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CODEX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; 1.8 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="resources.jar" type="462c0819:PsiDirectoryNode" />
+              <item name="javax" type="462c0819:PsiDirectoryNode" />
+              <item name="swing" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CODEX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Maven: sc.fiji:Stitching_:3.1.7-SNAPSHOT" type="70bed36:NamedLibraryElementNode" />
+            </path>
+            <path>
+              <item name="CODEX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Maven: sc.fiji:Stitching_:3.1.7-SNAPSHOT" type="70bed36:NamedLibraryElementNode" />
+              <item name="Stitching_-3.1.7-20190430.214047-5.jar" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CODEX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Maven: sc.fiji:Stitching_:3.1.7-SNAPSHOT" type="70bed36:NamedLibraryElementNode" />
+              <item name="Stitching_-3.1.7-20190430.214047-5.jar" type="462c0819:PsiDirectoryNode" />
+              <item name="plugin" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -828,19 +893,19 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20718816" sideWeight="0.25585938" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29704016" sideWeight="0.25585938" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1894654" sideWeight="0.62578124" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11875" sideWeight="0.48235294" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15833333" sideWeight="0.48235294" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16067654" sideWeight="0.37421876" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26293105" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21927084" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36031333" sideWeight="0.34140626" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.10570825" sideWeight="0.34140626" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -848,32 +913,11 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3139535" sideWeight="0.39492187" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1894654" sideWeight="0.62578124" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15833333" sideWeight="0.48235294" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3144654" sideWeight="0.39492187" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29704016" sideWeight="0.25585938" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14726563" sideWeight="0.5176471" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16067654" sideWeight="0.37421876" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26293105" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21927084" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.10570825" sideWeight="0.34140626" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1140,12 +1184,6 @@
           <option name="timeStamp" value="812" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/frmMain.java</url>
-          <line>69</line>
-          <properties />
-          <option name="timeStamp" value="830" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/SegmMain.java</url>
           <line>124</line>
           <properties />
@@ -1311,18 +1349,11 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="873" />
+      <option name="time" value="889" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/toolkit/FeaturizeCellTypesKNN.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6069">
-          <caret line="310" column="47" lean-forward="false" selection-start-line="310" selection-start-column="47" selection-end-line="310" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/javax/swing/SpinnerNumberModel.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
@@ -1341,14 +1372,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="231">
           <caret line="21" column="34" lean-forward="false" selection-start-line="21" selection-start-column="34" selection-end-line="21" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/MakeMontage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="137" column="104" lean-forward="false" selection-start-line="137" selection-start-column="104" selection-end-line="137" selection-end-column="104" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1434,20 +1457,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/Stitch_Image_Collection.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="29" column="43" lean-forward="false" selection-start-line="29" selection-start-column="39" selection-end-line="29" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/Stitch_Image_Directory.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="4" column="13" lean-forward="false" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/Stitch_Image_Collection.class" />
+    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/Stitch_Image_Directory.class" />
     <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/DeconvolutionInterlockDispatcher.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
@@ -1470,25 +1481,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/images/column1.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/plugin/Stitching_Grid.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="6" column="13" lean-forward="false" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/plugin/GridType.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="6" column="13" lean-forward="false" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/images/column1.png" />
+    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/plugin/GridType.class" />
     <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Fiji_Plugins/3.1.0/Fiji_Plugins-3.1.0.jar!/fiji/stacks/Hyperstack_rearranger.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
@@ -1496,20 +1490,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/DeltaVision_Converter.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="4" column="13" lean-forward="false" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/Stitch_Image_Grid.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="30" column="46" lean-forward="false" selection-start-line="30" selection-start-column="31" selection-end-line="30" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/DeltaVision_Converter.class" />
+    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/Stitch_Image_Grid.class" />
     <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/OkayMockOptionPane.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
@@ -1570,14 +1552,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="30" column="51" lean-forward="false" selection-start-line="30" selection-start-column="51" selection-end-line="30" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/microvolution/microvolution/win_2019.03/microvolution-win_2019.03.jar!/com/microvolution/dispatch/DeconvolutionDispatch.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
@@ -1589,14 +1563,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-51">
           <caret line="515" column="25" lean-forward="false" selection-start-line="515" selection-start-column="25" selection-end-line="515" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/Experiment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="26" lean-forward="false" selection-start-line="2" selection-start-column="26" selection-end-line="2" selection-end-column="26" />
           <folding />
         </state>
       </provider>
@@ -1625,17 +1591,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/SegmMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2090">
-          <caret line="335" column="44" lean-forward="true" selection-start-line="335" selection-start-column="44" selection-end-line="335" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
+        <state relative-caret-position="2210">
           <caret line="151" column="13" lean-forward="false" selection-start-line="151" selection-start-column="13" selection-end-line="151" selection-end-column="13" />
           <folding />
         </state>
@@ -1643,7 +1601,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Deconvolve_mult.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="321">
+        <state relative-caret-position="0">
           <caret line="98" column="43" lean-forward="false" selection-start-line="98" selection-start-column="43" selection-end-line="98" selection-end-column="43" />
           <folding>
             <element signature="e#0#5606#0" expanded="true" />
@@ -1652,17 +1610,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="327" column="46" lean-forward="true" selection-start-line="327" selection-start-column="46" selection-end-line="327" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/DeconvolutionTask.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1088">
+        <state relative-caret-position="1037">
           <caret line="66" column="47" lean-forward="false" selection-start-line="66" selection-start-column="47" selection-end-line="66" selection-end-column="47" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -1672,8 +1622,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driftcomp.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="63" column="5" lean-forward="true" selection-start-line="63" selection-start-column="5" selection-end-line="63" selection-end-column="5" />
+        <state relative-caret-position="833">
+          <caret line="63" column="5" lean-forward="false" selection-start-line="63" selection-start-column="5" selection-end-line="63" selection-end-column="5" />
           <folding />
         </state>
       </provider>
@@ -1681,27 +1631,87 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/TextAreaOutputStream.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="493">
-          <caret line="35" column="0" lean-forward="true" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+          <caret line="35" column="0" lean-forward="false" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/ProcessingOptionsView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
+        <state relative-caret-position="153">
           <caret line="16" column="30" lean-forward="false" selection-start-line="16" selection-start-column="30" selection-end-line="16" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/plugins.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/sc/fiji/Stitching_/3.1.7-SNAPSHOT/Stitching_-3.1.7-20190430.214047-5.jar!/plugin/Stitching_Grid.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="6" column="13" lean-forward="false" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="462" column="0" lean-forward="false" selection-start-line="462" selection-start-column="0" selection-end-line="463" selection-end-column="147" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/Experiment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="212">
+          <caret line="208" column="25" lean-forward="false" selection-start-line="208" selection-start-column="25" selection-end-line="208" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#13057#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/MakeMontage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="79" column="57" lean-forward="false" selection-start-line="79" selection-start-column="57" selection-end-line="79" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/SegmMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="31" column="31" lean-forward="false" selection-start-line="31" selection-start-column="31" selection-end-line="31" selection-end-column="31" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/frmMain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="80" column="34" lean-forward="true" selection-start-line="80" selection-start-column="34" selection-end-line="80" selection-end-column="34" />
+        <state relative-caret-position="587">
+          <caret line="939" column="9" lean-forward="true" selection-start-line="939" selection-start-column="9" selection-end-line="939" selection-end-column="9" />
           <folding>
-            <element signature="e#2869#2958#0" expanded="true" />
-            <element signature="e#35455#35542#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#2830#2860#0" expanded="true" />
+            <element signature="e#41716#42306#0" expanded="true" />
+            <element signature="e#42305#42306#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="505">
+          <caret line="64" column="35" lean-forward="true" selection-start-line="64" selection-start-column="35" selection-end-line="64" selection-end-column="35" />
+          <folding />
         </state>
       </provider>
     </entry>
