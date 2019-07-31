@@ -5,8 +5,11 @@
  */
 package org.nolanlab.codex.upload;
 
+import ij.CompositeImage;
 import ij.ImageStack;
+import ij.plugin.HyperStackConverter;
 import ij.plugin.StackCombiner;
+import ij.process.LUT;
 import ij.process.StackProcessor;
 import org.nolanlab.codex.DefaultOptionPane;
 import org.nolanlab.codex.Microscope;
@@ -44,31 +47,32 @@ import java.util.List;
 public class frmMain extends javax.swing.JFrame {
 
     private JTextArea textArea = new JTextArea(15,30);
-    private TextAreaOutputStream taOutputStream;
+    private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "", null);
     private ArrayList<Process> allProcess = new ArrayList<>();
+    private PrintStream consoleOut;
 
     /**
      * Creates new form frmMain
      */
     public frmMain() {
         initComponents();
-        experimentView.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                File dir = new File(experimentView.getPath());
-                File poFile = new File(dir + File.separator + "processingOptions.json");
-                try {
-                    //Directly replace ProcessionOptions content
-                    ProcessingOptions po = ProcessingOptions.load(poFile);
-                    uploadOptionsView.load(po);
-                    File uploaderLogFile = new File(uploadOptionsView.getTxtTempDir().getText() + File.separator + "uploader-console.log");
-                    taOutputStream = new TextAreaOutputStream(textArea, "", uploaderLogFile);
-                    PrintStream consoleOut = new PrintStream(taOutputStream);
-                    System.setOut(consoleOut);
-                    System.setErr(consoleOut);
-                } catch (Exception e) {
-                    log("Failed to load processingOptions.json file");
-                }
+        consoleOut = new PrintStream(taOutputStream);
+        System.setOut(consoleOut);
+        System.setErr(consoleOut);
+        experimentView.addPropertyChangeListener(evt -> {
+            File dir = new File(experimentView.getPath());
+            File poFile = new File(dir + File.separator + "processingOptions.json");
+            try {
+                //Directly replace ProcessionOptions content
+                ProcessingOptions po = ProcessingOptions.load(poFile);
+                uploadOptionsView.load(po);
+                File uploaderLogFile = new File(uploadOptionsView.getTxtTempDir().getText() + File.separator + "uploader-console.log");
+                taOutputStream = new TextAreaOutputStream(textArea, "", uploaderLogFile);
+                consoleOut = new PrintStream(taOutputStream);
+                System.setOut(consoleOut);
+                System.setErr(consoleOut);
+            } catch (Exception e) {
+                log("Failed to load processingOptions.json file");
             }
         });
     }
@@ -667,6 +671,12 @@ public class frmMain extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(null, "Please select input experiment location and output location before running pre-processing montage!");
                     }
                     else {
+                        File uploaderLogFile = new File(outputDir + File.separator + "uploader-console.log");
+                        taOutputStream = new TextAreaOutputStream(textArea, "", uploaderLogFile);
+                        consoleOut = new PrintStream(taOutputStream);
+                        System.setOut(consoleOut);
+                        System.setErr(consoleOut);
+
                         initCreatePreProcessedMontageUI(preMontagePanel, preMontageCyc, preMontageReg, preMontageCh, preMontageZ);
 
                         int result = optionPane.showConfirmDialog(null, preMontagePanel,
