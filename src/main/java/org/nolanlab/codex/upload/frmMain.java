@@ -684,6 +684,7 @@ public class frmMain extends javax.swing.JFrame {
                         if (result == JOptionPane.OK_OPTION) {
                             log("Starting to create pre-processed stitched image for the selected cyc, reg, ch, z...");
                             Experiment exp = experimentView.getExperiment();
+                            replaceTileOverlapInExp(dir, exp);
                             if (areEmptyFields(preMontageCyc, preMontageReg, preMontageCh, preMontageZ, preMontagePanel)) {
                                 int cyc = Integer.parseInt(preMontageCyc.getText().toString());
                                 int reg = Integer.parseInt(preMontageReg.getText().toString());
@@ -713,6 +714,7 @@ public class frmMain extends javax.swing.JFrame {
                                     for (int i = 0; i < tifFiles.length; i++) {
                                         int[] coord = extractXYFromFile(tifFiles[i], exp, reg);
                                         ImagePlus tmp = IJ.openImage(tifFiles[i].getAbsolutePath());
+                                        tmp = new ImagePlus(tmp.getTitle(), tmp.getImageStack().crop((int) Math.floor(exp.tile_overlap_X / 2), (int) Math.floor(exp.tile_overlap_Y / 2), 0, tmp.getWidth() - (int) Math.ceil(exp.tile_overlap_X), tmp.getHeight() - (int) Math.ceil(exp.tile_overlap_Y), tmp.getStackSize()));
                                         ImageStack is = tmp.getImageStack();
                                         StackProcessor sp = new StackProcessor(is);
                                         grid[coord[0] - 1][coord[1] - 1] = sp.resize(tmp.getWidth() / 2, tmp.getHeight() / 2);
