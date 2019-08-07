@@ -125,7 +125,7 @@ public class Driffta {
                         if (i == exp.num_cycles - 1 && exp.HandEstain) {
                             continue;
                         }
-                        deconvIterations[i][j] = 25;
+                        deconvIterations[i][j] = exp.deconvolutionIterations;
                     }
                 }
             }
@@ -489,7 +489,7 @@ public class Driffta {
             log("Interlock acquired");
             dec = new Deconvolve_mult(!exp.deconvolution.equals("Microvolution"), numDeconvolutionDevices, po.isUseBlindDeconvolution());
 
-            dec.runDeconvolution(hyp, XYres, Zpitch, wavelenghths, deconvIterations, exp.drift_comp_channel - 1, exp.numerical_aperture, ObjectiveRI);
+            dec.runDeconvolution(hyp, XYres, Zpitch, wavelenghths, deconvIterations, exp.deconvolutionModel, exp.drift_comp_channel - 1, exp.numerical_aperture, ObjectiveRI);
 
             DeconvolutionInterlockDispatcher.releaseLock();
 

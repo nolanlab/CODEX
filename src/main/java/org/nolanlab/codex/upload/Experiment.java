@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.microvolution.PSFModel;
 import org.nolanlab.codex.MicroscopeTypeEnum;
 import static org.nolanlab.codex.MicroscopeTypeEnum.KEYENCE;
 import static org.nolanlab.codex.MicroscopeTypeEnum.LEICA;
@@ -32,6 +33,8 @@ public class Experiment {
     public final String codex_instrument;
     public MicroscopeTypeEnum microscope;
     public final String deconvolution;
+    public final int deconvolutionIterations;
+    public final String deconvolutionModel;
     public final int magnification;
     public final double numerical_aperture;
     public final double per_pixel_XY_resolution;
@@ -68,18 +71,23 @@ public class Experiment {
     public static transient final MicroscopeTypeEnum[] microscopeTypes = new MicroscopeTypeEnum[]{KEYENCE, ZEISS, LEICA};
 
     public Experiment(String name, String date, String codex_instrument, MicroscopeTypeEnum microscope,
-            String deconvolution, int magnification, double numerical_aperture, double per_pixel_XY_resolution,
-            double z_pitch, int num_z_planes, String channel_arrangement, String[] channel_names,
-            int[] channelWavelen, int drift_comp_channel, int driftCompReferenceCycle, int bestFocusReferenceCycle, int best_focus_channel,
-            int cycle_lower_limit, int cycle_upper_limit, int[] regIdx,
-            String[] region_names, String tiling_mode, int region_width,
-            int region_height, int tile_overlap_X, int tile_overlap_Y,
-            String objectiveType, boolean HandEstain, boolean bgSub, String projName, boolean optionalFocusFragment, int focusing_offset) {
+                      String deconvolution, int deconvolutionIterations, String deconvolutionModel, int magnification,
+                      double numerical_aperture, double per_pixel_XY_resolution,
+                      double z_pitch, int num_z_planes, String channel_arrangement, String[] channel_names,
+                      int[] channelWavelen, int drift_comp_channel, int driftCompReferenceCycle,
+                      int bestFocusReferenceCycle, int best_focus_channel,
+                      int cycle_lower_limit, int cycle_upper_limit, int[] regIdx,
+                      String[] region_names, String tiling_mode, int region_width,
+                      int region_height, int tile_overlap_X, int tile_overlap_Y,
+                      String objectiveType, boolean HandEstain, boolean bgSub, String projName,
+                      boolean optionalFocusFragment, int focusing_offset) {
         this.name = name;
         this.date = date;
         this.codex_instrument = codex_instrument;
         this.microscope = microscope;
         this.deconvolution = deconvolution;
+        this.deconvolutionIterations = deconvolutionIterations;
+        this.deconvolutionModel = deconvolutionModel;
         this.magnification = magnification;
         this.numerical_aperture = numerical_aperture;
         this.per_pixel_XY_resolution = per_pixel_XY_resolution;
