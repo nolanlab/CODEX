@@ -28,7 +28,7 @@ import java.util.*;
  *
  * @author Nikolay Samusik
  */
-public class ExperimentView extends javax.swing.JPanel {
+public class ExperimentView extends JPanel {
 
     /**
      * Creates new form ExperimentView
@@ -48,70 +48,76 @@ public class ExperimentView extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
-        buttonGroup2 = new javax.swing.ButtonGroup();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
+        buttonGroup1 = new ButtonGroup();
+        buttonGroup2 = new ButtonGroup();
+        jPanel2 = new JPanel();
+        jPanel4 = new JPanel();
         txtDir = new JTextField();
         val1 = new JTextField();
         jTextField1 = new JTextField();
         val2 = new JTextField();
-        val3 = new javax.swing.JComboBox<>();
-        val4 = new javax.swing.JComboBox<>();
-        val23 = new javax.swing.JComboBox<>();
+        val3 = new JComboBox<>();
+        val4 = new JComboBox<>();
+        val23 = new JComboBox<>();
         val5 = new JTextField();
         val6 = new JTextField();
         val7 = new JTextField();
         val8 = new JTextField();
         val9 = new JTextField();
-        val10 = new javax.swing.JComboBox<>();
+        val10 = new JComboBox<>();
         val11 = new JTextField();
         val21 = new JTextField();
         val12 = new JSpinner();
         val13 = new JTextField();
         val14 = new JTextField();
         val15 = new JTextField();
-        val16 = new javax.swing.JComboBox<>();
+        val16 = new JComboBox<>();
         val17 = new JTextField();
         val18 = new JTextField();
         val19 = new JTextField();
         val20 = new JTextField();
-        jPanel1 = new javax.swing.JPanel();
-        rb_HandE_yes = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jPanel5 = new javax.swing.JPanel();
-        jLabel17 = new javax.swing.JLabel();
-        jLabel24 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        jLabel20 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
-        jLabel22 = new javax.swing.JLabel();
-        jLabel23 = new javax.swing.JLabel();
-        jLabel25 = new javax.swing.JLabel();
-        jLabel27 = new javax.swing.JLabel();
-        jLabel28 = new javax.swing.JLabel();
-        jLabel21 = new javax.swing.JLabel();
-        bgSubLabel = new javax.swing.JLabel();
-        jLabel29 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new JPanel();
+        rb_HandE_yes = new JRadioButton();
+        jRadioButton2 = new JRadioButton();
+        deconvolutionIteration = new JTextField();
+        deconvolutionModel = new JComboBox<>();
+
+        jPanel5 = new JPanel();
+
+        jLabel17 = new JLabel();
+        jLabel24 = new JLabel();
+        jLabel9 = new JLabel();
+        jLabel3 = new JLabel();
+        jLabel4 = new JLabel();
+        jLabel5 = new JLabel();
+        jLabel10 = new JLabel();
+        jLabel6 = new JLabel();
+        jLabel8 = new JLabel();
+        jLabel12 = new JLabel();
+        jLabel13 = new JLabel();
+        jLabel14 = new JLabel();
+        jLabel15 = new JLabel();
+        jLabel16 = new JLabel();
+        jLabel18 = new JLabel();
+        jLabel20 = new JLabel();
+        jLabel19 = new JLabel();
+        jLabel22 = new JLabel();
+        jLabel23 = new JLabel();
+        jLabel25 = new JLabel();
+        jLabel27 = new JLabel();
+        jLabel28 = new JLabel();
+        jLabel21 = new JLabel();
+        bgSubLabel = new JLabel();
+        jLabel29 = new JLabel();
+        jLabel1 = new JLabel();
         bestFocusCycleLabel = new JLabel();
         bestFocusChannelLabel = new JLabel();
         driftReferenceLabel = new JLabel();
+        deconModelLabel = new JLabel();
+        deconIterationLabel = new JLabel();
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Experimental Details"));
-        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, BoxLayout.PAGE_AXIS));
+        jPanel2.setBorder(BorderFactory.createTitledBorder("Experimental Details"));
+        jPanel4.setLayout(new BoxLayout(jPanel4, BoxLayout.PAGE_AXIS));
 
         txtDir.setText("...");
         txtDir.setEnabled(false);
@@ -165,6 +171,19 @@ public class ExperimentView extends javax.swing.JPanel {
         val4.setMinimumSize(new java.awt.Dimension(300, 20));
         val4.setPreferredSize(new java.awt.Dimension(3000, 20));
         jPanel4.add(val4);
+
+        deconvolutionIteration.setText("25");
+        deconvolutionIteration.setInputVerifier(integerVerifier);
+        deconvolutionIteration.setMaximumSize(new java.awt.Dimension(3000, 20));
+        deconvolutionIteration.setMinimumSize(new java.awt.Dimension(300, 20));
+        deconvolutionIteration.setPreferredSize(new java.awt.Dimension(3000, 20));
+        jPanel4.add(deconvolutionIteration);
+
+        deconvolutionModel.setModel(new DefaultComboBoxModel<>(new String[] { "Vectorial", "Scalar" }));
+        deconvolutionModel.setMaximumSize(new java.awt.Dimension(3000, 20));
+        deconvolutionModel.setMinimumSize(new java.awt.Dimension(300, 20));
+        deconvolutionModel.setPreferredSize(new java.awt.Dimension(3000, 20));
+        jPanel4.add(deconvolutionModel);
 
         val23.setModel(new DefaultComboBoxModel<>(new String[] { "air", "water", "oil" }));
         val23.setMaximumSize(new java.awt.Dimension(3000, 20));
@@ -478,13 +497,37 @@ public class ExperimentView extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         jPanel5.add(jLabel4, gridBagConstraints);
 
+        deconIterationLabel.setText("Deconvolution iterations");
+        deconIterationLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
+        deconIterationLabel.setMinimumSize(new java.awt.Dimension(100, 20));
+        deconIterationLabel.setPreferredSize(new java.awt.Dimension(500, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(deconIterationLabel, gridBagConstraints);
+
+        deconModelLabel.setText("Deconvolution PSF model");
+        deconModelLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
+        deconModelLabel.setMinimumSize(new java.awt.Dimension(100, 20));
+        deconModelLabel.setPreferredSize(new java.awt.Dimension(500, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(deconModelLabel, gridBagConstraints);
+
         jLabel29.setText("Objective Type");
         jLabel29.setMaximumSize(new java.awt.Dimension(40, 20));
         jLabel29.setMinimumSize(new java.awt.Dimension(40, 20));
         jLabel29.setPreferredSize(new java.awt.Dimension(40, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         jPanel5.add(jLabel29, gridBagConstraints);
@@ -495,7 +538,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel5.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -507,7 +550,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel10.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -519,7 +562,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel6.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridy = 11;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -531,7 +574,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel8.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 12;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -543,7 +586,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel12.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridy = 13;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -555,7 +598,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel13.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -567,7 +610,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel14.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridy = 15;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -579,7 +622,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel27.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridy = 16;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         jPanel5.add(jLabel27, gridBagConstraints);
@@ -590,7 +633,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel15.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridy = 17;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -602,7 +645,7 @@ public class ExperimentView extends javax.swing.JPanel {
         driftReferenceLabel.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridy = 18;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -614,7 +657,7 @@ public class ExperimentView extends javax.swing.JPanel {
         bestFocusChannelLabel.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 17;
+        gridBagConstraints.gridy = 19;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -626,7 +669,7 @@ public class ExperimentView extends javax.swing.JPanel {
         bestFocusCycleLabel.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 18;
+        gridBagConstraints.gridy = 20;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -638,7 +681,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel16.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 19;
+        gridBagConstraints.gridy = 21;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -651,7 +694,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel25.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 20;
+        gridBagConstraints.gridy = 22;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         jPanel5.add(jLabel25, gridBagConstraints);
 
@@ -661,7 +704,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel18.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 21;
+        gridBagConstraints.gridy = 23;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -673,7 +716,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel20.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 22;
+        gridBagConstraints.gridy = 24;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -685,7 +728,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel19.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 23;
+        gridBagConstraints.gridy = 25;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -697,7 +740,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel22.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 24;
+        gridBagConstraints.gridy = 26;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -709,7 +752,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel23.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 25;
+        gridBagConstraints.gridy = 27;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -721,7 +764,7 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel28.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 26;
+        gridBagConstraints.gridy = 28;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
@@ -733,27 +776,27 @@ public class ExperimentView extends javax.swing.JPanel {
         jLabel21.setPreferredSize(new java.awt.Dimension(500, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 27;
+        gridBagConstraints.gridy = 29;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         jPanel5.add(jLabel21, gridBagConstraints);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel5, GroupLayout.PREFERRED_SIZE, 178, GroupLayout.PREFERRED_SIZE)
                 .addGap(4, 4, 4)
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 767, Short.MAX_VALUE)
+                .addComponent(jPanel4, GroupLayout.DEFAULT_SIZE, 767, Short.MAX_VALUE)
                 .addGap(9, 9, 9))
         );
         jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -1041,6 +1084,8 @@ public class ExperimentView extends javax.swing.JPanel {
         }
 
         val4.setSelectedItem(exp.deconvolution);
+        deconvolutionIteration.setText(String.valueOf(exp.deconvolutionIterations));
+        deconvolutionModel.setSelectedItem(exp.deconvolutionModel);
         val23.setSelectedItem(exp.objectiveType);// out of order
         val5.setText(String.valueOf(exp.magnification));
         val6.setText(String.valueOf(exp.numerical_aperture));
@@ -1266,6 +1311,8 @@ public class ExperimentView extends javax.swing.JPanel {
                 val2.getText(),
                 (MicroscopeTypeEnum) val3.getSelectedItem(),
                 val4.getSelectedItem().toString(),
+                Integer.parseInt(deconvolutionIteration.getText()),
+                deconvolutionModel.getSelectedItem().toString(),
                 Integer.valueOf(val5.getText()),
                 Double.parseDouble(val6.getText()),
                 Double.parseDouble(val7.getText()),
@@ -1427,63 +1474,63 @@ public class ExperimentView extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.ButtonGroup buttonGroup2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel bgSubLabel;
-    private javax.swing.JLabel jLabel22;
-    private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel24;
-    private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel27;
-    private javax.swing.JLabel jLabel28;
-    private javax.swing.JLabel jLabel29;
+    private ButtonGroup buttonGroup1;
+    private ButtonGroup buttonGroup2;
+    private JLabel jLabel1;
+    private JLabel jLabel10;
+    private JLabel jLabel12;
+    private JLabel jLabel13;
+    private JLabel jLabel14;
+    private JLabel jLabel15;
+    private JLabel jLabel16;
+    private JLabel jLabel17;
+    private JLabel jLabel18;
+    private JLabel jLabel19;
+    private JLabel jLabel20;
+    private JLabel jLabel21;
+    private JLabel bgSubLabel;
+    private JLabel jLabel22;
+    private JLabel jLabel23;
+    private JLabel jLabel24;
+    private JLabel jLabel25;
+    private JLabel jLabel27;
+    private JLabel jLabel28;
+    private JLabel jLabel29;
     private JLabel driftReferenceLabel;
     private JLabel bestFocusCycleLabel;
     private JLabel bestFocusChannelLabel;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JRadioButton jRadioButton2;
+    private JLabel jLabel3;
+    private JLabel jLabel4;
+    private JLabel jLabel5;
+    private JLabel jLabel6;
+    private JLabel jLabel8;
+    private JLabel jLabel9;
+    private JPanel jPanel1;
+    private JPanel jPanel2;
+    private JPanel jPanel4;
+    private JPanel jPanel5;
+    private JRadioButton jRadioButton2;
     private JTextField jTextField1;
-    private javax.swing.JRadioButton rb_HandE_yes;
-    private javax.swing.JComboBox<String> optionalBgSub;
+    private JRadioButton rb_HandE_yes;
+    private JComboBox<String> optionalBgSub;
     private JTextField txtDir;
     private JTextField val1;
-    private javax.swing.JComboBox<String> val10;
+    private JComboBox<String> val10;
     private JTextField val11;
     private JSpinner val12;
     private JTextField val13;
     private JTextField val14;
     private JTextField val15;
-    private javax.swing.JComboBox<String> val16;
+    private JComboBox<String> val16;
     private JTextField val17;
     private JTextField val18;
     private JTextField val19;
     private JTextField val2;
     private JTextField val20;
     private JTextField val21;
-    private javax.swing.JComboBox<String> val23;
-    private javax.swing.JComboBox<MicroscopeTypeEnum> val3;
-    private javax.swing.JComboBox<String> val4;
+    private JComboBox<String> val23;
+    private JComboBox<MicroscopeTypeEnum> val3;
+    private JComboBox<String> val4;
     private JTextField val5;
     private JTextField val6;
     private JTextField val7;
@@ -1497,6 +1544,10 @@ public class ExperimentView extends javax.swing.JPanel {
     private JComboBox<String> optionalFragmentButton;
     private JSpinner focussingOffset;
     private JPanel optionalPanel;
+    private JLabel deconModelLabel;
+    private JLabel deconIterationLabel;
+    private JComboBox<String> deconvolutionModel;
+    private JTextField deconvolutionIteration;
 
     public ButtonGroup getButtonGroup1() {
         return buttonGroup1;

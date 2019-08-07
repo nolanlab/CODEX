@@ -64,7 +64,9 @@ public class Deconvolve_mult {
         
     }
 
-    public void runDeconvolution(ImagePlus stack, double XYres, double zPitch, int[] wavelengths, int[][] iterationMap, final int zeroBasedDriftCompChannel, double ObjectiveNA, double ObjectiveRI) throws Exception {
+    public void runDeconvolution(ImagePlus stack, double XYres, double zPitch, int[] wavelengths, int[][] iterationMap,
+                                 String deconvolutionModel, final int zeroBasedDriftCompChannel, double ObjectiveNA,
+                                 double ObjectiveRI) throws Exception {
         
         try {
             for (int frame = 1; frame <= stack.getNFrames(); frame++) {
@@ -73,9 +75,9 @@ public class Deconvolve_mult {
                     if (iterations == 0 || disableDecon) {
                         Driffta.log("Skipping deconvolution ch:" + ch + " frame:" + frame + "iterations");
                     } else {
-                        
+
                         final ImagePlus dup = new Duplicator().run(stack, ch, ch, 1, stack.getNSlices(), frame, frame);
-                        
+
                         DeconvolutionTask task = new DeconvolutionTask(dup, frame, ch, stack);
                         // Make sure params have been set, either here or inside task itself. Otherwise, expect exceptions thrown.
                         // SpinningDiskParameters, Pinhole, PinholeSpacing
@@ -87,7 +89,11 @@ public class Deconvolve_mult {
                         params.background(0);
                         params.preFilter(PreFilter.None);
                         params.generatePsf(true);
-                        params.psfModel(PSFModel.Vectorial);
+                        if (deconvolutionModel.equals("Scalar")) {
+                            params.psfModel(PSFModel.BornWolf);
+                        } else {
+                            params.psfModel(PSFModel.Vectorial);
+                        }
                         params.NA(ObjectiveNA);
                         params.RI(ObjectiveRI);
                         params.ns(1.33);
