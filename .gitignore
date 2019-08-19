@@ -1,7 +1,16 @@
-*/target/
+*.xml
+**/target
+
+### IntelliJ IDEA ###
+**/.idea
+*.iws
+*.iml
+*.ipr
 .idea
 *.iws
 *.iml
 *.ipr
 *.jar
 
+.idea/workspace.xml
+*.xml
