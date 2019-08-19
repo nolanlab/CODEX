@@ -1084,8 +1084,8 @@ public class ExperimentView extends JPanel {
         }
 
         val4.setSelectedItem(exp.deconvolution);
-        deconvolutionIteration.setText(String.valueOf(exp.deconvolutionIterations));
-        deconvolutionModel.setSelectedItem(exp.deconvolutionModel);
+        deconvolutionIteration.setText(exp.deconvolutionIterations != 0 ? String.valueOf(exp.deconvolutionIterations) : "25");
+        deconvolutionModel.setSelectedItem(exp.deconvolutionModel != null ? exp.deconvolutionModel : "Vectorial");
         val23.setSelectedItem(exp.objectiveType);// out of order
         val5.setText(String.valueOf(exp.magnification));
         val6.setText(String.valueOf(exp.numerical_aperture));

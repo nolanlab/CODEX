@@ -7,6 +7,10 @@ package org.nolanlab.codex.upload;
 
 import ij.CompositeImage;
 import ij.ImageStack;
+import ij.gui.ImageRoi;
+import ij.gui.Overlay;
+import ij.gui.Roi;
+import ij.gui.TextRoi;
 import ij.plugin.HyperStackConverter;
 import ij.plugin.StackCombiner;
 import ij.process.LUT;
@@ -725,8 +729,21 @@ public class frmMain extends javax.swing.JFrame {
                                             if (grid[x][y] == null) {
                                                 throw new IllegalStateException("tile is null");
                                             }
-
                                         }
+                                    }
+                                    int snakeTileNumber = 1;
+                                    for(int y = 0; y < grid[0].length; y++) {
+                                            if(y % 2 == 0) {
+                                                for (int x = 0; x < grid.length; x++) {
+                                                    ImagePlus imp = new ImagePlus("", grid[x][y]);
+                                                    IJ.run(imp, "Label...", "format=Text starting=0 interval=1 x=24 y=110 font=58 text=" + snakeTileNumber++);
+                                                }
+                                            } else {
+                                                for (int x = grid.length-1; x >= 0; x--) {
+                                                    ImagePlus imp = new ImagePlus("", grid[x][y]);
+                                                    IJ.run(imp, "Label...", "format=Text starting=0 interval=1 x=24 y=110 font=58 text=" + snakeTileNumber++);
+                                                }
+                                            }
                                     }
 
                                     ImageStack[] horizStacks = new ImageStack[grid[0].length];
