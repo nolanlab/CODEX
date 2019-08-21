@@ -427,7 +427,7 @@ public class frmMain extends javax.swing.JFrame {
             try {
                 File dir = new File(experimentView.getPath());
 
-                if(dir == null || dir.getName().equals("...")) {
+                if (dir == null || dir.getName().equals("...")) {
                     log("Please select an experiment folder and try again!");
                 }
 
@@ -437,17 +437,16 @@ public class frmMain extends javax.swing.JFrame {
                 String experimentJS = exp.toJSON();
 
                 String microscopeType = exp != null && exp.microscope != null ? exp.microscope.toString() : "";
-                if(microscopeType == null || microscopeType.equals("")) {
+                if (microscopeType == null || microscopeType.equals("")) {
                     JOptionPane.showMessageDialog(null, "Microscope type is invalid");
                 }
                 Microscope microscope = MicroscopeFactory.getMicroscope(microscopeType);
                 //Included a feature to check if the product of region size X and Y is equal to the number of tiles
                 File expJSON = null;
-                if(microscope.isTilesAProductOfRegionXAndY(dir, experimentView)) {
+                if (microscope.isTilesAProductOfRegionXAndY(dir, experimentView)) {
                     expJSON = new File(dir + File.separator + "Experiment.json");
                     exp.saveToFile(expJSON);
-                }
-                else {
+                } else {
                     JOptionPane.showMessageDialog(null, "Check the values of Region Size X and Y and then try again!");
                     return;
                 }
@@ -459,14 +458,14 @@ public class frmMain extends javax.swing.JFrame {
                 po.saveToFile(poFile);
 
                 //Copy Experiment.JSON to processed folder.
-                if(expJSON != null) {
-                    if(po.isExportImgSeq()) {
+                if (expJSON != null) {
+                    if (po.isExportImgSeq()) {
                         copyFileFromSourceToDest(expJSON, new File(po.getTempDir() + File.separator + "tiles"));
                     }
                     copyFileFromSourceToDest(expJSON, po.getTempDir());
                 }
 
-                        //Included a feature to check if the channelNames.txt file is present
+                //Included a feature to check if the channelNames.txt file is present
                 if (!experimentView.isChannelNamesPresent(dir)) {
                     JOptionPane.showMessageDialog(null, "channelNames.txt file is not present in the experiment folder. Please check and try again!");
                     return;
@@ -475,7 +474,7 @@ public class frmMain extends javax.swing.JFrame {
                 log("Copying channelNames.txt file from experiment folder to processed folder location");
 
                 File source = new File(dir + File.separator + "channelNames.txt");
-                if(po.isExportImgSeq()) {
+                if (po.isExportImgSeq()) {
                     copyFileFromSourceToDest(source, new File(po.getTempDir() + File.separator + "tiles"));
                 }
                 copyFileFromSourceToDest(source, po.getTempDir());
@@ -525,71 +524,27 @@ public class frmMain extends javax.swing.JFrame {
                 int currCnt = 1;
 
                 Properties config = new Properties();
-                config.load(new FileInputStream(System.getProperty("user.home")+File.separator+"config.txt"));
+                config.load(new FileInputStream(System.getProperty("user.home") + File.separator + "config.txt"));
                 String maxRAM = "";
-                if(config.toString().contains("maxRAM") && !StringUtils.isEmpty(config.get("maxRAM").toString())) {
+                if (config.toString().contains("maxRAM") && !StringUtils.isEmpty(config.get("maxRAM").toString())) {
                     maxRAM = config.get("maxRAM").toString();
                 }
-                maxRAM = maxRAM.equals("") ? "48":maxRAM;
+                maxRAM = maxRAM.equals("") ? "48" : maxRAM;
 
-                for (int reg : exp.regIdx) {
-                    for (int tile = 1; tile <= exp.region_height * exp.region_width; tile++) {
-                        File d = null;
-                        if(!po.isExportImgSeq()) {
-                            d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
+                if (exp.processTiles.length == 1 && exp.processTiles[0] == "1-" + exp.region_height * exp.region_width) {
+                    processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, 1, exp.region_height * exp.region_width);
+                } else {
+                    for(int i = 0; i < exp.processTiles.length; i++) {
+                        if(exp.processTiles[i].contains("-")) {
+                            String[] tileRange = exp.processTiles[i].split("-");
+                            int lowerTile = Integer.parseInt(tileRange[0]);
+                            int upperTile = Integer.parseInt(tileRange[1]);
+                            processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, lowerTile, upperTile);
+
+                        } else {
+                            int tile = Integer.parseInt(exp.processTiles[i]);
+                            processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, tile, tile);
                         }
-                        else {
-                            d = new File(po.getTempDir() + File.separator + "tiles" + File.separator + FilenameUtils.removeExtension(Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width)));
-                        }
-                        int numTrial = 0;
-                        while (!d.exists() && numTrial < 3) {
-                            numTrial++;
-                            if(SystemUtils.IS_OS_WINDOWS) {
-                                ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" org.nolanlab.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
-                                pb.redirectErrorStream(true);
-
-                                log("Starting process: " + pb.command().toString());
-                                Process proc = pb.start();
-                                allProcess.add(proc);
-
-                                waitAndPrint(proc);
-                                log("Driffta done");
-                            }
-                            else if(SystemUtils.IS_OS_LINUX) {
-                                ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \"./*\" org.nolanlab.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
-                                pb.redirectErrorStream(true);
-
-                                log("Starting process: " + pb.command().toString());
-                                Process proc = pb.start();
-                                allProcess.add(proc);
-
-                                waitAndPrint(proc);
-                                log("Driffta done");
-
-                            }
-                        }
-
-                        if (!d.exists()) {
-                            log("Tile processing failed 3 times in a row: " + d.getName());
-                        }
-
-                        /*
-                        if (doUpload) {
-                            d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
-                            if (!d.exists()) {
-                                throw new IllegalStateException("Driftcompensation completed, but the result file does not exist:" + d.getPath());
-                            } else {
-                                logger.print("File exists:" + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
-
-                                upl.uploadFilesMultith(d, fsa, reg, tile, token, 1);
-                                if (chNamesUpl) {
-                                    upl.uploadFilesMultith(new File(experimentView.getPath() + File.separator + "channelNames.txt"), fsa, 0, 0, token, 1);
-                                    chNamesUpl = false;
-                                }
-                            }
-                        }*/
-                        prg.setValue(currCnt++);
-                        frmMain.this.repaint();
                     }
                 }
 
@@ -664,6 +619,9 @@ public class frmMain extends javax.swing.JFrame {
         return th;
     }
 
+    /*
+    Required exp.json file
+     */
     public Thread cmdMontageActionPerformed(java.awt.event.ActionEvent evt) throws Exception {//GEN-FIRST:cmdMontageActionPerformed
         Thread th = new Thread(new Runnable() {
             @Override
@@ -766,19 +724,6 @@ public class frmMain extends javax.swing.JFrame {
                                     ImagePlus res = new ImagePlus("Pre-processed stitched for z: " + zSlice, out);
                                     log("Successfully created the pre-processed stitched image for the selected cyc, reg, ch, z...");
                                     res.show();
-
-//                            String stitchingOptions = "type=[Grid: snake by rows] order=[Right & Down                ] " +
-//                                    "grid_size_x=" + experimentView.getVal17().getText() + " grid_size_y=" + experimentView.getVal18().getText() +
-//                                    " tile_overlap=" + experimentView.getVal19().getText()+ " first_file_index_i=1 " +
-//                                    "directory=" + cycFolders[0] + " file_names=HE_000{ii}_Z" + zSlice+ "_CH1.tif " +
-//                                    "output_textfile_name=TileConfiguration.txt fusion_method=[Linear Blending] " +
-//                                    "regression_threshold=0.30 max/avg_displacement_threshold=2.50 absolute_displacement_threshold=3.50 " +
-//                                    "compute_overlap computation_parameters=[Save computation time (but use more RAM)] " +
-//                                    "image_output=[Write to disk] output_directory=" + cycFolders[0];
-
-//                            IJ.run("Grid/Collection stitching", stitchingOptions);
-//                            IJ.run("Grid/Collection stitching", "type=[Grid: snake by rows] order=[Right & Down                ] grid_size_x=3 grid_size_y=1 tile_overlap=30 first_file_index_i=1 directory=C:/exp2Test/Cyc1_reg1 file_names=HE_000{ii}_Z007_CH1.tif output_textfile_name=TileConfiguration.txt fusion_method=[Linear Blending] regression_threshold=0.30 max/avg_displacement_threshold=2.50 absolute_displacement_threshold=3.50 compute_overlap computation_parameters=[Save computation time (but use more RAM)] image_output=[Write to disk] output_directory=C:/exp2Test/Cyc1_reg1/");
-//                            IJ.runPlugIn("Stitching_Grid",  "type=[Grid: snake by rows] order=[Right & Down                ] grid_size_x=3 grid_size_y=1 tile_overlap=30 first_file_index_i=1 directory=C:/exp2Test/Cyc1_reg1 file_names=HE_000{ii}_Z007_CH1.tif output_textfile_name=TileConfiguration.txt fusion_method=[Linear Blending] regression_threshold=0.30 max/avg_displacement_threshold=2.50 absolute_displacement_threshold=3.50 compute_overlap computation_parameters=[Save computation time (but use more RAM)] image_output=[Write to disk] output_directory=C:/exp2Test/Cyc1_reg1/");
                                 } else {
                                     log("Some fields are incorrect.. Please retry...");
                                 }
@@ -1054,5 +999,49 @@ public class frmMain extends javax.swing.JFrame {
         preMontageReg.setInputVerifier(integerVerifier);
         preMontageCh.setInputVerifier(integerVerifier);
         preMontageZ.setInputVerifier(integerVerifier);
+    }
+
+    private void processTiles(Experiment exp, ExperimentView experimentView, ProcessingOptions po,
+                                    List<Process> allProcess, int currCnt, String maxRAM, int minTile, int maxTile) throws IOException {
+        for (int reg : exp.regIdx) {
+            for (int tile = minTile; tile <= maxTile; tile++) {
+                File d = null;
+                if (!po.isExportImgSeq()) {
+                    d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
+                } else {
+                    d = new File(po.getTempDir() + File.separator + "tiles" + File.separator + FilenameUtils.removeExtension(Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width)));
+                }
+                int numTrial = 0;
+                while (!d.exists() && numTrial < 3) {
+                    numTrial++;
+                    if (SystemUtils.IS_OS_WINDOWS) {
+                        ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" org.nolanlab.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
+                        pb.redirectErrorStream(true);
+
+                        log("Starting process: " + pb.command().toString());
+                        Process proc = pb.start();
+                        allProcess.add(proc);
+
+                        waitAndPrint(proc);
+                        log("Driffta done");
+                    } else if (SystemUtils.IS_OS_LINUX) {
+                        ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \"./*\" org.nolanlab.codex.upload.driffta.Driffta \"" + experimentView.getPath() + "\" \"" + po.getTempDir() + "\" " + String.valueOf(reg) + " " + String.valueOf(tile));
+                        pb.redirectErrorStream(true);
+
+                        log("Starting process: " + pb.command().toString());
+                        Process proc = pb.start();
+                        allProcess.add(proc);
+
+                        waitAndPrint(proc);
+                        log("Driffta done");
+                    }
+                }
+                if (!d.exists()) {
+                    log("Tile processing failed 3 times in a row: " + d.getName());
+                }
+                prg.setValue(currCnt++);
+                frmMain.this.repaint();
+            }
+        }
     }
 }
