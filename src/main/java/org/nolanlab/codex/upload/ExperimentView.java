@@ -108,6 +108,7 @@ public class ExperimentView extends JPanel {
         jLabel28 = new JLabel();
         jLabel21 = new JLabel();
         bgSubLabel = new JLabel();
+        processTilesLabel = new JLabel();
         jLabel29 = new JLabel();
         jLabel1 = new JLabel();
         bestFocusCycleLabel = new JLabel();
@@ -893,6 +894,31 @@ public class ExperimentView extends JPanel {
         gridBagConstraints.gridy = 2;
         optionalPanel.add(optionalBgSub, gridBagConstraints);
 
+        processTilesLabel.setText("Process tiles(; del. If range, use -)");
+        processTilesLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
+        processTilesLabel.setMinimumSize(new java.awt.Dimension(100, 20));
+        processTilesLabel.setPreferredSize(new java.awt.Dimension(180, 20));
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+        //gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        optionalPanel.add(processTilesLabel, gridBagConstraints);
+
+        processTiles = new JTextField();
+        processTiles.setMaximumSize(new java.awt.Dimension(100, 20));
+        processTiles.setMinimumSize(new java.awt.Dimension(40, 20));
+        processTiles.setPreferredSize(new java.awt.Dimension(50, 20));
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        optionalPanel.add(processTiles, gridBagConstraints);
 
         this.setLayout(new BorderLayout());
         this.add(jPanel2, BorderLayout.PAGE_START);
@@ -1032,6 +1058,7 @@ public class ExperimentView extends JPanel {
 
         val14.setText(regTxt);
         val15.setText(regNames);
+        guessTiles(dir);
 
         guessMicroscope(dir);
 
@@ -1049,7 +1076,7 @@ public class ExperimentView extends JPanel {
     }
 
     /*
-    Set the number of Z-indices after reading it from the experiment folder
+    Set the microscope type
     */
     private void guessMicroscope(File dir) {
         boolean flag = false;
@@ -1065,6 +1092,31 @@ public class ExperimentView extends JPanel {
                 val3.setSelectedItem(MicroscopeTypeEnum.ZEISS);
             }
         }
+    }
+
+    /*
+    Set the number tiles to be processed
+    */
+    private void guessTiles(File dir) {
+        int tiles = 0;
+        boolean flag = false;
+        if(dir != null) {
+            for (File cyc : dir.listFiles()) {
+                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
+                    flag = true;
+                    File[] listFiles = cyc.listFiles(t -> t.getName().endsWith(".tif") || t.getName().endsWith(".tiff"));
+                    if(listFiles != null && listFiles.length != 0) {
+                        Arrays.sort(listFiles, Collections.reverseOrder());
+                        String[] sp = listFiles[0].getName().split("_");
+                        tiles = Integer.parseInt(sp[1]);
+                    }
+                }
+                if(flag) {
+                    break;
+                }
+            }
+        }
+        processTiles.setText("1-" + tiles);
     }
 
     /*
@@ -1157,6 +1209,7 @@ public class ExperimentView extends JPanel {
             };
             rb_handE_yes.addItemListener(itl);
         }
+        processTiles.setText((exp.processTiles == null || exp.processTiles.length == 0) ? "1-" + exp.region_height * exp.region_width : String.join(";", exp.processTiles));
     }
 
     private Experiment buildExperiment() {
@@ -1339,7 +1392,8 @@ public class ExperimentView extends JPanel {
                 "Yes".equalsIgnoreCase(optionalBgSub.getSelectedItem().toString()),
                 projName,
                 "Yes".equalsIgnoreCase(optionalFragmentButton.getSelectedItem().toString()),
-                Integer.parseInt(focussingOffset.getValue().toString())
+                Integer.parseInt(focussingOffset.getValue().toString()),
+                processTiles.getText().split(";")
         );
     }
 
@@ -1489,6 +1543,7 @@ public class ExperimentView extends JPanel {
     private JLabel jLabel20;
     private JLabel jLabel21;
     private JLabel bgSubLabel;
+    private JLabel processTilesLabel;
     private JLabel jLabel22;
     private JLabel jLabel23;
     private JLabel jLabel24;
@@ -1513,6 +1568,7 @@ public class ExperimentView extends JPanel {
     private JTextField jTextField1;
     private JRadioButton rb_HandE_yes;
     private JComboBox<String> optionalBgSub;
+    private JTextField processTiles;
     private JTextField txtDir;
     private JTextField val1;
     private JComboBox<String> val10;

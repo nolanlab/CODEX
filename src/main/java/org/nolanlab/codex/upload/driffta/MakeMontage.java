@@ -23,11 +23,17 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.nolanlab.codex.upload.driffta.Driffta.log;
+
 /**
  *
  * @author Nikolay Samusik
  */
 public class MakeMontage {
+    static int stackWidth = 0;
+    static int stackHeight = 0;
+    static int stackSize = 0;
+    static int stackBitDepth = 0;
 
     public static void main(String[] args) throws IOException {
         //args = new String[]{"I:\\Nikolay\\4-20-16 Panel test on tonsil\\bestFocus", "2"};
@@ -80,6 +86,12 @@ public class MakeMontage {
                     ImagePlus tmp = new Opener().openImage(f2.getAbsolutePath());
 
                     ImageStack is = tmp.getImageStack();
+                    if(is != null) {
+                        stackWidth = is.getWidth()/factor;
+                        stackHeight = is.getHeight()/factor;
+                        stackSize = is.getSize()/factor;
+                        stackBitDepth = is.getBitDepth();
+                    }
 
                     StackProcessor sp = new StackProcessor(is);
 
@@ -94,7 +106,9 @@ public class MakeMontage {
             for (int x = 0; x < grid.length; x++) {
                 for (int y = 0; y < grid[x].length; y++) {
                     if (grid[x][y] == null) {
-                        throw new IllegalStateException("tile is null: " + regname + " X=" + (x + 1) + ", Y=" + (y + 1));
+                        log("Tile is null: " + regname + " X=" + (x + 1) + ", Y=" + (y + 1));
+                        log("Will proceed with creating montage with a blank tile here...");
+                        grid[x][y] = ImageStack.create(stackWidth, stackHeight, stackSize, stackBitDepth);
                     }
 
                 }
