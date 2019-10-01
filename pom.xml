@@ -25,7 +25,7 @@
         <dependency>
             <groupId>microvolution</groupId>
             <artifactId>microvolution</artifactId>
-            <version>win_2019.03</version>
+            <version>win_2019.07</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
