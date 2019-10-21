@@ -109,6 +109,7 @@ public class ExperimentView extends JPanel {
         jLabel21 = new JLabel();
         bgSubLabel = new JLabel();
         processTilesLabel = new JLabel();
+        processRegionsLabel = new JLabel();
         jLabel29 = new JLabel();
         jLabel1 = new JLabel();
         bestFocusCycleLabel = new JLabel();
@@ -920,6 +921,32 @@ public class ExperimentView extends JPanel {
         gridBagConstraints.gridy = 3;
         optionalPanel.add(processTiles, gridBagConstraints);
 
+        processRegionsLabel.setText("Process regions(; del)");
+        processRegionsLabel.setMaximumSize(new java.awt.Dimension(3000, 20));
+        processRegionsLabel.setMinimumSize(new java.awt.Dimension(100, 20));
+        processRegionsLabel.setPreferredSize(new java.awt.Dimension(180, 20));
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+        //gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        optionalPanel.add(processRegionsLabel, gridBagConstraints);
+
+        processRegions = new JTextField();
+        processRegions.setMaximumSize(new java.awt.Dimension(100, 20));
+        processRegions.setMinimumSize(new java.awt.Dimension(40, 20));
+        processRegions.setPreferredSize(new java.awt.Dimension(50, 20));
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        optionalPanel.add(processRegions, gridBagConstraints);
+
         this.setLayout(new BorderLayout());
         this.add(jPanel2, BorderLayout.PAGE_START);
         this.add(optionalPanel, BorderLayout.PAGE_END);
@@ -1058,7 +1085,7 @@ public class ExperimentView extends JPanel {
 
         val14.setText(regTxt);
         val15.setText(regNames);
-        guessTiles(dir);
+        //guessTiles(dir);
 
         guessMicroscope(dir);
 
@@ -1209,7 +1236,12 @@ public class ExperimentView extends JPanel {
             };
             rb_handE_yes.addItemListener(itl);
         }
-        processTiles.setText((exp.processTiles == null || exp.processTiles.length == 0) ? "1-" + exp.region_height * exp.region_width : String.join(";", exp.processTiles));
+//        processTiles.setText((exp.processTiles == null || exp.processTiles.length == 0) ? "1-" + exp.region_height * exp.region_width : String.join(";", exp.processTiles));
+//        processRegions.setText((exp.processRegions == null || exp.processRegions.length == 0) ? String.join(";", Arrays.stream(exp.regIdx)
+//                .mapToObj(String::valueOf)
+//                .toArray(String[]::new)) : String.join(";", exp.processRegions));
+        processTiles.setText((exp.processTiles == null || exp.processTiles.length == 0) ? null : String.join(";", exp.processTiles));
+        processRegions.setText((exp.processRegions == null || exp.processRegions.length == 0) ? null : String.join(";", exp.processRegions));
     }
 
     private Experiment buildExperiment() {
@@ -1359,6 +1391,25 @@ public class ExperimentView extends JPanel {
             throw new IllegalStateException("Please enter a valid percentage value for tile overlap.");
         }
 
+        if(StringUtils.isBlank(processTiles.getText())) {
+            if(!StringUtils.isBlank(processRegions.getText())) {
+                JOptionPane.showMessageDialog(this, "Process regions must be blank because process tiles is blank.");
+                throw new IllegalStateException("Process regions must be blank because process tiles is blank.");
+            }
+        }
+
+        if(StringUtils.isBlank(processRegions.getText())) {
+            if(!StringUtils.isBlank(processTiles.getText())) {
+                JOptionPane.showMessageDialog(this, "Process tiles must be blank because process regions is blank.");
+                throw new IllegalStateException("Process tiles must be blank because process regions is blank.");
+            }
+        }
+
+        if(processTiles.getText().split(";").length != processRegions.getText().split(";").length) {
+            JOptionPane.showMessageDialog(this, "Please make sure to have process tiles & regions mapped correctly.");
+            throw new IllegalStateException("process tiles & process regions length are not equal");
+        }
+
         return new Experiment(val1.getText(),
                 formattedDate,
                 val2.getText(),
@@ -1393,7 +1444,8 @@ public class ExperimentView extends JPanel {
                 projName,
                 "Yes".equalsIgnoreCase(optionalFragmentButton.getSelectedItem().toString()),
                 Integer.parseInt(focussingOffset.getValue().toString()),
-                processTiles.getText().split(";")
+                StringUtils.isBlank(processTiles.getText()) ? null : processTiles.getText().split(";"),
+                StringUtils.isBlank(processRegions.getText()) ? null : processRegions.getText().split(";")
         );
     }
 
@@ -1544,6 +1596,7 @@ public class ExperimentView extends JPanel {
     private JLabel jLabel21;
     private JLabel bgSubLabel;
     private JLabel processTilesLabel;
+    private JLabel processRegionsLabel;
     private JLabel jLabel22;
     private JLabel jLabel23;
     private JLabel jLabel24;
@@ -1569,6 +1622,7 @@ public class ExperimentView extends JPanel {
     private JRadioButton rb_HandE_yes;
     private JComboBox<String> optionalBgSub;
     private JTextField processTiles;
+    private JTextField processRegions;
     private JTextField txtDir;
     private JTextField val1;
     private JComboBox<String> val10;

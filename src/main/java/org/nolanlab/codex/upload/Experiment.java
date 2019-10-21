@@ -67,6 +67,7 @@ public class Experiment {
     public final int focusing_offset;
     public boolean bgSub;
     public String[] processTiles;
+    public String[] processRegions;
 
     public static transient HashMap<String, String> projectNameCache = new HashMap<>();
     public static transient final MicroscopeTypeEnum[] microscopeTypes = new MicroscopeTypeEnum[]{KEYENCE, ZEISS, LEICA};
@@ -81,7 +82,7 @@ public class Experiment {
                       String[] region_names, String tiling_mode, int region_width,
                       int region_height, int tile_overlap_X, int tile_overlap_Y,
                       String objectiveType, boolean HandEstain, boolean bgSub, String projName,
-                      boolean optionalFocusFragment, int focusing_offset, String[] processTiles) {
+                      boolean optionalFocusFragment, int focusing_offset, String[] processTiles, String[] processRegions) {
         this.name = name;
         this.date = date;
         this.codex_instrument = codex_instrument;
@@ -129,6 +130,7 @@ public class Experiment {
         this.optionalFocusFragment = optionalFocusFragment;
         this.focusing_offset = focusing_offset;
         this.processTiles = processTiles;
+        this.processRegions = processRegions;
     }
 
     public String getDirName(int cycle, int region, String baseDir) {
