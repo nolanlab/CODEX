@@ -42,6 +42,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Stream;
 
 
 /**
@@ -531,20 +532,43 @@ public class frmMain extends javax.swing.JFrame {
                 }
                 maxRAM = maxRAM.equals("") ? "48" : maxRAM;
 
-                if (exp.processTiles.length == 1 && exp.processTiles[0] == "1-" + exp.region_height * exp.region_width) {
-                    processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, 1, exp.region_height * exp.region_width);
-                } else {
-                    for(int i = 0; i < exp.processTiles.length; i++) {
-                        if(exp.processTiles[i].contains("-")) {
-                            String[] tileRange = exp.processTiles[i].split("-");
-                            int lowerTile = Integer.parseInt(tileRange[0]);
-                            int upperTile = Integer.parseInt(tileRange[1]);
-                            processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, lowerTile, upperTile);
+                if((exp.processTiles == null || exp.processTiles.length == 0) && (exp.processRegions == null || exp.processRegions.length == 0)) {
+                    for(int reg : exp.regIdx) {
+                        processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, 1, exp.region_height * exp.region_width, reg);
+                    }
+                }
+                else {
+                    int[] processRegs = Stream.of(exp.processRegions).mapToInt(Integer::parseInt).toArray();
 
-                        } else {
-                            int tile = Integer.parseInt(exp.processTiles[i]);
-                            processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, tile, tile);
+                    if (processRegs.length == exp.processTiles.length) {
+                        for (int i = 0; i < processRegs.length; i++) {
+                            if (exp.processTiles[i].contains(",")) {
+                                String[] tiles = exp.processTiles[i].split(",");
+                                for (int j = 0; j < tiles.length; j++) {
+                                    if (tiles[j].contains("-")) {
+                                        String[] tileRange = tiles[j].split("-");
+                                        int lowerTile = Integer.parseInt(tileRange[0]);
+                                        int upperTile = Integer.parseInt(tileRange[1]);
+                                        processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
+                                    } else {
+                                        int tile = Integer.parseInt(tiles[j]);
+                                        processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
+                                    }
+                                }
+                            } else if (exp.processTiles[i].contains("-")) {
+                                String[] tileRange = exp.processTiles[i].split("-");
+                                int lowerTile = Integer.parseInt(tileRange[0]);
+                                int upperTile = Integer.parseInt(tileRange[1]);
+                                processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
+                            } else {
+                                int tile = Integer.parseInt(exp.processTiles[i]);
+                                processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
+                            }
                         }
+                    } else {
+                        log("The number of tiles and regions to be processed are not equal");
+                        throw new IllegalStateException("The number of tiles and regions to be processed are not equal... " +
+                                "processTiles length not equal to processRegions length");
                     }
                 }
 
@@ -1002,8 +1026,8 @@ public class frmMain extends javax.swing.JFrame {
     }
 
     private void processTiles(Experiment exp, ExperimentView experimentView, ProcessingOptions po,
-                                    List<Process> allProcess, int currCnt, String maxRAM, int minTile, int maxTile) throws IOException {
-        for (int reg : exp.regIdx) {
+                                    List<Process> allProcess, int currCnt, String maxRAM, int minTile, int maxTile, int reg) throws IOException {
+//        for (int reg : exp.regIdx) {
             for (int tile = minTile; tile <= maxTile; tile++) {
                 File d = null;
                 if (!po.isExportImgSeq()) {
@@ -1042,6 +1066,6 @@ public class frmMain extends javax.swing.JFrame {
                 prg.setValue(currCnt++);
                 frmMain.this.repaint();
             }
-        }
+//        }
     }
 }
