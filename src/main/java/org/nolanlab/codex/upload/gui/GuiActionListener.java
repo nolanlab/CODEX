@@ -1,5 +1,6 @@
 package org.nolanlab.codex.upload.gui;
 
+import org.apache.commons.lang3.StringUtils;
 import org.nolanlab.codex.upload.Experiment;
 import org.nolanlab.codex.upload.logger;
 
@@ -28,17 +29,18 @@ class GuiActionListener implements ActionListener {
                     if (expJS.exists()) {
                         try {
                             GuiWorkers loadWorker = new GuiWorkers(gui);
-                            loadWorker.load(Experiment.loadFromJSON(expJS), jfc.getSelectedFile());
+                            loadWorker.loadFromJson(Experiment.loadFromJSON(expJS), jfc.getSelectedFile());
                         } catch (Exception e) {
                             logger.showException(e);
                             System.out.println(e.getMessage());
                         }
                     } else {
-//                        String err = guessValues(jfc.getSelectedFile());
-//                        if (err.length() > 0) {
-//                            JOptionPane.showMessageDialog(this, err);
-//                            throw new IllegalStateException(err);
-//                        }
+                        GuiWorkers guessWorker = new GuiWorkers(gui);
+                        String err = guessWorker.parseExperimentFolderForFields(jfc.getSelectedFile());
+                        if (err.length() > 0) {
+                            JOptionPane.showMessageDialog(gui.getMainPanel(), err);
+                            throw new IllegalStateException(err);
+                        }
                     }
 
                     gui.getInputPathField().setText(jfc.getSelectedFile().getAbsolutePath());
@@ -47,18 +49,39 @@ class GuiActionListener implements ActionListener {
                     gui.getNameField().setText(jfc.getSelectedFile().getName());
 
                     fireStateChanged();
-
                 }
+            } else if(event.getSource() == gui.getOutputPathBrowseButton()) {
+                JFileChooser jfc = new JFileChooser();
+                jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                jfc.setDialogTitle("Select an output processed directory for your experiment");
+                if (jfc.showOpenDialog(gui.getMainPanel()) == JFileChooser.APPROVE_OPTION) {
+                    gui.getOutputDirField().setText(jfc.getSelectedFile().getAbsolutePath());
+                    fireStateChanged();
+                }
+                if (!StringUtils.isBlank(gui.getOutputDirField().getText())) {
+                    gui.getOpenOutputButton().setEnabled(true);
+                }
+            } else if(event.getSource() == gui.getOpenInputButton()) {
+                openInputFolder();
             } else if(event.getSource() == gui.getEditChannelNamesButton()) {
                 openChannelNames();
             } else if(event.getSource() == gui.getEditExperimentJsonButton()) {
                 openExperimentJson();
             } else if(event.getSource() == gui.getEditExposureTimesButton()) {
                 openExposureTimes();
+            } else if(event.getSource() == gui.getOpenOutputButton()) {
+                openOutputFolder();
+            } else if(event.getSource() == gui.getStartButton()) {
+                GuiWorkers startWorker = new GuiWorkers(gui);
+//                startWorker.startActionPerformed();
             }
         } catch (Exception e) {
 //            log.debug(ExceptionUtils.getStackTrace(e));
         }
+    }
+
+    private void openInputFolder() {
+        guiHelper.openFolder(gui.getInputPathField().getText());
     }
 
     private void openChannelNames() {
@@ -71,6 +94,10 @@ class GuiActionListener implements ActionListener {
 
     private void openExposureTimes() {
         guiHelper.openTextEditor(gui.getInputPathField().getText() + File.separator + "exposure_times.txt");
+    }
+
+    private void openOutputFolder() {
+        guiHelper.openFolder(gui.getOutputDirField().getText());
     }
 
     private void fireStateChanged() {

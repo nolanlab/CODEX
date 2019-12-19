@@ -43,6 +43,8 @@ public class NewGUI {
     private JPanel essentialsPanel;
     private JLabel nameLabel;
     private JTextField nameField;
+    private JLabel projectNameLabel;
+    private JTextField projectNameField;
     private JLabel regionWidthLabel;
     private JLabel regionHeightLabel;
     private JLabel tileOverlapXLabel;
@@ -61,9 +63,11 @@ public class NewGUI {
     private JPanel viewFilesPanel;
     private JButton startButton;
     private JButton stopButton;
+    private JButton openInputButton;
     private JButton editChannelNamesButton;
     private JButton editExperimentJsonButton;
     private JButton editExposureTimesButton;
+    private JButton openOutputButton;
     private JPanel pathPanel;
     private JTextField inputPathField;
     private JButton inputPathBrowseButton;
@@ -96,10 +100,14 @@ public class NewGUI {
     private JTextField tileWidthField;
     private JTextField tileHeightField;
     private JPanel processRightColumnPanel;
-    private JSpinner driftReferenceCycleField;
-    private JSpinner driftReferenceChannelField;
-    private JSpinner focusingOffsetField;
+    private JTextField driftReferenceCycleField;
+    private JTextField driftReferenceChannelField;
+    private JTextField focusingOffsetField;
     private JTextField cycleRangeField;
+    private JLabel regionNamesLabel;
+    private JLabel channelNamesLabel;
+    private JTextField regionNamesField;
+    private JTextField channelNamesField;
     private JCheckBox useBlindDeconvolutionCheckBox;
     private JCheckBox useBleachMinimizingCropCheckBox;
     private JTextField deconvolutionIterationsField;
@@ -127,8 +135,8 @@ public class NewGUI {
     private JLabel processTilesLabel;
     private JLabel microscopeLabel;
     private JComboBox microscopeTypeComboBox;
-    private JSpinner bestFocusCycleField;
-    private JSpinner bestFocusChannelField;
+    private JTextField bestFocusCycleField;
+    private JTextField bestFocusChannelField;
     private JLabel colorModeLabel;
     private JComboBox colorModeComboBox;
     private JCheckBox optionalFocusFragmentCheckBox;
@@ -142,6 +150,8 @@ public class NewGUI {
     private JLabel cycleRangeLabel;
     private JLabel deconvolutionIterationsLabel;
     private JLabel deconvolutionModelLabel;
+    private JTextField processRegionsField;
+    private JTextField processTilesField;
 
 
     private TextAreaOutputStream taOutputStream;
@@ -161,6 +171,10 @@ public class NewGUI {
 
     public JTextField getNameField() {
         return nameField;
+    }
+
+    public JTextField getProjectNameField() {
+        return projectNameField;
     }
 
     public JTextField getRegionWidthField() {
@@ -207,6 +221,10 @@ public class NewGUI {
         return stopButton;
     }
 
+    public JButton getOpenInputButton() {
+        return openInputButton;
+    }
+
     public JButton getEditChannelNamesButton() {
         return editChannelNamesButton;
     }
@@ -217,6 +235,10 @@ public class NewGUI {
 
     public JButton getEditExposureTimesButton() {
         return editExposureTimesButton;
+    }
+
+    public JButton getOpenOutputButton() {
+        return openOutputButton;
     }
 
     public JTextField getInputPathField() {
@@ -283,19 +305,19 @@ public class NewGUI {
         return tileHeightField;
     }
 
-    public JSpinner getDriftReferenceCycleField() {
+    public JTextField getDriftReferenceCycleField() {
         return driftReferenceCycleField;
     }
 
-    public JSpinner getDriftReferenceChannelField() {
+    public JTextField getDriftReferenceChannelField() {
         return driftReferenceChannelField;
     }
 
-    public JSpinner getBestFocusCycleField() {
+    public JTextField getBestFocusCycleField() {
         return bestFocusCycleField;
     }
 
-    public JSpinner getBestFocusChannelField() {
+    public JTextField getBestFocusChannelField() {
         return bestFocusChannelField;
     }
 
@@ -303,12 +325,20 @@ public class NewGUI {
         return optionalFocusFragmentCheckBox;
     }
 
-    public JSpinner getFocusingOffsetField() {
+    public JTextField getFocusingOffsetField() {
         return focusingOffsetField;
     }
 
     public JTextField getCycleRangeField() {
         return cycleRangeField;
+    }
+
+    public JTextField getRegionNamesField() {
+        return regionNamesField;
+    }
+
+    public JTextField getChannelNamesField() {
+        return channelNamesField;
     }
 
     public JCheckBox getUseBlindDeconvolutionCheckBox() {
@@ -367,56 +397,54 @@ public class NewGUI {
         return configField;
     }
 
+    public JTextField getProcessRegionsField() {
+        return processRegionsField;
+    }
+
+    public JTextField getProcessTilesField() {
+        return processTilesField;
+    }
+
     public NewGUI() {
-//        initComponents();
+        checkConfigFile();
         initEnables();
         loadLogo();
         addListeners();
         taOutputStream = new TextAreaOutputStream(loggingTextArea, "", null);
         System.setOut(new PrintStream(taOutputStream));
         System.setErr(new PrintStream(taOutputStream));
-
-        File dir = new File(System.getProperty("user.home"));
-
-        try {
-            File in = new File(dir.getCanonicalPath() + File.separator + "config.txt");
-            if (in != null && !in.isDirectory() && !in.exists()) {
-                numberOfGpuDialog();
-            }
-        } catch (Exception e) {
-            logger.showException(e);
-            System.out.println(e.getMessage());
-            System.exit(0);
-        }
     }
 
     private void initEnables() {
-        startButton.setEnabled(false);
-        stopButton.setEnabled(false);
-        previewGenerateButton.setEnabled(false);
         inputPathField.setEnabled(false);
         inputPathBrowseButton.setEnabled(true);
         outputDirField.setEnabled(false);
         outputPathBrowseButton.setEnabled(false);
-//        GuiFields.enableAll(this, false);
+
+        openInputButton.setEnabled(false);
+        editChannelNamesButton.setEnabled(false);
+        editExperimentJsonButton.setEnabled(false);
+        editExposureTimesButton.setEnabled(false);
+        openOutputButton.setEnabled(false);
+
+        startButton.setEnabled(false);
+        stopButton.setEnabled(false);
+
+        previewGenerateButton.setEnabled(false);
+        GuiHelper.enableAll(this, false);
     }
 
     private void addListeners() {
         inputPathBrowseButton.addActionListener(new GuiActionListener(this));
+        outputPathBrowseButton.addActionListener(new GuiActionListener(this));
+        openInputButton.addActionListener(new GuiActionListener(this));
         editChannelNamesButton.addActionListener(new GuiActionListener(this));
         editExperimentJsonButton.addActionListener(new GuiActionListener(this));
         editExposureTimesButton.addActionListener(new GuiActionListener(this));
-
-//        startButton.addActionListener(new GuiActionListener(this));
+        openOutputButton.addActionListener(new GuiActionListener(this));
+        startButton.addActionListener(new GuiActionListener(this));
 //        stopButton.addActionListener(new GuiActionListener(this));
-//        outputPathBrowseButton.addActionListener(new GuiActionListener(this));
-//        editChannelNamesButton.addActionListener(new GuiActionListener(this));
-//        editExposureTimesButton.addActionListener(new GuiActionListener(this));
 //        previewGenerateButton.addActionListener(new GuiActionListener(this));
-    }
-
-    private void txtDirMouseReleased(MouseEvent evt) {//GEN-FIRST:event_txtDirMouseReleased
-
     }
 
     private void loadLogo() {
@@ -430,11 +458,25 @@ public class NewGUI {
         logoLabel.setIcon(new ImageIcon(image));
     }
 
+    private void checkConfigFile() {
+        File dir = new File(System.getProperty("user.home"));
+        try {
+            File in = new File(dir.getCanonicalPath() + File.separator + "config.txt");
+            if (in != null && !in.isDirectory() && !in.exists()) {
+                numberOfGpuDialog();
+            }
+        } catch (Exception e) {
+            logger.showException(e);
+            System.out.println(e.getMessage());
+            System.exit(0);
+        }
+    }
+
     /*
        Method to create a new dialog box to be input at the start-up of the application, when it is run
        on the machine the first time.
     */
-    public void numberOfGpuDialog() {
+    private void numberOfGpuDialog() {
 
         JPanel gpuPanel = new JPanel();
         GridBagLayout gridBag = new GridBagLayout();
@@ -650,48 +692,48 @@ public class NewGUI {
         progressAnimation = new JProgressBar();
         progressPanel.add(progressAnimation, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 5), null, 0, false));
         essentialsPanel = new JPanel();
-        essentialsPanel.setLayout(new GridLayoutManager(5, 7, new Insets(5, 10, 10, 10), -1, -1));
+        essentialsPanel.setLayout(new GridLayoutManager(6, 7, new Insets(5, 10, 10, 10), -1, -1));
         mainPanel.add(essentialsPanel, new GridConstraints(7, 1, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         essentialsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Essentials", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, Font.BOLD, -1, essentialsPanel.getFont())));
         nameLabel = new JLabel();
         nameLabel.setText("Name");
         essentialsPanel.add(nameLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         nameField = new JTextField();
-        nameField.setText("");
+        nameField.setText("<Experiment name>");
         essentialsPanel.add(nameField, new GridConstraints(0, 2, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(180, -1), null, 0, false));
         regionWidthLabel = new JLabel();
         regionWidthLabel.setText("Region Width");
-        essentialsPanel.add(regionWidthLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        essentialsPanel.add(regionWidthLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         regionHeightLabel = new JLabel();
         regionHeightLabel.setText("Region Height");
-        essentialsPanel.add(regionHeightLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        essentialsPanel.add(regionHeightLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         tileOverlapXLabel = new JLabel();
         tileOverlapXLabel.setText("Tile Overlap X");
-        essentialsPanel.add(tileOverlapXLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        essentialsPanel.add(tileOverlapXLabel, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         tileOverlapYLabel = new JLabel();
         tileOverlapYLabel.setText("Tile Overlap Y");
-        essentialsPanel.add(tileOverlapYLabel, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        essentialsPanel.add(tileOverlapYLabel, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         regionWidthField = new JTextField();
-        essentialsPanel.add(regionWidthField, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        essentialsPanel.add(regionWidthField, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         regionHeightField = new JTextField();
-        essentialsPanel.add(regionHeightField, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        essentialsPanel.add(regionHeightField, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         tileOverlapXField = new JTextField();
-        essentialsPanel.add(tileOverlapXField, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        essentialsPanel.add(tileOverlapXField, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         tileOverlapYField = new JTextField();
-        essentialsPanel.add(tileOverlapYField, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        essentialsPanel.add(tileOverlapYField, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer5 = new Spacer();
         essentialsPanel.add(spacer5, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));
         final Spacer spacer6 = new Spacer();
-        essentialsPanel.add(spacer6, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));
+        essentialsPanel.add(spacer6, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));
         final Spacer spacer7 = new Spacer();
-        essentialsPanel.add(spacer7, new GridConstraints(1, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));
+        essentialsPanel.add(spacer7, new GridConstraints(2, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));
         logoLabel = new JLabel();
         logoLabel.setBackground(new Color(-1));
         logoLabel.setText("");
-        essentialsPanel.add(logoLabel, new GridConstraints(1, 6, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(240, 80), new Dimension(240, 80), null, 0, false));
+        essentialsPanel.add(logoLabel, new GridConstraints(2, 6, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(240, 80), new Dimension(240, 80), null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(4, 1, new Insets(0, 0, 0, 0), -1, -1));
-        essentialsPanel.add(panel2, new GridConstraints(1, 4, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        essentialsPanel.add(panel2, new GridConstraints(2, 4, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         backgroundSubtractionCheckBox = new JCheckBox();
         backgroundSubtractionCheckBox.setSelected(true);
         backgroundSubtractionCheckBox.setText("Background Subtraction");
@@ -710,6 +752,12 @@ public class NewGUI {
         hAndEStainCheckBox.setSelected(false);
         hAndEStainCheckBox.setText("HandE Staining");
         panel2.add(hAndEStainCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        projectNameLabel = new JLabel();
+        projectNameLabel.setText("Project Name");
+        essentialsPanel.add(projectNameLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        projectNameField = new JTextField();
+        projectNameField.setText("<Project name>");
+        essentialsPanel.add(projectNameField, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer8 = new Spacer();
         mainPanel.add(spacer8, new GridConstraints(2, 1, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 5), null, 0, false));
         outputDirPanel = new JPanel();
@@ -761,35 +809,41 @@ public class NewGUI {
         final Spacer spacer16 = new Spacer();
         mainPanel.add(spacer16, new GridConstraints(8, 1, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 5), null, 0, false));
         viewFilesPanel = new JPanel();
-        viewFilesPanel.setLayout(new GridLayoutManager(1, 8, new Insets(5, 10, 10, 10), -1, -1));
+        viewFilesPanel.setLayout(new GridLayoutManager(1, 9, new Insets(5, 10, 10, 10), -1, -1));
         mainPanel.add(viewFilesPanel, new GridConstraints(5, 1, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, 1, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         viewFilesPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "View Files", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, Font.BOLD, -1, viewFilesPanel.getFont())));
-        final Spacer spacer17 = new Spacer();
-        viewFilesPanel.add(spacer17, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));
         editExposureTimesButton = new JButton();
         editExposureTimesButton.setEnabled(true);
-        editExposureTimesButton.setText("Edit Exposures");
-        viewFilesPanel.add(editExposureTimesButton, new GridConstraints(0, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(130, 50), null, 0, false));
+        editExposureTimesButton.setText("ExposureTimes");
+        viewFilesPanel.add(editExposureTimesButton, new GridConstraints(0, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 30), null, 0, false));
+        openInputButton = new JButton();
+        openInputButton.setEnabled(true);
+        openInputButton.setText("Input");
+        viewFilesPanel.add(openInputButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 30), null, 0, false));
+        final Spacer spacer17 = new Spacer();
+        viewFilesPanel.add(spacer17, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));
+        openOutputButton = new JButton();
+        openOutputButton.setEnabled(true);
+        openOutputButton.setText("Output");
+        viewFilesPanel.add(openOutputButton, new GridConstraints(0, 8, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 30), null, 0, false));
         final Spacer spacer18 = new Spacer();
-        viewFilesPanel.add(spacer18, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));
+        viewFilesPanel.add(spacer18, new GridConstraints(0, 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));
         editChannelNamesButton = new JButton();
         editChannelNamesButton.setEnabled(true);
-        editChannelNamesButton.setText("Edit Channels");
-        viewFilesPanel.add(editChannelNamesButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(130, 50), null, 0, false));
+        editChannelNamesButton.setText("ChannlNames");
+        viewFilesPanel.add(editChannelNamesButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 30), null, 0, false));
+        final Spacer spacer19 = new Spacer();
+        viewFilesPanel.add(spacer19, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));
+        final Spacer spacer20 = new Spacer();
+        viewFilesPanel.add(spacer20, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));
         editExperimentJsonButton = new JButton();
         editExperimentJsonButton.setEnabled(true);
-        editExperimentJsonButton.setText("Edit Experiment Json");
-        viewFilesPanel.add(editExperimentJsonButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(130, 50), null, 0, false));
-        final Spacer spacer19 = new Spacer();
-        viewFilesPanel.add(spacer19, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));
-        final Spacer spacer20 = new Spacer();
-        viewFilesPanel.add(spacer20, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, new Dimension(5, -1), null, 0, false));
+        editExperimentJsonButton.setText("ExperimentJSON");
+        viewFilesPanel.add(editExperimentJsonButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 30), null, 2, false));
         final Spacer spacer21 = new Spacer();
-        viewFilesPanel.add(spacer21, new GridConstraints(0, 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, new Dimension(5, -1), null, 0, false));
+        mainPanel.add(spacer21, new GridConstraints(6, 1, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 5), null, 0, false));
         final Spacer spacer22 = new Spacer();
-        mainPanel.add(spacer22, new GridConstraints(6, 1, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 5), null, 0, false));
-        final Spacer spacer23 = new Spacer();
-        mainPanel.add(spacer23, new GridConstraints(4, 1, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 5), null, 0, false));
+        mainPanel.add(spacer22, new GridConstraints(4, 1, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 5), null, 0, false));
         processPanel = new JPanel();
         processPanel.setLayout(new GridLayoutManager(3, 5, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("Process", processPanel);
@@ -814,32 +868,38 @@ public class NewGUI {
         magnificationLabel.setText("Magnification");
         imagingParametersPanel.add(magnificationLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         magnificationField = new JTextField();
+        magnificationField.setEnabled(true);
+        magnificationField.setText("20");
         imagingParametersPanel.add(magnificationField, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         apertureLabel = new JLabel();
         apertureLabel.setText("Aperture");
         imagingParametersPanel.add(apertureLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         apertureField = new JTextField();
+        apertureField.setText("0.75");
         imagingParametersPanel.add(apertureField, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         xyResolutionLabel = new JLabel();
         xyResolutionLabel.setText("XY Resolution (nm)");
         imagingParametersPanel.add(xyResolutionLabel, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         xyResolutionField = new JTextField();
+        xyResolutionField.setText("377.442");
         imagingParametersPanel.add(xyResolutionField, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         zPitchLabel = new JLabel();
         zPitchLabel.setText("Z Pitch (nm)");
         imagingParametersPanel.add(zPitchLabel, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         zPitchField = new JTextField();
+        zPitchField.setText("1500");
         imagingParametersPanel.add(zPitchField, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         wavelengthsLabel = new JLabel();
         wavelengthsLabel.setText("Wavelengths (nm)");
         imagingParametersPanel.add(wavelengthsLabel, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         wavelengthsField = new JTextField();
+        wavelengthsField.setText("425;525;595;670");
         imagingParametersPanel.add(wavelengthsField, new GridConstraints(7, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         microscopeLabel = new JLabel();
         microscopeLabel.setText("Microscope");
         imagingParametersPanel.add(microscopeLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer24 = new Spacer();
-        imagingParametersPanel.add(spacer24, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        final Spacer spacer23 = new Spacer();
+        imagingParametersPanel.add(spacer23, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
         microscopeTypeComboBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
         defaultComboBoxModel2.addElement("Keyence BZ-X710");
@@ -856,8 +916,8 @@ public class NewGUI {
         defaultComboBoxModel3.addElement("color");
         colorModeComboBox.setModel(defaultComboBoxModel3);
         imagingParametersPanel.add(colorModeComboBox, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(180, -1), null, 0, false));
-        final Spacer spacer25 = new Spacer();
-        processLeftColumnPanel.add(spacer25, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
+        final Spacer spacer24 = new Spacer();
+        processLeftColumnPanel.add(spacer24, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
         autoDetectedPanel = new JPanel();
         autoDetectedPanel.setLayout(new GridLayoutManager(6, 3, new Insets(5, 10, 10, 10), -1, -1));
         processLeftColumnPanel.add(autoDetectedPanel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -865,8 +925,8 @@ public class NewGUI {
         numRegionsLabel = new JLabel();
         numRegionsLabel.setText("Number of Regions");
         autoDetectedPanel.add(numRegionsLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer26 = new Spacer();
-        autoDetectedPanel.add(spacer26, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        final Spacer spacer25 = new Spacer();
+        autoDetectedPanel.add(spacer25, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
         numRegionsField = new JTextField();
         autoDetectedPanel.add(numRegionsField, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         numCyclesLabel = new JLabel();
@@ -894,69 +954,77 @@ public class NewGUI {
         autoDetectedPanel.add(tileWidthField, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         tileHeightField = new JTextField();
         autoDetectedPanel.add(tileHeightField, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer27 = new Spacer();
-        processLeftColumnPanel.add(spacer27, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final Spacer spacer26 = new Spacer();
+        processLeftColumnPanel.add(spacer26, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         processRightColumnPanel = new JPanel();
         processRightColumnPanel.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), -1, -1));
         processPanel.add(processRightColumnPanel, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final Spacer spacer27 = new Spacer();
+        processRightColumnPanel.add(spacer27, new GridConstraints(1, 2, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer28 = new Spacer();
-        processRightColumnPanel.add(spacer28, new GridConstraints(1, 2, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final Spacer spacer29 = new Spacer();
-        processRightColumnPanel.add(spacer29, new GridConstraints(0, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
+        processRightColumnPanel.add(spacer28, new GridConstraints(0, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
         processingOptionsPanel = new JPanel();
-        processingOptionsPanel.setLayout(new GridLayoutManager(13, 3, new Insets(5, 10, 10, 10), -1, -1));
+        processingOptionsPanel.setLayout(new GridLayoutManager(11, 3, new Insets(5, 10, 10, 10), -1, -1));
         processRightColumnPanel.add(processingOptionsPanel, new GridConstraints(2, 0, 1, 3, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         processingOptionsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Optional Parameters", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, Font.BOLD, -1, processingOptionsPanel.getFont())));
         driftReferenceCycleLabel = new JLabel();
         driftReferenceCycleLabel.setText("Drift Reference Cycle");
         processingOptionsPanel.add(driftReferenceCycleLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final Spacer spacer30 = new Spacer();
-        processingOptionsPanel.add(spacer30, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
-        driftReferenceChannelLabel = new JLabel();
-        driftReferenceChannelLabel.setText("Drift Reference Channel");
-        processingOptionsPanel.add(driftReferenceChannelLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final Spacer spacer29 = new Spacer();
+        processingOptionsPanel.add(spacer29, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
         focusingOffsetLabel = new JLabel();
         focusingOffsetLabel.setText("Focusing Offset");
-        processingOptionsPanel.add(focusingOffsetLabel, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final Spacer spacer31 = new Spacer();
-        processingOptionsPanel.add(spacer31, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
+        processingOptionsPanel.add(focusingOffsetLabel, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         bestFocusCycleLabel = new JLabel();
         bestFocusCycleLabel.setText("Best Focus Cycle");
-        processingOptionsPanel.add(bestFocusCycleLabel, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        processingOptionsPanel.add(bestFocusCycleLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         bestFocusChannelLabel = new JLabel();
         bestFocusChannelLabel.setText("Best Focus Channel");
-        processingOptionsPanel.add(bestFocusChannelLabel, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        driftReferenceCycleField = new JSpinner();
-        processingOptionsPanel.add(driftReferenceCycleField, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        driftReferenceChannelField = new JSpinner();
-        processingOptionsPanel.add(driftReferenceChannelField, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        bestFocusCycleField = new JSpinner();
-        processingOptionsPanel.add(bestFocusCycleField, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        bestFocusChannelField = new JSpinner();
-        processingOptionsPanel.add(bestFocusChannelField, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        focusingOffsetField = new JSpinner();
-        processingOptionsPanel.add(focusingOffsetField, new GridConstraints(10, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer32 = new Spacer();
-        processingOptionsPanel.add(spacer32, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
-        final Spacer spacer33 = new Spacer();
-        processingOptionsPanel.add(spacer33, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
-        final Spacer spacer34 = new Spacer();
-        processingOptionsPanel.add(spacer34, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
-        final Spacer spacer35 = new Spacer();
-        processingOptionsPanel.add(spacer35, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
+        processingOptionsPanel.add(bestFocusChannelLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final Spacer spacer30 = new Spacer();
+        processingOptionsPanel.add(spacer30, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
         cycleRangeLabel = new JLabel();
         cycleRangeLabel.setText("Cycle Range");
-        processingOptionsPanel.add(cycleRangeLabel, new GridConstraints(12, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        processingOptionsPanel.add(cycleRangeLabel, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         cycleRangeField = new JTextField();
-        processingOptionsPanel.add(cycleRangeField, new GridConstraints(12, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        processingOptionsPanel.add(cycleRangeField, new GridConstraints(8, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         optionalFocusFragmentCheckBox = new JCheckBox();
         optionalFocusFragmentCheckBox.setEnabled(true);
         optionalFocusFragmentCheckBox.setSelected(false);
         optionalFocusFragmentCheckBox.setText("Optional Focusing Fragment");
         optionalFocusFragmentCheckBox.setVerticalAlignment(0);
-        processingOptionsPanel.add(optionalFocusFragmentCheckBox, new GridConstraints(8, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final Spacer spacer36 = new Spacer();
-        processingOptionsPanel.add(spacer36, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
+        processingOptionsPanel.add(optionalFocusFragmentCheckBox, new GridConstraints(5, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final Spacer spacer31 = new Spacer();
+        processingOptionsPanel.add(spacer31, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
+        driftReferenceCycleField = new JTextField();
+        driftReferenceCycleField.setText("1");
+        processingOptionsPanel.add(driftReferenceCycleField, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        driftReferenceChannelField = new JTextField();
+        driftReferenceChannelField.setText("1");
+        processingOptionsPanel.add(driftReferenceChannelField, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        driftReferenceChannelLabel = new JLabel();
+        driftReferenceChannelLabel.setText("Drift Reference Channel");
+        processingOptionsPanel.add(driftReferenceChannelLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        bestFocusCycleField = new JTextField();
+        bestFocusCycleField.setText("1");
+        processingOptionsPanel.add(bestFocusCycleField, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        bestFocusChannelField = new JTextField();
+        bestFocusChannelField.setText("1");
+        processingOptionsPanel.add(bestFocusChannelField, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        focusingOffsetField = new JTextField();
+        focusingOffsetField.setText("0");
+        processingOptionsPanel.add(focusingOffsetField, new GridConstraints(7, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        regionNamesLabel = new JLabel();
+        regionNamesLabel.setText("Region Names");
+        processingOptionsPanel.add(regionNamesLabel, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        channelNamesLabel = new JLabel();
+        channelNamesLabel.setText("Channel Names");
+        processingOptionsPanel.add(channelNamesLabel, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        regionNamesField = new JTextField();
+        processingOptionsPanel.add(regionNamesField, new GridConstraints(9, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        channelNamesField = new JTextField();
+        channelNamesField.setText("");
+        processingOptionsPanel.add(channelNamesField, new GridConstraints(10, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(5, 3, new Insets(5, 10, 10, 10), -1, -1));
         processRightColumnPanel.add(panel3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -977,9 +1045,10 @@ public class NewGUI {
         deconvolutionModelLabel = new JLabel();
         deconvolutionModelLabel.setText("Deconvolution Model");
         panel3.add(deconvolutionModelLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final Spacer spacer37 = new Spacer();
-        panel3.add(spacer37, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        final Spacer spacer32 = new Spacer();
+        panel3.add(spacer32, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
         deconvolutionIterationsField = new JTextField();
+        deconvolutionIterationsField.setText("25");
         panel3.add(deconvolutionIterationsField, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         deconvolutionModelComboBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel4 = new DefaultComboBoxModel();
@@ -987,23 +1056,23 @@ public class NewGUI {
         defaultComboBoxModel4.addElement("scalar");
         deconvolutionModelComboBox.setModel(defaultComboBoxModel4);
         panel3.add(deconvolutionModelComboBox, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(180, -1), null, 0, false));
+        final Spacer spacer33 = new Spacer();
+        panel3.add(spacer33, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
+        final Spacer spacer34 = new Spacer();
+        processPanel.add(spacer34, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        final Spacer spacer35 = new Spacer();
+        processPanel.add(spacer35, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        final Spacer spacer36 = new Spacer();
+        processPanel.add(spacer36, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        final Spacer spacer37 = new Spacer();
+        processPanel.add(spacer37, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 10), null, 0, false));
         final Spacer spacer38 = new Spacer();
-        panel3.add(spacer38, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
-        final Spacer spacer39 = new Spacer();
-        processPanel.add(spacer39, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
-        final Spacer spacer40 = new Spacer();
-        processPanel.add(spacer40, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
-        final Spacer spacer41 = new Spacer();
-        processPanel.add(spacer41, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
-        final Spacer spacer42 = new Spacer();
-        processPanel.add(spacer42, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 10), null, 0, false));
-        final Spacer spacer43 = new Spacer();
-        processPanel.add(spacer43, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
+        processPanel.add(spacer38, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
         advancedPanel = new JPanel();
         advancedPanel.setLayout(new GridLayoutManager(3, 5, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane.addTab("Advanced", advancedPanel);
-        final Spacer spacer44 = new Spacer();
-        advancedPanel.add(spacer44, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        final Spacer spacer39 = new Spacer();
+        advancedPanel.add(spacer39, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
         advancedRightColumnPanel = new JPanel();
         advancedRightColumnPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         advancedPanel.add(advancedRightColumnPanel, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -1034,16 +1103,16 @@ public class NewGUI {
         previewGenerateButton = new JButton();
         previewGenerateButton.setText("Generate Preview");
         previewPanel.add(previewGenerateButton, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(130, 50), null, 0, false));
-        final Spacer spacer45 = new Spacer();
-        previewPanel.add(spacer45, new GridConstraints(4, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        final Spacer spacer46 = new Spacer();
-        previewPanel.add(spacer46, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
-        final Spacer spacer47 = new Spacer();
-        previewPanel.add(spacer47, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        final Spacer spacer48 = new Spacer();
-        advancedPanel.add(spacer48, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
-        final Spacer spacer49 = new Spacer();
-        advancedPanel.add(spacer49, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
+        final Spacer spacer40 = new Spacer();
+        previewPanel.add(spacer40, new GridConstraints(4, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer41 = new Spacer();
+        previewPanel.add(spacer41, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        final Spacer spacer42 = new Spacer();
+        previewPanel.add(spacer42, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer43 = new Spacer();
+        advancedPanel.add(spacer43, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        final Spacer spacer44 = new Spacer();
+        advancedPanel.add(spacer44, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
         advancedLeftColumnPanel = new JPanel();
         advancedLeftColumnPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         advancedPanel.add(advancedLeftColumnPanel, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -1056,21 +1125,21 @@ public class NewGUI {
         processRegionsLabel = new JLabel();
         processRegionsLabel.setText("Regions");
         stepSelectionPanel.add(processRegionsLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer50 = new Spacer();
-        stepSelectionPanel.add(spacer50, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final JTextField textField1 = new JTextField();
-        stepSelectionPanel.add(textField1, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer51 = new Spacer();
-        stepSelectionPanel.add(spacer51, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        final Spacer spacer45 = new Spacer();
+        stepSelectionPanel.add(spacer45, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        processRegionsField = new JTextField();
+        stepSelectionPanel.add(processRegionsField, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer46 = new Spacer();
+        stepSelectionPanel.add(spacer46, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
         processTilesLabel = new JLabel();
         processTilesLabel.setText("Tiles");
         stepSelectionPanel.add(processTilesLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JTextField textField2 = new JTextField();
-        stepSelectionPanel.add(textField2, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer52 = new Spacer();
-        advancedPanel.add(spacer52, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
-        final Spacer spacer53 = new Spacer();
-        advancedPanel.add(spacer53, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        processTilesField = new JTextField();
+        stepSelectionPanel.add(processTilesField, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer47 = new Spacer();
+        advancedPanel.add(spacer47, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
+        final Spacer spacer48 = new Spacer();
+        advancedPanel.add(spacer48, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
         bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), -1, -1));
         rootPanel.add(bottomPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
@@ -1085,14 +1154,14 @@ public class NewGUI {
         loggingTextArea.setEditable(true);
         loggingTextArea.setRows(0);
         loggingPane.setViewportView(loggingTextArea);
-        final Spacer spacer54 = new Spacer();
-        bottomPanel.add(spacer54, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
-        final Spacer spacer55 = new Spacer();
-        bottomPanel.add(spacer55, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
-        final Spacer spacer56 = new Spacer();
-        bottomPanel.add(spacer56, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 5), null, 0, false));
-        final Spacer spacer57 = new Spacer();
-        bottomPanel.add(spacer57, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        final Spacer spacer49 = new Spacer();
+        bottomPanel.add(spacer49, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        final Spacer spacer50 = new Spacer();
+        bottomPanel.add(spacer50, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
+        final Spacer spacer51 = new Spacer();
+        bottomPanel.add(spacer51, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 5), null, 0, false));
+        final Spacer spacer52 = new Spacer();
+        bottomPanel.add(spacer52, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
     }
 
     /**
