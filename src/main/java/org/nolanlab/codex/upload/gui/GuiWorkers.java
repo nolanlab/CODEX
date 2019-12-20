@@ -24,6 +24,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
 
+/**
+ *
+ * @author Vishal
+ */
+
 public class GuiWorkers {
     private final NewGUI gui;
     private GuiHelper guiHelper = new GuiHelper();

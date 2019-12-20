@@ -3,12 +3,15 @@
   <component name="ChangeListManager">
     <list default="true" id="6dbd53b7-1df8-49c3-9f00-43904c514362" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/MicroscopeTypeEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/MicroscopeTypeEnum.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/ConcatAndMakeFCS.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/CODEXwebToken.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/HandEmapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/RescaleImages.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiActionListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiActionListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiHelper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.form" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/SystemInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/SystemInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Metadata.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Metadata.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -377,7 +380,7 @@
       <workItem from="1571179437449" duration="5779000" />
       <workItem from="1575317047575" duration="16091000" />
       <workItem from="1576104543862" duration="620000" />
-      <workItem from="1576166013554" duration="54306000" />
+      <workItem from="1576166013554" duration="55724000" />
     </task>
     <servers />
   </component>
@@ -739,48 +742,43 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiActionListener.java</url>
-          <line>76</line>
+          <line>81</line>
           <option name="timeStamp" value="955" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java</url>
-          <line>258</line>
+          <line>263</line>
           <option name="timeStamp" value="957" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java</url>
-          <line>458</line>
+          <line>463</line>
           <option name="timeStamp" value="958" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java</url>
-          <line>267</line>
+          <line>272</line>
           <option name="timeStamp" value="960" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Metadata.java</url>
-          <line>185</line>
+          <line>190</line>
           <option name="timeStamp" value="964" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Metadata.java</url>
-          <line>188</line>
+          <line>193</line>
           <option name="timeStamp" value="966" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java</url>
-          <line>268</line>
+          <line>273</line>
           <option name="timeStamp" value="967" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/MicroscopeTypeEnum.java</url>
           <line>26</line>
           <option name="timeStamp" value="969" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/frmMain.java</url>
-          <line>72</line>
-          <option name="timeStamp" value="971" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

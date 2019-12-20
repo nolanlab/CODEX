@@ -3,6 +3,11 @@ package org.nolanlab.codex.upload.gui;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ *
+ * @author Vishal
+ */
+
 public class SystemInfo {
     private static Properties getProperties() throws IOException {
         Properties prop = new Properties();

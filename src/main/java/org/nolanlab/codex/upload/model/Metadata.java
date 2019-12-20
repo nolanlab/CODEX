@@ -16,6 +16,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ *
+ * @author Vishal
+ */
+
 public class Metadata {
     public static Experiment getExperiment(NewGUI gui) {
         Date date = Calendar.getInstance().getTime();

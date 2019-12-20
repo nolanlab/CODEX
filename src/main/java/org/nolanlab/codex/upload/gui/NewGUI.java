@@ -4,16 +4,14 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.nolanlab.codex.upload.TextAreaOutputStream;
 import org.nolanlab.codex.upload.logger;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +26,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+/**
+ *
+ * @author Vishal
+ */
 
 public class NewGUI {
     public JPanel getMainPanel() {
@@ -160,6 +163,7 @@ public class NewGUI {
     private JSpinner spinGPU = new JSpinner();
     private JSpinner spinRAM = new JSpinner();
     private JTextField configField = new JTextField(5);
+    private static GuiHelper guiHelper = new GuiHelper();
 
     public JProgressBar getProgressBar() {
         return progressBar;
@@ -575,6 +579,7 @@ public class NewGUI {
             setDefaultFonts();
             NewGUI gui = new NewGUI();
             JFrame frame = new JFrame();
+            addWindowClosingListener(frame);
             frame.setTitle(getTitle());
             frame.setIconImage(getIconImage());
             frame.setContentPane(gui.rootPanel);
@@ -587,6 +592,21 @@ public class NewGUI {
         } catch (Exception e) {
 
         }
+    }
+
+    private static void addWindowClosingListener(JFrame frame) {
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                int selection = JOptionPane.showConfirmDialog(frame,
+                        "Are you sure you want to close this window?", "Close Processor", JOptionPane.YES_NO_OPTION);
+                if (selection == JOptionPane.YES_OPTION) {
+                    guiHelper.log("ProcessorGui closed");
+                    System.exit(0);
+                }
+            }
+        });
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     }
 
 

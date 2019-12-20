@@ -12,6 +12,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 
+/**
+ *
+ * @author Vishal
+ */
+
 class GuiActionListener implements ActionListener {
     private final NewGUI gui;
     private GuiHelper guiHelper = new GuiHelper();
