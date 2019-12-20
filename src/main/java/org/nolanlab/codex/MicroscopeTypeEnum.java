@@ -23,5 +23,18 @@ public enum MicroscopeTypeEnum {
         return type;
     }
 
+    public static MicroscopeTypeEnum getMicroscopeFromValue(String type) {
+        switch (type) {
+            case "Keyence BZ-X710":
+                return KEYENCE;
+            case "Zeiss ZEN":
+                return ZEISS;
+            case "Leica DMI8":
+                return LEICA;
+            default:
+                return KEYENCE;
+        }
+    }
+
 
 }

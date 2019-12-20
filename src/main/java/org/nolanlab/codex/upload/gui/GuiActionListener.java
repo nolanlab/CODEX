@@ -1,6 +1,7 @@
 package org.nolanlab.codex.upload.gui;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.nolanlab.codex.upload.Experiment;
 import org.nolanlab.codex.upload.logger;
 
@@ -73,10 +74,10 @@ class GuiActionListener implements ActionListener {
                 openOutputFolder();
             } else if(event.getSource() == gui.getStartButton()) {
                 GuiWorkers startWorker = new GuiWorkers(gui);
-//                startWorker.startActionPerformed();
+                startWorker.startActionPerformed();
             }
         } catch (Exception e) {
-//            log.debug(ExceptionUtils.getStackTrace(e));
+            guiHelper.log(ExceptionUtils.getStackTrace(e));
         }
     }
 

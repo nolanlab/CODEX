@@ -491,7 +491,7 @@
                         </constraints>
                         <properties>
                           <enabled value="true"/>
-                          <text value="ChannlNames"/>
+                          <text value="ChannelNames"/>
                         </properties>
                       </component>
                       <hspacer id="fefe5">

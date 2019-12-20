@@ -5,11 +5,13 @@ import org.nolanlab.codex.Microscope;
 import org.nolanlab.codex.MicroscopeFactory;
 import org.nolanlab.codex.MicroscopeTypeEnum;
 import org.nolanlab.codex.upload.Experiment;
+import org.nolanlab.codex.upload.ProcessingOptions;
 import org.nolanlab.codex.upload.gui.NewGUI;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.FileFilter;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,7 +25,7 @@ public class Metadata {
         String[] regIds = gui.getRegionNamesField().getText().split(";");
         int[] reg = new int[regIds.length];
         for (int i = 0; i < reg.length; i++) {
-            reg[i] = Integer.parseInt(regIds[i]);
+            reg[i] = i + 1;
         }
 
         String[] wavelenS = gui.getWavelengthsField().getText().split(";");
@@ -184,7 +186,7 @@ public class Metadata {
         return new Experiment(gui.getNameField().getText(),
                 formattedDate,
                 "CODEX-MPI",
-                (MicroscopeTypeEnum) gui.getMicroscopeTypeComboBox().getSelectedItem(),
+                MicroscopeTypeEnum.getMicroscopeFromValue(gui.getMicroscopeTypeComboBox().getSelectedItem().toString()),
                 gui.getDeconvolutionCheckBox().isSelected() ? "Microvolution" : "none",
                 Integer.parseInt(gui.getDeconvolutionIterationsField().getText()),
                 gui.getDeconvolutionModelComboBox().getSelectedItem().toString(),
@@ -217,6 +219,25 @@ public class Metadata {
                 Integer.parseInt(gui.getFocusingOffsetField().getText()),
                 StringUtils.isBlank(gui.getProcessTilesField().getText()) ? null : gui.getProcessTilesField().getText().split(";"),
                 StringUtils.isBlank(gui.getProcessRegionsField().getText()) ? null : gui.getProcessRegionsField().getText().split(";")
+        );
+    }
+
+    public static ProcessingOptions getProcessingOptions(NewGUI gui) {
+        if (StringUtils.isBlank(gui.getOutputDirField().getText())) {
+            System.out.println("Please specify the output folder and try again!");
+            throw new IllegalStateException("Output directory not set");
+        }
+        return new ProcessingOptions(
+                new File(gui.getOutputDirField().getText()),
+                gui.getUseBleachMinimizingCropCheckBox().isSelected(),
+                gui.getUseBlindDeconvolutionCheckBox().isSelected(),
+                16,
+                null,
+               null,
+               null,
+                false,
+                !gui.getImgSeqCheckBox().isSelected(),
+                gui.getImgSeqCheckBox().isSelected()
         );
     }
 }

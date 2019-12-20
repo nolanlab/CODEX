@@ -4,24 +4,23 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.io.FileSaver;
 import ij.plugin.Duplicator;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.nolanlab.codex.Microscope;
 import org.nolanlab.codex.MicroscopeFactory;
 import org.nolanlab.codex.MicroscopeTypeEnum;
-import org.nolanlab.codex.upload.Experiment;
-import org.nolanlab.codex.upload.ProcessingOptions;
+import org.nolanlab.codex.upload.*;
 import org.nolanlab.codex.upload.driffta.BestFocus;
 import org.nolanlab.codex.upload.model.Metadata;
-import org.nolanlab.codex.upload.util;
 
 import javax.swing.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -43,7 +42,7 @@ public class GuiWorkers {
 //        val2.setText(exp.codex_instrument);
 
         if(exp.microscope instanceof MicroscopeTypeEnum) {
-            gui.getMicroscopeTypeComboBox().setSelectedItem(exp.microscope);
+            gui.getMicroscopeTypeComboBox().setSelectedItem(exp.microscope.toString());
         }
         else {
             if(exp.microscope == null) {
@@ -144,6 +143,22 @@ public class GuiWorkers {
         gui.getProcessTilesField().setText((exp.processTiles == null || exp.processTiles.length == 0) ? null : String.join(";", exp.processTiles));
 
         GuiHelper.enableAll(gui,true);
+
+        // Load processing options
+        File poFile = new File(dir + File.separator + "processingOptions.json");
+        ProcessingOptions po = null;
+        try {
+            po = ProcessingOptions.load(poFile);
+            gui.getUseBlindDeconvolutionCheckBox().setSelected(po.isUseBlindDeconvolution());
+            gui.getUseBleachMinimizingCropCheckBox().setSelected(po.isUseBleachMinimizingCrop());
+            if (!StringUtils.isBlank(po.getTempDir().getPath())) {
+                gui.getOpenOutputButton().setEnabled(true);
+            }
+            gui.getOutputDirField().setText(po.getTempDir().getPath());
+            gui.getImgSeqCheckBox().setSelected(po.isExportImgSeq());
+        } catch (FileNotFoundException e) {
+            guiHelper.log(e.getMessage());
+        }
     }
 
     public String parseExperimentFolderForFields(File dir) {
@@ -240,222 +255,251 @@ public class GuiWorkers {
         return err.length() == 0 ? "" : ("Following errors were found in the experiment:\n" + err.toString());
     }
 
-//    public void startActionPerformed() {
-//        Thread th = new Thread(() -> {
-//            try {
-//                File dir = new File(gui.getInputPathField().getText());
-//
-//                if (dir == null || dir.getName().equals("...")) {
-////                    log("Please select an experiment folder and try again!");
-//                }
-//
-//                Experiment exp = Metadata.getExperiment(gui);
-//                replaceTileOverlapInExp(dir, exp);
-//
+    public Thread startActionPerformed() {
+        Thread th = new Thread(() -> {
+            try {
+                File dir = new File(gui.getInputPathField().getText());
+                ArrayList<Process> allProcess = new ArrayList<>();
+
+                if (dir == null || dir.getName().equals("...")) {
+                    guiHelper.log("Please select an experiment folder and try again!");
+                }
+
+                Experiment exp = Metadata.getExperiment(gui);
+                guiHelper.replaceTileOverlapInExp(dir, exp);
+
 //                String experimentJS = exp.toJSON();
-//
-//                String microscopeType = exp != null && exp.microscope != null ? exp.microscope.toString() : "";
-//                if (microscopeType == null || microscopeType.equals("")) {
-//                    JOptionPane.showMessageDialog(null, "Microscope type is invalid");
-//                }
-//                Microscope microscope = MicroscopeFactory.getMicroscope(microscopeType);
-//                //Included a feature to check if the product of region size X and Y is equal to the number of tiles
-//                File expJSON = null;
-//                if (microscope.isTilesAProductOfRegionXAndY(dir, experimentView)) {
-//                    expJSON = new File(dir + File.separator + "Experiment.json");
-//                    exp.saveToFile(expJSON);
-//                } else {
-//                    JOptionPane.showMessageDialog(null, "Check the values of Region Size X and Y and then try again!");
-//                    return;
-//                }
-//
-//                File poFile = new File(dir + File.separator + "processingOptions.json");
-//
-//                ProcessingOptions po = uploadOptionsView.getUploadOptions();
-//                boolean doUpload = po.doUpload();
-//                po.saveToFile(poFile);
-//
-//                //Copy Experiment.JSON to processed folder.
-//                if (expJSON != null) {
-//                    if (po.isExportImgSeq()) {
-//                        copyFileFromSourceToDest(expJSON, new File(po.getTempDir() + File.separator + "tiles"));
-//                    }
-//                    copyFileFromSourceToDest(expJSON, po.getTempDir());
-//                }
-//
-//                //Included a feature to check if the channelNames.txt file is present
-//                if (!experimentView.isChannelNamesPresent(dir)) {
-//                    JOptionPane.showMessageDialog(null, "channelNames.txt file is not present in the experiment folder. Please check and try again!");
-//                    return;
-//                }
-//
-//                log("Copying channelNames.txt file from experiment folder to processed folder location");
-//
-//                File source = new File(dir + File.separator + "channelNames.txt");
-//                if (po.isExportImgSeq()) {
-//                    copyFileFromSourceToDest(source, new File(po.getTempDir() + File.separator + "tiles"));
-//                }
-//                copyFileFromSourceToDest(source, po.getTempDir());
-//
-//                cmdStart.setEnabled(false);
+
+                String microscopeType = exp != null && exp.microscope != null ? exp.microscope.toString() : "";
+                if (microscopeType == null || microscopeType.equals("")) {
+                    JOptionPane.showMessageDialog(null, "Microscope type is invalid");
+                }
+                Microscope microscope = MicroscopeFactory.getMicroscope(microscopeType);
+                //Included a feature to check if the product of region size X and Y is equal to the number of tiles
+                File expJSON = null;
+                if (microscope.isTilesAProductOfRegionXAndY(dir, gui)) {
+                    expJSON = new File(dir + File.separator + "Experiment.json");
+                    exp.saveToFile(expJSON);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Check the values of Region Size X and Y and then try again!");
+                    return;
+                }
+
+                File poFile = new File(dir + File.separator + "processingOptions.json");
+
+                ProcessingOptions po = Metadata.getProcessingOptions(gui);
+                po.saveToFile(poFile);
+
+                //Copy Experiment.JSON to processed folder.
+                if (expJSON != null) {
+                    if (po.isExportImgSeq()) {
+                        guiHelper.copyFileFromSourceToDest(expJSON, new File(po.getTempDir() + File.separator + "tiles"));
+                    }
+                    guiHelper.copyFileFromSourceToDest(expJSON, po.getTempDir());
+                }
+
+                //Included a feature to check if the channelNames.txt file is present
+                if (!guiHelper.isChannelNamesPresent(dir)) {
+                    JOptionPane.showMessageDialog(null, "channelNames.txt file is not present in the experiment folder. Please check and try again!");
+                    return;
+                }
+
+                guiHelper.log("Copying channelNames.txt file from experiment folder to processed folder location");
+
+                File source = new File(dir + File.separator + "channelNames.txt");
+                if (po.isExportImgSeq()) {
+                    guiHelper.copyFileFromSourceToDest(source, new File(po.getTempDir() + File.separator + "tiles"));
+                }
+                guiHelper.copyFileFromSourceToDest(source, po.getTempDir());
+
+                gui.getStartButton().setEnabled(false);
 //                cmdStop.setEnabled(true);
-//
-//                //Uploader upl = doUpload ? new Uploader(po.getDestinationUrl(), po.getNumThreads()) : null;
-//
-//            /*
-//            if (doUpload) {
-//                log("\nAuthorizing...");
-//            }
-//            final String token = doUpload ? upl.sendAuthRequest(po.getUsername(), po.getPassword()) : null;
-//            if (doUpload) {
-//                log("\nCreating new experiment...");
-//            }
-//            Uploader.FileShareAccess fsa = doUpload ? upl.sendExpCreateRequest(token, experimentJS) : null;
-//            if (doUpload) {
-//                log("\nStarting upload...");
-//            }*/
-//
-//                log("Verifying names...");
-//
-//                for (File f : dir.listFiles(new FileFilter() {
-//                    @Override
-//                    public boolean accept(File file) {
-//                        return file.isDirectory() && file.getName().startsWith("Cyc");
-//                    }
-//                })) {
-//                    String name = f.getName();
-//                    String[] s = name.split("_");
-//                    if (s.length > 2) {
-//                        f.renameTo(new File(dir + File.separator + s[0] + "_" + s[1]));
-//                    }
-//                }
-//                File f = new File(".\\");
-//
-//                f.getAbsolutePath();
-//
-//                boolean chNamesUpl = true;
-//
-//                int totalCount = exp.region_names.length * exp.region_width * exp.region_height;
-//
+
+                guiHelper.log("Verifying names...");
+
+                for (File f : dir.listFiles(new FileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        return file.isDirectory() && file.getName().startsWith("Cyc");
+                    }
+                })) {
+                    String name = f.getName();
+                    String[] s = name.split("_");
+                    if (s.length > 2) {
+                        f.renameTo(new File(dir + File.separator + s[0] + "_" + s[1]));
+                    }
+                }
+                File f = new File(".\\");
+
+                f.getAbsolutePath();
+
+                boolean chNamesUpl = true;
+
+                int totalCount = exp.region_names.length * exp.region_width * exp.region_height;
+
 //                prg.setMaximum(totalCount);
-//
-//                int currCnt = 1;
-//
-//                Properties config = new Properties();
-//                config.load(new FileInputStream(System.getProperty("user.home") + File.separator + "config.txt"));
-//                String maxRAM = "";
-//                if (config.toString().contains("maxRAM") && !StringUtils.isEmpty(config.get("maxRAM").toString())) {
-//                    maxRAM = config.get("maxRAM").toString();
-//                }
-//                maxRAM = maxRAM.equals("") ? "48" : maxRAM;
-//
-//                if((exp.processTiles == null || exp.processTiles.length == 0) && (exp.processRegions == null || exp.processRegions.length == 0)) {
-//                    for(int reg : exp.regIdx) {
-//                        processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, 1, exp.region_height * exp.region_width, reg);
-//                    }
-//                }
-//                else {
-//                    int[] processRegs = Stream.of(exp.processRegions).mapToInt(Integer::parseInt).toArray();
-//
-//                    if (processRegs.length == exp.processTiles.length) {
-//                        for (int i = 0; i < processRegs.length; i++) {
-//                            if (exp.processTiles[i].contains(",")) {
-//                                String[] tiles = exp.processTiles[i].split(",");
-//                                for (int j = 0; j < tiles.length; j++) {
-//                                    if (tiles[j].contains("-")) {
-//                                        String[] tileRange = tiles[j].split("-");
-//                                        int lowerTile = Integer.parseInt(tileRange[0]);
-//                                        int upperTile = Integer.parseInt(tileRange[1]);
-//                                        processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
-//                                    } else {
-//                                        int tile = Integer.parseInt(tiles[j]);
-//                                        processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
-//                                    }
-//                                }
-//                            } else if (exp.processTiles[i].contains("-")) {
-//                                String[] tileRange = exp.processTiles[i].split("-");
-//                                int lowerTile = Integer.parseInt(tileRange[0]);
-//                                int upperTile = Integer.parseInt(tileRange[1]);
-//                                processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
-//                            } else {
-//                                int tile = Integer.parseInt(exp.processTiles[i]);
-//                                processTiles(exp, experimentView, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
-//                            }
-//                        }
-//                    } else {
-//                        log("The number of tiles and regions to be processed are not equal");
-//                        throw new IllegalStateException("The number of tiles and regions to be processed are not equal... " +
-//                                "processTiles length not equal to processRegions length");
-//                    }
-//                }
-//
-//                log("Checking if bestFocus folder is present...");
-//
-//                String bfDirStr = "";
-//                if(po.isExportImgSeq()) {
-//                    bfDirStr = po.getTempDir() + File.separator + "tiles" + File.separator + "bestFocus";
-//                } else {
-//                    bfDirStr = po.getTempDir() + File.separator + "bestFocus";
-//                }
-//
-//                File bf = new File(bfDirStr);
-//                if(!bf.exists()) {
-//                    log("Best focus folder is not present. Running it for all the tiffs inside the processed folder.");
-//                    File processed = new File(po.getTempDir().getPath());
-//                    String bestFocus = bfDirStr;
-//                    File mkBestFocus = new File(bestFocus);
-//                    mkBestFocus.mkdirs();
-//                    if(processed.isDirectory()) {
-//                        File[] procTiff = processed.listFiles(fName -> (fName.getName().endsWith(".tiff") || fName.getName().endsWith(".tif")));
-//                        for(File aTif : procTiff) {
-//                            ImagePlus p = IJ.openImage(aTif.getPath());
-//                            int[] bestFocusPlanes = new int[p.getNFrames()];
-//                            Duplicator dup = new Duplicator();
-//                            ImagePlus rp = dup.run(p, exp.best_focus_channel, exp.best_focus_channel, 1, p.getNSlices(), exp.bestFocusReferenceCycle-exp.cycle_lower_limit+1,  exp.bestFocusReferenceCycle-exp.cycle_lower_limit+1);
-//                            int refZ = Math.max(1, BestFocus.findBestFocusStackFromSingleTimepoint(rp, 1, exp.optionalFocusFragment));
-//                            //Add offset here
-//                            refZ = refZ + exp.focusing_offset;
-//                            Arrays.fill(bestFocusPlanes, refZ);
-//
-//                            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(p, bestFocusPlanes);
-//                            log("Saving the focused tiff " + aTif.getName()+ "where Z: " +bestFocusPlanes[0]);
-//                            FileSaver fs = new FileSaver(focused);
-//                            fs.saveAsTiff(bestFocus + File.separator + Experiment.getDestStackFileNameWithZIndexForTif(exp.tiling_mode, aTif.getName(), bestFocusPlanes[0]));
-//                        }
-//                    }
-//                }
-//
-//                log("Creating montages");
-//                String mkMonIn = null;
-//                if(po.isExportImgSeq()) {
-//                    log("Image sequence folder structure recognized...");
-//                    mkMonIn = po.getTempDir() + File.separator + "tiles" + File.separator + "bestFocus";
-//                } else {
-//                    mkMonIn = po.getTempDir() + File.separator + "bestFocus";
-//                }
-//                if(SystemUtils.IS_OS_WINDOWS) {
-//                    ProcessBuilder pb = new ProcessBuilder("cmd", "/C start /B /belownormal java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" org.nolanlab.codex.upload.driffta.MakeMontage \"" + mkMonIn + "\" 2");
-//                    log("Starting process: " + pb.command().toString());
-//                    pb.redirectErrorStream(true);
-//                    Process proc = pb.start();
-//                    allProcess.add(proc);
-//                    waitAndPrint(proc);
-//                }
-//
-//                else if(SystemUtils.IS_OS_LINUX) {
-//                    ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \"./*\" org.nolanlab.codex.upload.driffta.MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
-//                    log("Starting process: " + pb.command().toString());
-//                    pb.redirectErrorStream(true);
-//                    Process proc = pb.start();
-//                    allProcess.add(proc);
-//                    waitAndPrint(proc);
-//                }
-//
-//            } catch (Exception e) {
-//                System.out.println(new Error(e));
-//            }
-//        });
-//        th.start();
-//        return th;
-//    }
+
+                int currCnt = 1;
+
+                Properties config = new Properties();
+                config.load(new FileInputStream(System.getProperty("user.home") + File.separator + "config.txt"));
+                String maxRAM = "";
+                if (config.toString().contains("maxRAM") && !StringUtils.isEmpty(config.get("maxRAM").toString())) {
+                    maxRAM = config.get("maxRAM").toString();
+                }
+                maxRAM = maxRAM.equals("") ? "48" : maxRAM;
+
+                if((exp.processTiles == null || exp.processTiles.length == 0) && (exp.processRegions == null || exp.processRegions.length == 0)) {
+                    for(int reg : exp.regIdx) {
+                        processTiles(exp, gui, po, allProcess, currCnt, maxRAM, 1, exp.region_height * exp.region_width, reg);
+                    }
+                }
+                else {
+                    int[] processRegs = Stream.of(exp.processRegions).mapToInt(Integer::parseInt).toArray();
+
+                    if (processRegs.length == exp.processTiles.length) {
+                        for (int i = 0; i < processRegs.length; i++) {
+                            if (exp.processTiles[i].contains(",")) {
+                                String[] tiles = exp.processTiles[i].split(",");
+                                for (int j = 0; j < tiles.length; j++) {
+                                    if (tiles[j].contains("-")) {
+                                        String[] tileRange = tiles[j].split("-");
+                                        int lowerTile = Integer.parseInt(tileRange[0]);
+                                        int upperTile = Integer.parseInt(tileRange[1]);
+                                        processTiles(exp, gui, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
+                                    } else {
+                                        int tile = Integer.parseInt(tiles[j]);
+                                        processTiles(exp, gui, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
+                                    }
+                                }
+                            } else if (exp.processTiles[i].contains("-")) {
+                                String[] tileRange = exp.processTiles[i].split("-");
+                                int lowerTile = Integer.parseInt(tileRange[0]);
+                                int upperTile = Integer.parseInt(tileRange[1]);
+                                processTiles(exp, gui, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
+                            } else {
+                                int tile = Integer.parseInt(exp.processTiles[i]);
+                                processTiles(exp, gui, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
+                            }
+                        }
+                    } else {
+                        guiHelper.log("The number of tiles and regions to be processed are not equal");
+                        throw new IllegalStateException("The number of tiles and regions to be processed are not equal... " +
+                                "processTiles length not equal to processRegions length");
+                    }
+                }
+
+                guiHelper.log("Checking if bestFocus folder is present...");
+
+                String bfDirStr = "";
+                if(po.isExportImgSeq()) {
+                    bfDirStr = po.getTempDir() + File.separator + "tiles" + File.separator + "bestFocus";
+                } else {
+                    bfDirStr = po.getTempDir() + File.separator + "bestFocus";
+                }
+
+                File bf = new File(bfDirStr);
+                if(!bf.exists()) {
+                    guiHelper.log("Best focus folder is not present. Running it for all the tiffs inside the processed folder.");
+                    File processed = new File(po.getTempDir().getPath());
+                    String bestFocus = bfDirStr;
+                    File mkBestFocus = new File(bestFocus);
+                    mkBestFocus.mkdirs();
+                    if(processed.isDirectory()) {
+                        File[] procTiff = processed.listFiles(fName -> (fName.getName().endsWith(".tiff") || fName.getName().endsWith(".tif")));
+                        for(File aTif : procTiff) {
+                            ImagePlus p = IJ.openImage(aTif.getPath());
+                            int[] bestFocusPlanes = new int[p.getNFrames()];
+                            Duplicator dup = new Duplicator();
+                            ImagePlus rp = dup.run(p, exp.best_focus_channel, exp.best_focus_channel, 1, p.getNSlices(), exp.bestFocusReferenceCycle-exp.cycle_lower_limit+1,  exp.bestFocusReferenceCycle-exp.cycle_lower_limit+1);
+                            int refZ = Math.max(1, BestFocus.findBestFocusStackFromSingleTimepoint(rp, 1, exp.optionalFocusFragment));
+                            //Add offset here
+                            refZ = refZ + exp.focusing_offset;
+                            Arrays.fill(bestFocusPlanes, refZ);
+
+                            ImagePlus focused = BestFocus.createBestFocusStackFromHyperstack(p, bestFocusPlanes);
+                            guiHelper.log("Saving the focused tiff " + aTif.getName()+ "where Z: " +bestFocusPlanes[0]);
+                            FileSaver fs = new FileSaver(focused);
+                            fs.saveAsTiff(bestFocus + File.separator + Experiment.getDestStackFileNameWithZIndexForTif(exp.tiling_mode, aTif.getName(), bestFocusPlanes[0]));
+                        }
+                    }
+                }
+
+                guiHelper.log("Creating montages");
+                String mkMonIn = null;
+                if(po.isExportImgSeq()) {
+                    guiHelper.log("Image sequence folder structure recognized...");
+                    mkMonIn = po.getTempDir() + File.separator + "tiles" + File.separator + "bestFocus";
+                } else {
+                    mkMonIn = po.getTempDir() + File.separator + "bestFocus";
+                }
+                if(SystemUtils.IS_OS_WINDOWS) {
+                    ProcessBuilder pb = new ProcessBuilder("cmd", "/C start /B /belownormal java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" org.nolanlab.codex.upload.driffta.MakeMontage \"" + mkMonIn + "\" 2");
+                    guiHelper.log("Starting process: " + pb.command().toString());
+                    pb.redirectErrorStream(true);
+                    Process proc = pb.start();
+                    allProcess.add(proc);
+                    guiHelper.waitAndPrint(proc);
+                }
+
+                else if(SystemUtils.IS_OS_LINUX) {
+                    ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \"./*\" org.nolanlab.codex.upload.driffta.MakeMontage \"" + po.getTempDir() + File.separator + "bestFocus\" 2");
+                    guiHelper.log("Starting process: " + pb.command().toString());
+                    pb.redirectErrorStream(true);
+                    Process proc = pb.start();
+                    allProcess.add(proc);
+                    guiHelper.waitAndPrint(proc);
+                }
+
+            } catch (Exception e) {
+                System.out.println(new Error(e));
+            }
+        });
+        th.start();
+        return th;
+    }
+
+    private void processTiles(Experiment exp, NewGUI gui, ProcessingOptions po,
+                              List<Process> allProcess, int currCnt, String maxRAM, int minTile, int maxTile, int reg) throws IOException {
+//        for (int reg : exp.regIdx) {
+        for (int tile = minTile; tile <= maxTile; tile++) {
+            File d = null;
+            if (!po.isExportImgSeq()) {
+                d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
+            } else {
+                d = new File(po.getTempDir() + File.separator + "tiles" + File.separator + FilenameUtils.removeExtension(Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width)));
+            }
+            int numTrial = 0;
+            while (!d.exists() && numTrial < 3) {
+                numTrial++;
+                if (SystemUtils.IS_OS_WINDOWS) {
+                    ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" org.nolanlab.codex.upload.driffta.Driffta \"" + gui.getInputPathField().getText() + "\" \"" + po.getTempDir() + "\" " + reg + " " + tile);
+                    pb.redirectErrorStream(true);
+
+                    guiHelper.log("Starting process: " + pb.command().toString());
+                    Process proc = pb.start();
+                    allProcess.add(proc);
+
+                    guiHelper.waitAndPrint(proc);
+                    guiHelper.log("Driffta done");
+                } else if (SystemUtils.IS_OS_LINUX) {
+                    ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \"./*\" org.nolanlab.codex.upload.driffta.Driffta \"" + gui.getInputPathField().getText() + "\" \"" + po.getTempDir() + "\" " + reg + " " + tile);
+                    pb.redirectErrorStream(true);
+
+                    guiHelper.log("Starting process: " + pb.command().toString());
+                    Process proc = pb.start();
+                    allProcess.add(proc);
+
+                    guiHelper.waitAndPrint(proc);
+                    guiHelper.log("Driffta done");
+                }
+            }
+            if (!d.exists()) {
+                guiHelper.log("Tile processing failed 3 times in a row: " + d.getName());
+            }
+//            prg.setValue(currCnt++);
+//            frmMain.this.repaint();
+        }
+//        }
+    }
 }

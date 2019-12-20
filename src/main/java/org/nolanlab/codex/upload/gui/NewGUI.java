@@ -830,7 +830,7 @@ public class NewGUI {
         viewFilesPanel.add(spacer18, new GridConstraints(0, 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));
         editChannelNamesButton = new JButton();
         editChannelNamesButton.setEnabled(true);
-        editChannelNamesButton.setText("ChannlNames");
+        editChannelNamesButton.setText("ChannelNames");
         viewFilesPanel.add(editChannelNamesButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 30), null, 0, false));
         final Spacer spacer19 = new Spacer();
         viewFilesPanel.add(spacer19, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(5, -1), null, 0, false));

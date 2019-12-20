@@ -1,12 +1,18 @@
 package org.nolanlab.codex.upload.gui;
 
+import ij.IJ;
+import ij.ImagePlus;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.nolanlab.codex.MicroscopeTypeEnum;
+import org.nolanlab.codex.upload.Experiment;
 
 import javax.swing.*;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class GuiHelper {
 
@@ -70,6 +76,63 @@ public class GuiHelper {
                 // log.error()
             }
         }
+    }
+
+    public void replaceTileOverlapInExp(File dir, Experiment exp) {
+        if(dir != null) {
+            for (File cyc : dir.listFiles()) {
+                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
+                    File[] cycFiles = cyc.listFiles(tif->tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif"));
+                    ImagePlus imp = IJ.openImage(cycFiles[0].getAbsolutePath());
+                    exp.tile_overlap_X  = (int)((double)(exp.tile_overlap_X *imp.getWidth()/100));
+                    exp.tile_overlap_Y = (int)((double)(exp.tile_overlap_Y*imp.getHeight()/100));
+                    break;
+                }
+            }
+        }
+    }
+
+    public void copyFileFromSourceToDest(File source, File dest) {
+        try {
+            FileUtils.copyFileToDirectory(source, dest);
+        } catch (IOException e) {
+            log(e.getMessage());
+        }
+
+    }
+
+    public boolean isChannelNamesPresent(File dir) {
+        File chNames = new File(dir + File.separator + "channelNames.txt");
+        return chNames == null ? false : (!chNames.isDirectory() && chNames.exists());
+    }
+
+    public void waitAndPrint(Process proc) throws IOException {
+        do {
+            try {
+                BufferedReader brOut = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+                String s = null;
+                while ((s = brOut.readLine()) != null) {
+                    log(s);
+                }
+
+                BufferedReader brErr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+
+                while ((s = brErr.readLine()) != null) {
+                    log("ERROR>" + s);
+                }
+
+                Thread.sleep(100);
+
+            } catch (InterruptedException e) {
+                log("Process interrupted");
+                return;
+            }
+        } while (proc.isAlive());
+        log("Process done");
+    }
+
+    public void log(String s) {
+        System.out.println(s);
     }
 
     public static void enableAll(NewGUI gui, boolean enabled) {
