@@ -11,7 +11,6 @@ import org.nolanlab.codex.upload.gui.NewGUI;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileFilter;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -167,6 +166,16 @@ public class Metadata {
         if(StringUtils.isBlank(gui.getTileOverlapXField().getText()) || StringUtils.isBlank(gui.getTileOverlapYField().getText())) {
             JOptionPane.showMessageDialog(gui.getMainPanel(), "Please enter a valid percentage value for tile overlap.");
             throw new IllegalStateException("Please enter a valid percentage value for tile overlap.");
+        }
+
+        if(StringUtils.isBlank(gui.getRegionWidthField().getText()) || StringUtils.isBlank(gui.getRegionHeightField().getText())) {
+            JOptionPane.showMessageDialog(gui.getMainPanel(), "Please enter valid values for region width and/or region height.");
+            throw new IllegalStateException("Please enter valid values for region width and/or region height.");
+        }
+
+        if(StringUtils.isBlank(gui.getOutputDirField().getText())) {
+            JOptionPane.showMessageDialog(gui.getMainPanel(), "Please specify the output folder and try again!");
+            throw new IllegalStateException("Please specify the output folder and try again!");
         }
 
         if(StringUtils.isBlank(gui.getProcessTilesField().getText())) {

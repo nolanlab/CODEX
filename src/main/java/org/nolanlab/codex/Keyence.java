@@ -364,4 +364,12 @@ public class Keyence implements Microscope {
         }
         return false;
     }
+
+    /*
+    Set the tile overlap
+    */
+    public void guessTileOverlap(NewGUI gui) {
+        gui.getTileOverlapXField().setText("30");
+        gui.getTileOverlapYField().setText("30");
+    }
 }

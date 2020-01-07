@@ -19,6 +19,7 @@ public interface Microscope {
     public void guessCycleRange(File dir, NewGUI gui);
     public boolean isTilesAProductOfRegionXAndY(File dir, ExperimentView experimentView);
     public boolean isTilesAProductOfRegionXAndY(File dir, NewGUI gui);
+    public void guessTileOverlap(NewGUI gui);
     public int getMaxCycNumberFromFolder(File dir);
 
 }

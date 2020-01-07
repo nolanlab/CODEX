@@ -281,4 +281,12 @@ public class Zeiss implements Microscope  {
         }
         return false;
     }
+
+    /*
+    Set the tile overlap
+    */
+    public void guessTileOverlap(NewGUI gui) {
+        gui.getTileOverlapXField().setText("10");
+        gui.getTileOverlapYField().setText("10");
+    }
 }

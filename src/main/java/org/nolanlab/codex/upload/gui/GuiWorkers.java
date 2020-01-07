@@ -2,11 +2,15 @@ package org.nolanlab.codex.upload.gui;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.io.FileSaver;
 import ij.plugin.Duplicator;
+import ij.plugin.StackCombiner;
+import ij.process.StackProcessor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.nolanlab.codex.Microscope;
 import org.nolanlab.codex.MicroscopeFactory;
 import org.nolanlab.codex.MicroscopeTypeEnum;
@@ -20,7 +24,6 @@ import java.awt.event.ItemListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -32,16 +35,17 @@ import java.util.stream.Stream;
 public class GuiWorkers {
     private final NewGUI gui;
     private GuiHelper guiHelper = new GuiHelper();
+    private WorkerHelper workerHelper = new WorkerHelper();
 
     GuiWorkers(NewGUI gui) {
         this.gui = gui;
     }
 
     /*
-   Method to load the values from the JSON file and set it to the Experiment property
+     Method to load the values from the JSON file and set it to the Experiment property
     */
     public void loadFromJson(Experiment exp, File dir) {
-        System.out.println("Started logging with load...");
+        guiHelper.log("Started logging with load...");
         gui.getNameField().setText(exp.name);
         gui.getProjectNameField().setText(exp.projName);
 //        val2.setText(exp.codex_instrument);
@@ -147,8 +151,6 @@ public class GuiWorkers {
         gui.getProcessRegionsField().setText((exp.processRegions == null || exp.processRegions.length == 0) ? null : String.join(";", exp.processRegions));
         gui.getProcessTilesField().setText((exp.processTiles == null || exp.processTiles.length == 0) ? null : String.join(";", exp.processTiles));
 
-        GuiHelper.enableAll(gui,true);
-
         // Load processing options
         File poFile = new File(dir + File.separator + "processingOptions.json");
         ProcessingOptions po = null;
@@ -157,16 +159,22 @@ public class GuiWorkers {
             gui.getUseBlindDeconvolutionCheckBox().setSelected(po.isUseBlindDeconvolution());
             gui.getUseBleachMinimizingCropCheckBox().setSelected(po.isUseBleachMinimizingCrop());
             if (!StringUtils.isBlank(po.getTempDir().getPath())) {
-                gui.getOpenOutputButton().setEnabled(true);
+//                gui.getOpenOutputButton().setEnabled(true);
+                GuiHelper.enableAll(gui,true);
             }
             gui.getOutputDirField().setText(po.getTempDir().getPath());
+            guiHelper.logRouting(gui);
             gui.getImgSeqCheckBox().setSelected(po.isExportImgSeq());
         } catch (FileNotFoundException e) {
-            guiHelper.log(e.getMessage());
+            guiHelper.log(ExceptionUtils.getStackTrace(e));
         }
     }
 
+    /*
+     Method to parse and guess the values from the input Experiment folder when experiment json is not present.
+     */
     public String parseExperimentFolderForFields(File dir) {
+        guiHelper.log("Experiment.json not found! Trying to parse the values for fields from the input folder...");
 
         StringBuilder err = new StringBuilder();
 
@@ -256,10 +264,14 @@ public class GuiWorkers {
         microscope.guessZSlices(dir, gui);
         microscope.guessChannelNamesAndWavelength(dir, gui);
         microscope.guessCycleRange(dir, gui);
+        microscope.guessTileOverlap(gui);
 
         return err.length() == 0 ? "" : ("Following errors were found in the experiment:\n" + err.toString());
     }
 
+    /*
+    Start button clicked
+    */
     public Thread startActionPerformed() {
         Thread th = new Thread(() -> {
             try {
@@ -318,8 +330,9 @@ public class GuiWorkers {
                 guiHelper.copyFileFromSourceToDest(source, po.getTempDir());
 
                 gui.getStartButton().setEnabled(false);
-//                cmdStop.setEnabled(true);
+                gui.getStopButton().setEnabled(true);
 
+                gui.getProgressAnimation().setIndeterminate(true);
                 guiHelper.log("Verifying names...");
 
                 for (File f : dir.listFiles(new FileFilter() {
@@ -343,6 +356,7 @@ public class GuiWorkers {
                 int totalCount = exp.region_names.length * exp.region_width * exp.region_height;
 
 //                prg.setMaximum(totalCount);
+                gui.getProgressBar().setMaximum(totalCount);
 
                 int currCnt = 1;
 
@@ -356,7 +370,7 @@ public class GuiWorkers {
 
                 if((exp.processTiles == null || exp.processTiles.length == 0) && (exp.processRegions == null || exp.processRegions.length == 0)) {
                     for(int reg : exp.regIdx) {
-                        processTiles(exp, gui, po, allProcess, currCnt, maxRAM, 1, exp.region_height * exp.region_width, reg);
+                        workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, 1, exp.region_height * exp.region_width, reg);
                     }
                 }
                 else {
@@ -371,20 +385,20 @@ public class GuiWorkers {
                                         String[] tileRange = tiles[j].split("-");
                                         int lowerTile = Integer.parseInt(tileRange[0]);
                                         int upperTile = Integer.parseInt(tileRange[1]);
-                                        processTiles(exp, gui, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
+                                        workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
                                     } else {
                                         int tile = Integer.parseInt(tiles[j]);
-                                        processTiles(exp, gui, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
+                                        workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
                                     }
                                 }
                             } else if (exp.processTiles[i].contains("-")) {
                                 String[] tileRange = exp.processTiles[i].split("-");
                                 int lowerTile = Integer.parseInt(tileRange[0]);
                                 int upperTile = Integer.parseInt(tileRange[1]);
-                                processTiles(exp, gui, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
+                                workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
                             } else {
                                 int tile = Integer.parseInt(exp.processTiles[i]);
-                                processTiles(exp, gui, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
+                                workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
                             }
                         }
                     } else {
@@ -445,6 +459,7 @@ public class GuiWorkers {
                     Process proc = pb.start();
                     allProcess.add(proc);
                     guiHelper.waitAndPrint(proc);
+                    gui.getProgressAnimation().setIndeterminate(false);
                 }
 
                 else if(SystemUtils.IS_OS_LINUX) {
@@ -457,54 +472,119 @@ public class GuiWorkers {
                 }
 
             } catch (Exception e) {
-                System.out.println(new Error(e));
+                guiHelper.log(ExceptionUtils.getStackTrace(e));
             }
         });
         th.start();
         return th;
     }
 
-    private void processTiles(Experiment exp, NewGUI gui, ProcessingOptions po,
-                              List<Process> allProcess, int currCnt, String maxRAM, int minTile, int maxTile, int reg) throws IOException {
-//        for (int reg : exp.regIdx) {
-        for (int tile = minTile; tile <= maxTile; tile++) {
-            File d = null;
-            if (!po.isExportImgSeq()) {
-                d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
-            } else {
-                d = new File(po.getTempDir() + File.separator + "tiles" + File.separator + FilenameUtils.removeExtension(Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width)));
-            }
-            int numTrial = 0;
-            while (!d.exists() && numTrial < 3) {
-                numTrial++;
-                if (SystemUtils.IS_OS_WINDOWS) {
-                    ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \".\\*\" org.nolanlab.codex.upload.driffta.Driffta \"" + gui.getInputPathField().getText() + "\" \"" + po.getTempDir() + "\" " + reg + " " + tile);
-                    pb.redirectErrorStream(true);
-
-                    guiHelper.log("Starting process: " + pb.command().toString());
-                    Process proc = pb.start();
-                    allProcess.add(proc);
-
-                    guiHelper.waitAndPrint(proc);
-                    guiHelper.log("Driffta done");
-                } else if (SystemUtils.IS_OS_LINUX) {
-                    ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "java -Xms5G -Xmx" + maxRAM + "G -Xmn50m -cp \"./*\" org.nolanlab.codex.upload.driffta.Driffta \"" + gui.getInputPathField().getText() + "\" \"" + po.getTempDir() + "\" " + reg + " " + tile);
-                    pb.redirectErrorStream(true);
-
-                    guiHelper.log("Starting process: " + pb.command().toString());
-                    Process proc = pb.start();
-                    allProcess.add(proc);
-
-                    guiHelper.waitAndPrint(proc);
-                    guiHelper.log("Driffta done");
+    /*
+    Preview button clicked
+    */
+    public Thread previewActionPerformed() {
+        Thread th = new Thread(() -> {
+            try {
+                File dir = new File(gui.getInputPathField().getText());
+                File outputDir = new File(gui.getOutputDirField().getText());
+                if(dir == null ||outputDir == null) {
+                    JOptionPane.showMessageDialog(null, "Please select input experiment location and output location before running a preview to display pre-processed stitched image!");
                 }
+                else {
+                    guiHelper.logRouting(gui);
+                    guiHelper.log("Starting to create pre-processed stitched image for the selected cyc, reg, ch, z...");
+
+                    Experiment exp = Metadata.getExperiment(gui);
+                    workerHelper.replaceTileOverlapInExp(dir, exp);
+                    if (workerHelper.areEmptyFields(gui)) {
+                        int cyc = Integer.parseInt(gui.getPreviewCycleField().getText());
+                        int reg = Integer.parseInt(gui.getPreviewRegionField().getText());
+                        int ch = Integer.parseInt(gui.getPreviewChannelField().getText());
+                        int z = Integer.parseInt(gui.getPreviewZPlaneField().getText());
+
+                        if(workerHelper.areValidFields(exp, cyc, reg, ch, z, gui)) {
+                            String zSlice = "";
+                            if (z > 0 && z < 10) {
+                                zSlice = "00" + gui.getPreviewZPlaneField().getText().toString();
+                            } else {
+                                zSlice = "0" + gui.getPreviewZPlaneField().getText().toString();
+                            }
+
+                            File[] cycFolders = dir.listFiles(cy -> cy.getName().toLowerCase().equals("cyc" + cyc + "_reg" + reg));
+                            StackCombiner stackCombiner = new StackCombiner();
+                            String finalZSlice = zSlice;
+
+                            File[] tifFiles = cycFolders[0].listFiles(t -> t.getName().toLowerCase().endsWith(".tif") && t.getName().toLowerCase().contains("_z" + finalZSlice)
+                                    && t.getName().toLowerCase().contains("_ch" + ch));
+
+                            int maxX = Integer.parseInt(gui.getRegionWidthField().getText());
+                            int maxY = Integer.parseInt(gui.getRegionHeightField().getText());
+
+                            ImageStack[][] grid = new ImageStack[maxX][maxY];
+
+                            for (int i = 0; i < tifFiles.length; i++) {
+                                int[] coord = workerHelper.extractXYFromFile(tifFiles[i], exp, reg);
+                                ImagePlus tmp = IJ.openImage(tifFiles[i].getAbsolutePath());
+                                tmp = new ImagePlus(tmp.getTitle(), tmp.getImageStack().crop((int) Math.floor(exp.tile_overlap_X / 2), (int) Math.floor(exp.tile_overlap_Y / 2), 0, tmp.getWidth() - (int) Math.ceil(exp.tile_overlap_X), tmp.getHeight() - (int) Math.ceil(exp.tile_overlap_Y), tmp.getStackSize()));
+                                ImageStack is = tmp.getImageStack();
+                                StackProcessor sp = new StackProcessor(is);
+                                grid[coord[0] - 1][coord[1] - 1] = sp.resize(tmp.getWidth() / 2, tmp.getHeight() / 2);
+                            }
+
+                            for (int x = 0; x < grid.length; x++) {
+                                for (int y = 0; y < grid[x].length; y++) {
+                                    if (grid[x][y] == null) {
+                                        throw new IllegalStateException("tile is null");
+                                    }
+                                }
+                            }
+                            int snakeTileNumber = 1;
+                            for(int y = 0; y < grid[0].length; y++) {
+                                if(y % 2 == 0) {
+                                    for (int x = 0; x < grid.length; x++) {
+                                        ImagePlus imp = new ImagePlus("", grid[x][y]);
+                                        IJ.run(imp, "Label...", "format=Text starting=0 interval=1 x=24 y=110 font=58 text=" + snakeTileNumber++);
+                                    }
+                                } else {
+                                    for (int x = grid.length-1; x >= 0; x--) {
+                                        ImagePlus imp = new ImagePlus("", grid[x][y]);
+                                        IJ.run(imp, "Label...", "format=Text starting=0 interval=1 x=24 y=110 font=58 text=" + snakeTileNumber++);
+                                    }
+                                }
+                            }
+
+                            ImageStack[] horizStacks = new ImageStack[grid[0].length];
+
+                            for (int y = 0; y < horizStacks.length; y++) {
+                                horizStacks[y] = grid[0][y];
+                                for (int x = 1; x < grid.length; x++) {
+                                    horizStacks[y] = stackCombiner.combineHorizontally(horizStacks[y], grid[x][y]);
+                                }
+                            }
+
+                            ImageStack out = horizStacks[0];
+
+                            for (int i = 1; i < horizStacks.length; i++) {
+                                if (horizStacks[i] != null) {
+                                    out = stackCombiner.combineVertically(out, horizStacks[i]);
+                                }
+                            }
+
+                            ImagePlus res = new ImagePlus("Pre-processed stitched for z: " + zSlice, out);
+                            guiHelper.log("Successfully created the pre-processed stitched image for the selected cyc, reg, ch, z...");
+                            res.show();
+                        } else {
+                            guiHelper.log("Some fields are incorrect.. Please retry...");
+                        }
+                    } else {
+                        guiHelper.log("Some fields are incorrect.. Please retry...");
+                    }
+                }
+            } catch (Exception e) {
+                guiHelper.log(ExceptionUtils.getStackTrace(e));
             }
-            if (!d.exists()) {
-                guiHelper.log("Tile processing failed 3 times in a row: " + d.getName());
-            }
-//            prg.setValue(currCnt++);
-//            frmMain.this.repaint();
-        }
-//        }
+        });
+        th.start();
+        return th;
     }
 }

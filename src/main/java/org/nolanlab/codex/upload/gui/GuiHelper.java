@@ -7,12 +7,12 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.nolanlab.codex.MicroscopeTypeEnum;
 import org.nolanlab.codex.upload.Experiment;
+import org.nolanlab.codex.upload.TextAreaOutputStream;
 
 import javax.swing.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.*;
 
 /**
  *
@@ -57,19 +57,20 @@ public class GuiHelper {
                 try {
                     Runtime.getRuntime().exec(editorPath + " \"" + textPath + "\"");
                 } catch (IOException e) {
-//                    log.error(ExceptionUtils.getStackTrace(e));
+                    JOptionPane.showMessageDialog(null, "Logs file was not found or has not been created yet.");
+                    log(ExceptionUtils.getStackTrace(e));
                 }
             } else {
-//                log.error("Could not find a Windows text editor!");
+                log("Could not find a Windows text editor!");
             }
         } else if (SystemUtils.IS_OS_MAC) {
             try {
                 new ProcessBuilder("open", "\"" + textPath + "\"").start();
             } catch (IOException e) {
-//                log.error(ExceptionUtils.getStackTrace(e));
+                log(ExceptionUtils.getStackTrace(e));
             }
         } else {
-//            log.error("Unsupported operating system!");
+            log("Unsupported operating system!");
         }
     }
 
@@ -78,7 +79,7 @@ public class GuiHelper {
             try {
                 Runtime.getRuntime().exec("explorer.exe " + textPath);
             } catch (IOException e) {
-                // log.error()
+                log(ExceptionUtils.getStackTrace(e));
             }
         }
     }
@@ -101,7 +102,7 @@ public class GuiHelper {
         try {
             FileUtils.copyFileToDirectory(source, dest);
         } catch (IOException e) {
-            log(e.getMessage());
+            log(ExceptionUtils.getStackTrace(e));
         }
 
     }
@@ -140,6 +141,21 @@ public class GuiHelper {
         System.out.println(s);
     }
 
+    public void logRouting(NewGUI gui) {
+        File uploaderLogFile = new File(gui.getOutputDirField().getText() + File.separator + "uploader-console.log");
+        gui.setTaOutputStream(new TextAreaOutputStream(gui.getLoggingTextArea(), "", uploaderLogFile));
+        System.setOut(new PrintStream(gui.getTaOutputStream()));
+        System.setErr(new PrintStream(gui.getTaOutputStream()));
+    }
+
+    public static void enableButtonsOnInputLoad(NewGUI gui, boolean enabled) {
+        gui.getOpenInputButton().setEnabled(enabled);
+        gui.getEditChannelNamesButton().setEnabled(enabled);
+        gui.getEditExperimentJsonButton().setEnabled(enabled);
+        gui.getEditExposureTimesButton().setEnabled(enabled);
+        gui.getOutputPathBrowseButton().setEnabled(enabled);
+    }
+
     public static void enableAll(NewGUI gui, boolean enabled) {
         // Main panel
 //        gui.getInputPathField().setEnabled(enabled);
@@ -151,6 +167,8 @@ public class GuiHelper {
 //        gui.getTileOverlapXField().setEnabled(enabled);
 //        gui.getTileOverlapYField().setEnabled(enabled);
         gui.getOpenInputButton().setEnabled(enabled);
+        gui.getOpenOutputButton().setEnabled(enabled);
+        gui.getOpenLogsButton().setEnabled(enabled);
         gui.getEditChannelNamesButton().setEnabled(enabled);
         gui.getEditExperimentJsonButton().setEnabled(enabled);
         gui.getEditExposureTimesButton().setEnabled(enabled);
