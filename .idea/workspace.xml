@@ -2,26 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6dbd53b7-1df8-49c3-9f00-43904c514362" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/WorkerHelper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CODEX.iml" beforeDir="false" afterPath="$PROJECT_DIR$/CODEX.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/Keyence.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/Keyence.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/Microscope.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/Microscope.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/Zeiss.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/Zeiss.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiActionListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiActionListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiHelper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.form" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Metadata.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Metadata.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/ConcatAndMakeFCS.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/Keyence.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/Keyence.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/Microscope.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/Microscope.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/Zeiss.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/Zeiss.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/CODEXwebToken.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/HandEmapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/RescaleImages.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/WorkerHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/WorkerHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/Experiment.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/Experiment.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -65,7 +52,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/resources" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/target" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -123,6 +110,15 @@
       <method v="2">
         <option name="Make" enabled="true" />
         <option name="Maven.BeforeRunTask" enabled="true" file="C:\Users\Vishal\NolanLab\CODEX/pom.xml" goal="assembly:single" />
+      </method>
+    </configuration>
+    <configuration name="CodexNewUI" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="org.nolanlab.codex.upload.gui.NewGUI" />
+      <module name="CODEX" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/target" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="assembly:single" />
       </method>
     </configuration>
     <configuration name="ConcatenateResults" type="Application" factoryName="Application">
@@ -353,6 +349,7 @@
     </configuration>
     <list>
       <item itemvalue="Application.CODEXUploader" />
+      <item itemvalue="Application.CodexNewUI" />
       <item itemvalue="Application.CODEXClustering" />
       <item itemvalue="Application.MakeMontage" />
       <item itemvalue="Application.CODEXSegm" />
@@ -393,7 +390,7 @@
       <workItem from="1575317047575" duration="16091000" />
       <workItem from="1576104543862" duration="620000" />
       <workItem from="1576166013554" duration="55871000" />
-      <workItem from="1578341830383" duration="25684000" />
+      <workItem from="1578341830383" duration="35877000" />
     </task>
     <servers />
   </component>
@@ -724,11 +721,6 @@
           <option name="timeStamp" value="930" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java</url>
-          <line>152</line>
-          <option name="timeStamp" value="986" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiActionListener.java</url>
           <line>58</line>
           <option name="timeStamp" value="988" />
@@ -737,11 +729,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiActionListener.java</url>
           <line>67</line>
           <option name="timeStamp" value="989" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/Experiment.java</url>
-          <line>131</line>
-          <option name="timeStamp" value="996" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiActionListener.java</url>

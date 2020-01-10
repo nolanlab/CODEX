@@ -21,7 +21,7 @@ public class WorkerHelper {
     public void processTiles(Experiment exp, NewGUI gui, ProcessingOptions po,
                               List<Process> allProcess, int currCnt, String maxRAM, int minTile, int maxTile, int reg) throws IOException {
         for (int tile = minTile; tile <= maxTile; tile++) {
-            File d = null;
+            File d;
             if (!po.isExportImgSeq()) {
                 d = new File(po.getTempDir() + File.separator + Experiment.getDestStackFileName(exp.tiling_mode, tile, reg, exp.region_width));
             } else {

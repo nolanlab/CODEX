@@ -7,7 +7,6 @@ import ij.io.FileSaver;
 import ij.plugin.Duplicator;
 import ij.plugin.StackCombiner;
 import ij.process.StackProcessor;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -45,7 +44,7 @@ public class GuiWorkers {
      Method to load the values from the JSON file and set it to the Experiment property
     */
     public void loadFromJson(Experiment exp, File dir) {
-        guiHelper.log("Started logging with load...");
+        guiHelper.log("Experiment.json was found. Will populate the fields based on the values present in json...");
         gui.getNameField().setText(exp.name);
         gui.getProjectNameField().setText(exp.projName);
 //        val2.setText(exp.codex_instrument);
@@ -335,12 +334,14 @@ public class GuiWorkers {
                 gui.getProgressAnimation().setIndeterminate(true);
                 guiHelper.log("Verifying names...");
 
-                for (File f : dir.listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        return file.isDirectory() && file.getName().startsWith("Cyc");
-                    }
-                })) {
+                boolean selectiveProcessing = false;
+                if(!StringUtils.isBlank(gui.getProcessRegionsField().getText()) &&
+                        !StringUtils.isBlank(gui.getProcessTilesField().getText())) {
+                    selectiveProcessing = true;
+                    guiHelper.log("Selective processing of regions & tiles has been specified...");
+                }
+
+                for (File f : dir.listFiles(file -> file.isDirectory() && file.getName().startsWith("Cyc"))) {
                     String name = f.getName();
                     String[] s = name.split("_");
                     if (s.length > 2) {
@@ -351,9 +352,33 @@ public class GuiWorkers {
 
                 f.getAbsolutePath();
 
-                boolean chNamesUpl = true;
-
-                int totalCount = exp.region_names.length * exp.region_width * exp.region_height;
+                int totalCount = 0;
+                if(selectiveProcessing) {
+                    for(int i = 0; i < exp.processTiles.length; i++) {
+                        if (exp.processTiles[i].contains(".")) {
+                            String[] tiles = exp.processTiles[i].split("\\.");
+                            for (int j = 0; j < tiles.length; j++) {
+                                if (tiles[j].contains("-")) {
+                                    String[] tileRange = tiles[j].split("-");
+                                    int lowerTile = Integer.parseInt(tileRange[0]);
+                                    int upperTile = Integer.parseInt(tileRange[1]);
+                                    totalCount += (upperTile - lowerTile + 1);
+                                } else {
+                                    totalCount += 1;
+                                }
+                            }
+                        } else if (exp.processTiles[i].contains("-")) {
+                            String[] tileRange = exp.processTiles[i].split("-");
+                            int lowerTile = Integer.parseInt(tileRange[0]);
+                            int upperTile = Integer.parseInt(tileRange[1]);
+                            totalCount += (upperTile - lowerTile + 1);
+                        } else {
+                            totalCount += 1;
+                        }
+                    }
+                } else {
+                    totalCount = exp.region_names.length * exp.region_width * exp.region_height;
+                }
 
 //                prg.setMaximum(totalCount);
                 gui.getProgressBar().setMaximum(totalCount);
@@ -378,17 +403,19 @@ public class GuiWorkers {
 
                     if (processRegs.length == exp.processTiles.length) {
                         for (int i = 0; i < processRegs.length; i++) {
-                            if (exp.processTiles[i].contains(",")) {
-                                String[] tiles = exp.processTiles[i].split(",");
+                            if (exp.processTiles[i].contains(".")) {
+                                String[] tiles = exp.processTiles[i].split("\\.");
                                 for (int j = 0; j < tiles.length; j++) {
                                     if (tiles[j].contains("-")) {
                                         String[] tileRange = tiles[j].split("-");
                                         int lowerTile = Integer.parseInt(tileRange[0]);
                                         int upperTile = Integer.parseInt(tileRange[1]);
                                         workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
+                                        currCnt++;
                                     } else {
                                         int tile = Integer.parseInt(tiles[j]);
                                         workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
+                                        currCnt++;
                                     }
                                 }
                             } else if (exp.processTiles[i].contains("-")) {
@@ -396,9 +423,11 @@ public class GuiWorkers {
                                 int lowerTile = Integer.parseInt(tileRange[0]);
                                 int upperTile = Integer.parseInt(tileRange[1]);
                                 workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
+                                currCnt++;
                             } else {
                                 int tile = Integer.parseInt(exp.processTiles[i]);
                                 workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
+                                currCnt++;
                             }
                         }
                     } else {
