@@ -156,7 +156,7 @@
 <!--                <configuration>-->
 <!--                    <archive>-->
 <!--                        <manifest>-->
-<!--                            <mainClass>org.nolanlab.codex.upload.frmMain</mainClass>-->
+<!--                            <mainClass>org.nolanlab.codex.upload.legacy.frmMain</mainClass>-->
 <!--                        </manifest>-->
 <!--                    </archive>-->
 <!--                    <descriptorRefs>-->

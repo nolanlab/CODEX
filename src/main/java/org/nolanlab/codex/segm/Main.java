@@ -15,8 +15,7 @@ import ij.plugin.ImageCalculator;
 import ij.process.ImageProcessor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.nolanlab.codex.upload.Experiment;
-import org.nolanlab.codex.upload.logger;
+import org.nolanlab.codex.upload.model.Experiment;
 
 import java.awt.image.BufferedImage;
 import java.io.*;

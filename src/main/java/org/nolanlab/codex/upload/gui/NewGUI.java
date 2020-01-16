@@ -5,8 +5,6 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.nolanlab.codex.upload.TextAreaOutputStream;
-import org.nolanlab.codex.upload.logger;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -424,10 +422,11 @@ public class NewGUI {
 
 
     public NewGUI() {
-        checkConfigFile();
+        checkConfigFile(this);
         initEnables();
         loadLogo();
         addListeners();
+        addFieldValidations();
         taOutputStream = new TextAreaOutputStream(loggingTextArea, "", null);
         System.setOut(new PrintStream(taOutputStream));
         System.setErr(new PrintStream(taOutputStream));
@@ -466,6 +465,44 @@ public class NewGUI {
         previewGenerateButton.addActionListener(new GuiActionListener(this));
     }
 
+    private void addFieldValidations() {
+        // Essentials
+        regionWidthField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        regionHeightField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        tileOverlapXField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        tileOverlapYField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+
+        // Imaging params
+        magnificationField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        apertureField.setInputVerifier(FieldValidator.DOUBLE_VERIFIER);
+        xyResolutionField.setInputVerifier(FieldValidator.DOUBLE_VERIFIER);
+        zPitchField.setInputVerifier(FieldValidator.DOUBLE_VERIFIER);
+
+        // Auto-detected params
+        numRegionsField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        numCyclesField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        numPlanesField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        numChannelsField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+
+        // Deconvolution params
+        deconvolutionIterationsField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+
+        // Optional params
+        tileWidthField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        tileHeightField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        driftReferenceCycleField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        driftReferenceChannelField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        bestFocusCycleField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        bestFocusChannelField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        focusingOffsetField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+
+        // Region preview params
+        previewRegionField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        previewCycleField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        previewChannelField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        previewZPlaneField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+    }
+
     private void loadLogo() {
         URL url = this.getClass().getClassLoader().getResource("resources/codex/nolanlab-logo.png");
         Image image;
@@ -477,12 +514,12 @@ public class NewGUI {
         logoLabel.setIcon(new ImageIcon(image));
     }
 
-    private void checkConfigFile() {
+    private void checkConfigFile(NewGUI gui) {
         File dir = new File(System.getProperty("user.home"));
         try {
             File in = new File(dir.getCanonicalPath() + File.separator + "config.txt");
             if (in != null && !in.isDirectory() && !in.exists()) {
-                numberOfGpuDialog();
+                numberOfGpuDialog(gui);
             }
         } catch (Exception e) {
             guiHelper.log(ExceptionUtils.getStackTrace(e));
@@ -494,7 +531,7 @@ public class NewGUI {
        Method to create a new dialog box to be input at the start-up of the application, when it is run
        on the machine the first time.
     */
-    private void numberOfGpuDialog() {
+    private void numberOfGpuDialog(NewGUI gui) {
 
         JPanel gpuPanel = new JPanel();
         GridBagLayout gridBag = new GridBagLayout();
@@ -531,12 +568,7 @@ public class NewGUI {
         configField.setEnabled(false);
         configField.addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent evt) {
-//                configFieldDirMouseReleased(evt);
-            }
-        });
-        configField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-//                configFieldDirActionPerformed(evt);
+                guiHelper.configFieldDirMouseReleased(gui);
             }
         });
 
@@ -563,15 +595,15 @@ public class NewGUI {
             try {
                 File dir = new File(System.getProperty("user.home"));
                 if (configField.getText().equals(null) || configField.getText().equalsIgnoreCase("...")) {
-//                    JOptionPane.showMessageDialog(this,"Could not save config.txt file, please specify directory for TMP_SSD_DRIVE");
+                    JOptionPane.showMessageDialog(this.getMainPanel(),"Could not save config.txt file, please specify directory for TMP_SSD_DRIVE");
                     System.exit(0);
                 }
                 if (StringUtils.isBlank(spinGPU.getValue().toString())) {
-//                    JOptionPane.showMessageDialog(this,"Could not save config.txt file, please enter value for number of GPUs");
+                    JOptionPane.showMessageDialog(this.getMainPanel(),"Could not save config.txt file, please enter value for number of GPUs");
                     System.exit(0);
                 }
                 if (StringUtils.isBlank(spinRAM.getValue().toString())) {
-//                    JOptionPane.showMessageDialog(this,"Could not save config.txt file, please enter value for RAM size");
+                    JOptionPane.showMessageDialog(this.getMainPanel(),"Could not save config.txt file, please enter value for RAM size");
                     System.exit(0);
                 }
                 String str = configField.getText().replaceAll("\\\\", "/");
@@ -579,9 +611,7 @@ public class NewGUI {
                 Path file = Paths.get(dir.getCanonicalPath() + File.separator + "config.txt");
                 Files.write(file, lines, Charset.forName("UTF-8"));
             } catch (IOException e) {
-//                logger.showException(e);
-//                System.out.println(e.getMessage());
-//                JOptionPane.showMessageDialog(this,"Could not save the config.txt file");
+                JOptionPane.showMessageDialog(this.getMainPanel(),"Could not save the config.txt file");
                 guiHelper.log(ExceptionUtils.getStackTrace(e));
                 System.exit(0);
             }
@@ -603,7 +633,7 @@ public class NewGUI {
             frame.setMinimumSize(new Dimension(800, 895));
             frame.toFront();
             frame.setVisible(true);
-//            gui.initComplete();
+            guiHelper.logMicrovolutionInfo(gui.getDeconvolutionCheckBox());
         } catch (Exception e) {
 
         }
@@ -768,24 +798,25 @@ public class NewGUI {
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(4, 1, new Insets(0, 0, 0, 0), -1, -1));
         essentialsPanel.add(panel2, new GridConstraints(2, 4, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        backgroundSubtractionCheckBox = new JCheckBox();
-        backgroundSubtractionCheckBox.setSelected(true);
-        backgroundSubtractionCheckBox.setText("Background Subtraction");
-        panel2.add(backgroundSubtractionCheckBox, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         imgSeqCheckBox = new JCheckBox();
         imgSeqCheckBox.setEnabled(true);
         imgSeqCheckBox.setSelected(false);
         imgSeqCheckBox.setText("<html>Export as Image Sequence<br>(For compatibility with MAV)</html>");
         panel2.add(imgSeqCheckBox, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         deconvolutionCheckBox = new JCheckBox();
-        deconvolutionCheckBox.setSelected(true);
+        deconvolutionCheckBox.setEnabled(true);
+        deconvolutionCheckBox.setSelected(false);
         deconvolutionCheckBox.setText("Deconvolution");
         panel2.add(deconvolutionCheckBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         hAndEStainCheckBox = new JCheckBox();
         hAndEStainCheckBox.setEnabled(true);
         hAndEStainCheckBox.setSelected(false);
         hAndEStainCheckBox.setText("HandE Staining");
-        panel2.add(hAndEStainCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel2.add(hAndEStainCheckBox, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        backgroundSubtractionCheckBox = new JCheckBox();
+        backgroundSubtractionCheckBox.setSelected(false);
+        backgroundSubtractionCheckBox.setText("Background Subtraction");
+        panel2.add(backgroundSubtractionCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         projectNameLabel = new JLabel();
         projectNameLabel.setText("Project Name");
         essentialsPanel.add(projectNameLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
@@ -1077,7 +1108,7 @@ public class NewGUI {
         panel3.add(useBlindDeconvolutionCheckBox, new GridConstraints(3, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         useBleachMinimizingCropCheckBox = new JCheckBox();
         useBleachMinimizingCropCheckBox.setEnabled(true);
-        useBleachMinimizingCropCheckBox.setText("Use Bleach Minimizing Crop");
+        useBleachMinimizingCropCheckBox.setText("<html>Use Bleach Minimizing Crop<br>(unstable with MAV)</html>");
         panel3.add(useBleachMinimizingCropCheckBox, new GridConstraints(4, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         deconvolutionIterationsLabel = new JLabel();
         deconvolutionIterationsLabel.setText("Deconvolution Iterations");

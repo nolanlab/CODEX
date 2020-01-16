@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: org.nolanlab.codex.upload.frmMain
+Main-Class: org.nolanlab.codex.upload.legacy.frmMain
 

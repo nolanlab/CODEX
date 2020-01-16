@@ -4,8 +4,8 @@ import ij.IJ;
 import ij.ImagePlus;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.nolanlab.codex.upload.Experiment;
-import org.nolanlab.codex.upload.ProcessingOptions;
+import org.nolanlab.codex.upload.model.Experiment;
+import org.nolanlab.codex.upload.model.ProcessingOptions;
 
 import javax.swing.*;
 import java.io.File;
@@ -104,7 +104,7 @@ public class WorkerHelper {
         } else if (reg < 0 || reg > exp.regIdx.length) {
             JOptionPane.showMessageDialog(gui.getMainPanel(), "Region cannot be lesser than 0 or greater than total number of regions!");
             return false;
-        } else if (ch < 0 || ch > exp.readout_channels.length) {
+        } else if (ch < 0 || ch > 4) {
             JOptionPane.showMessageDialog(gui.getMainPanel(), "Channel cannot be lesser than 0 or greater than total number of channels!");
             return false;
         } else if (z < 0 || z > exp.num_z_planes) {

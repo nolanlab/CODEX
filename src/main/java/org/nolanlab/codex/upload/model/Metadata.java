@@ -1,11 +1,9 @@
 package org.nolanlab.codex.upload.model;
 
 import org.apache.commons.lang3.StringUtils;
-import org.nolanlab.codex.Microscope;
-import org.nolanlab.codex.MicroscopeFactory;
-import org.nolanlab.codex.MicroscopeTypeEnum;
-import org.nolanlab.codex.upload.Experiment;
-import org.nolanlab.codex.upload.ProcessingOptions;
+import org.nolanlab.codex.upload.scope.Microscope;
+import org.nolanlab.codex.upload.scope.MicroscopeFactory;
+import org.nolanlab.codex.upload.scope.MicroscopeTypeEnum;
 import org.nolanlab.codex.upload.gui.NewGUI;
 
 import javax.swing.*;

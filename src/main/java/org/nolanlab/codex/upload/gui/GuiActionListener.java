@@ -2,7 +2,7 @@ package org.nolanlab.codex.upload.gui;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.nolanlab.codex.upload.Experiment;
+import org.nolanlab.codex.upload.model.Experiment;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

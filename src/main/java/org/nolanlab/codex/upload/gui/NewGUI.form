@@ -214,15 +214,6 @@
                         <properties/>
                         <border type="none"/>
                         <children>
-                          <component id="339cc" class="javax.swing.JCheckBox" binding="backgroundSubtractionCheckBox">
-                            <constraints>
-                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <selected value="true"/>
-                              <text value="Background Subtraction"/>
-                            </properties>
-                          </component>
                           <component id="979f5" class="javax.swing.JCheckBox" binding="imgSeqCheckBox">
                             <constraints>
                               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -238,18 +229,28 @@
                               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
-                              <selected value="true"/>
+                              <enabled value="true"/>
+                              <selected value="false"/>
                               <text value="Deconvolution"/>
                             </properties>
                           </component>
                           <component id="46d09" class="javax.swing.JCheckBox" binding="hAndEStainCheckBox">
                             <constraints>
-                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
                               <enabled value="true"/>
                               <selected value="false"/>
                               <text value="HandE Staining"/>
+                            </properties>
+                          </component>
+                          <component id="339cc" class="javax.swing.JCheckBox" binding="backgroundSubtractionCheckBox">
+                            <constraints>
+                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <selected value="false"/>
+                              <text value="Background Subtraction"/>
                             </properties>
                           </component>
                         </children>
@@ -1078,7 +1079,7 @@
                             </constraints>
                             <properties>
                               <enabled value="true"/>
-                              <text value="Use Bleach Minimizing Crop"/>
+                              <text value="&lt;html&gt;Use Bleach Minimizing Crop&lt;br&gt;(unstable with MAV)&lt;/html&gt;"/>
                             </properties>
                           </component>
                           <component id="41fa6" class="javax.swing.JLabel" binding="deconvolutionIterationsLabel">

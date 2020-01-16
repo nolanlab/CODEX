@@ -3,8 +3,8 @@ package org.nolanlab.codex.segm;
 import org.nolanlab.codex.DefaultOptionPane;
 import org.nolanlab.codex.OkayMockOptionPane;
 import org.nolanlab.codex.OptionPane;
-import org.nolanlab.codex.upload.TextAreaOutputStream;
-import org.nolanlab.codex.upload.logger;
+import org.nolanlab.codex.upload.gui.TextAreaOutputStream;
+import org.nolanlab.codex.utils.logger;
 
 
 import javax.swing.*;

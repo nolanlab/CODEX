@@ -5,13 +5,10 @@ import ij.ImagePlus;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.nolanlab.codex.MicroscopeTypeEnum;
-import org.nolanlab.codex.upload.Experiment;
-import org.nolanlab.codex.upload.TextAreaOutputStream;
-
+import org.nolanlab.codex.upload.scope.MicroscopeTypeEnum;
+import org.nolanlab.codex.upload.model.Experiment;
+import com.microvolution.Licensing;
 import javax.swing.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.*;
 
 /**
@@ -21,7 +18,7 @@ import java.io.*;
 
 public class GuiHelper {
 
-    /*
+    /**
     Set the microscope type
     */
     public void guessMicroscope(File dir, JComboBox microscopeTypeComboBox) {
@@ -40,6 +37,9 @@ public class GuiHelper {
         }
     }
 
+    /**
+     Open text editor - either notepad++ or notepad
+     */
     public void openTextEditor(String textPath) {
         if (SystemUtils.IS_OS_WINDOWS) {
             String editorPath = "";
@@ -74,6 +74,9 @@ public class GuiHelper {
         }
     }
 
+    /**
+     Open the folder directly in windows file explorer
+     */
     public void openFolder(String textPath) {
         if(SystemUtils.IS_OS_WINDOWS) {
             try {
@@ -157,15 +160,7 @@ public class GuiHelper {
     }
 
     public static void enableAll(NewGUI gui, boolean enabled) {
-        // Main panel
-//        gui.getInputPathField().setEnabled(enabled);
-//        gui.getOutputDirField().setEnabled(enabled);
         gui.getOutputPathBrowseButton().setEnabled(enabled);
-//        gui.getNameField().setEnabled(enabled);
-//        gui.getRegionWidthField().setEnabled(enabled);
-//        gui.getRegionHeightField().setEnabled(enabled);
-//        gui.getTileOverlapXField().setEnabled(enabled);
-//        gui.getTileOverlapYField().setEnabled(enabled);
         gui.getOpenInputButton().setEnabled(enabled);
         gui.getOpenOutputButton().setEnabled(enabled);
         gui.getOpenLogsButton().setEnabled(enabled);
@@ -174,39 +169,44 @@ public class GuiHelper {
         gui.getEditExposureTimesButton().setEnabled(enabled);
         gui.getStartButton().setEnabled(enabled);
         gui.getPreviewGenerateButton().setEnabled(enabled);
+    }
 
-//        gui.getBackgroundSubtractionCheckBox().setEnabled(enabled);
-//        gui.getDeconvolutionCheckBox().setEnabled(enabled);
+    /**
+     * Check for a valid microvolution.lic file, if exists by default set the deconvolution field to true, else false.
+     * @param deconvolutionCheckbox
+     */
+    public void logMicrovolutionInfo(JCheckBox deconvolutionCheckbox) {
+        boolean deconvolutionLicense = Licensing.GetInstance().HaveValidLicense("deconvolution");
+        boolean multiGpuLicense = Licensing.GetInstance().HaveValidLicense("multi_gpu");
+        if (deconvolutionLicense) {
+            if (multiGpuLicense) {
+                log("Found a valid multi-GPU Microvolution license. Enabling the deconvolution field by default." +
+                        " You can modify this field if you have to.");
+                deconvolutionCheckbox.setSelected(true);
+            } else {
+                log("Found a valid single-GPU Microvolution license. Enabling the deconvolution field by default." +
+                        " You can modify this field if you have to.");
+                deconvolutionCheckbox.setSelected(true);
+            }
+        } else {
+            log("Could not find a valid Microvolution license. Hence, disabling the deconvolution field by default." +
+                    " You can modify this field if you have to.");
+            deconvolutionCheckbox.setSelected(false);
+        }
+    }
 
-        // Process panel
-//        gui.getObjectiveTypeComboBox().setEnabled(enabled);
-//        gui.getMagnificationField().setEnabled(enabled);
-//        gui.getApertureField().setEnabled(enabled);
-//        gui.getXyResolutionField().setEnabled(enabled);
-//        gui.getzPitchField().setEnabled(enabled);
-//        gui.getWavelengthsField().setEnabled(enabled);
-//        gui.getNumRegionsField().setEnabled(enabled);
-//        gui.getNumCyclesField().setEnabled(enabled);
-//        gui.getNumPlanesField().setEnabled(enabled);
-//        gui.getNumChannelsField().setEnabled(enabled);
-//        gui.getTileWidthField().setEnabled(enabled);
-//        gui.getTileHeightField().setEnabled(enabled);
-
-//        gui.getReferenceCycleField().setEnabled(enabled);
-//        gui.getReferenceChannelField().setEnabled(enabled);
-//        gui.getDeconvolutionIterationsField().setEnabled(enabled);
-//        gui.getDeconvolutionModelComboBox().setEnabled(enabled);
-//        gui.getFocusingOffsetField().setEnabled(enabled);
-//        gui.getUse3dCycleAlignmentCheckBox().setEnabled(enabled);
-//        gui.getUseBlindDeconvolutionCheckBox().setEnabled(enabled);
-//        gui.getUseBleachMinimizingCropCheckBox().setEnabled(false);
-//        gui.getDiagnosticOutputCheckBox().setEnabled(enabled);
-
-        // Advanced Panel
-//        gui.getPreviewRegionField().setEnabled(enabled);
-//        gui.getPreviewCycleField().setEnabled(enabled);
-//        gui.getPreviewChannelField().setEnabled(enabled);
-//        gui.getPreviewZPlaneField().setEnabled(enabled);
-//        gui.getPreviewGenerateButton().setEnabled(enabled);
+    /**
+     * Mouseevent to open the filechooser option to specify config.txt TMP_SSD_DRIVE content.
+     *
+     * @param gui
+     */
+    public void configFieldDirMouseReleased(NewGUI gui) {
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (jfc.showOpenDialog(gui.getMainPanel()) == JFileChooser.APPROVE_OPTION) {
+            if(jfc.getSelectedFile() != null) {
+                gui.getConfigField().setText(jfc.getSelectedFile().getAbsolutePath());
+            }
+        }
     }
 }

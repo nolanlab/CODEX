@@ -10,12 +10,14 @@ import ij.process.StackProcessor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.nolanlab.codex.Microscope;
-import org.nolanlab.codex.MicroscopeFactory;
-import org.nolanlab.codex.MicroscopeTypeEnum;
-import org.nolanlab.codex.upload.*;
+import org.nolanlab.codex.upload.scope.Microscope;
+import org.nolanlab.codex.upload.scope.MicroscopeFactory;
+import org.nolanlab.codex.upload.scope.MicroscopeTypeEnum;
 import org.nolanlab.codex.upload.driffta.BestFocus;
+import org.nolanlab.codex.upload.model.Experiment;
 import org.nolanlab.codex.upload.model.Metadata;
+import org.nolanlab.codex.upload.model.ProcessingOptions;
+import org.nolanlab.codex.utils.util;
 
 import javax.swing.*;
 import java.awt.event.ItemEvent;
@@ -396,6 +398,7 @@ public class GuiWorkers {
                 if((exp.processTiles == null || exp.processTiles.length == 0) && (exp.processRegions == null || exp.processRegions.length == 0)) {
                     for(int reg : exp.regIdx) {
                         workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, 1, exp.region_height * exp.region_width, reg);
+                        currCnt += exp.region_height * exp.region_width;
                     }
                 }
                 else {
@@ -411,7 +414,7 @@ public class GuiWorkers {
                                         int lowerTile = Integer.parseInt(tileRange[0]);
                                         int upperTile = Integer.parseInt(tileRange[1]);
                                         workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
-                                        currCnt++;
+                                        currCnt += upperTile - lowerTile + 1;
                                     } else {
                                         int tile = Integer.parseInt(tiles[j]);
                                         workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
@@ -423,7 +426,7 @@ public class GuiWorkers {
                                 int lowerTile = Integer.parseInt(tileRange[0]);
                                 int upperTile = Integer.parseInt(tileRange[1]);
                                 workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, lowerTile, upperTile, processRegs[i]);
-                                currCnt++;
+                                currCnt += upperTile - lowerTile + 1;
                             } else {
                                 int tile = Integer.parseInt(exp.processTiles[i]);
                                 workerHelper.processTiles(exp, gui, po, allProcess, currCnt, maxRAM, tile, tile, processRegs[i]);
@@ -563,7 +566,7 @@ public class GuiWorkers {
                             for (int x = 0; x < grid.length; x++) {
                                 for (int y = 0; y < grid[x].length; y++) {
                                     if (grid[x][y] == null) {
-                                        throw new IllegalStateException("tile is null");
+                                        throw new IllegalStateException("Tile does not exist. Please check the preview inputs and try again...");
                                     }
                                 }
                             }
