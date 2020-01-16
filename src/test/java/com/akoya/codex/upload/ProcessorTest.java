@@ -1,7 +1,13 @@
 package org.nolanlab.codex;
 
 
-import org.nolanlab.codex.upload.*;
+import org.nolanlab.codex.upload.legacy.ExperimentView;
+import org.nolanlab.codex.upload.legacy.ProcessingOptionsView;
+import org.nolanlab.codex.upload.legacy.frmMain;
+import org.nolanlab.codex.upload.scope.MicroscopeTypeEnum;
+import org.nolanlab.codex.upload.model.Experiment;
+import org.nolanlab.codex.upload.model.ProcessingOptions;
+import org.nolanlab.codex.utils.logger;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

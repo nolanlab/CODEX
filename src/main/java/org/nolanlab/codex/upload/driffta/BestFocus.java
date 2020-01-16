@@ -5,7 +5,7 @@
  */
 package org.nolanlab.codex.upload.driffta;
 
-import org.nolanlab.codex.upload.logger;
+import org.nolanlab.codex.utils.logger;
 import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;

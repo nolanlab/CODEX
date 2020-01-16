@@ -5,10 +5,10 @@
  */
 package org.nolanlab.codex.upload.driffta;
 
-import org.nolanlab.codex.upload.Experiment;
-import org.nolanlab.codex.upload.ProcessingOptions;
-import org.nolanlab.codex.upload.logger;
-import org.nolanlab.codex.MicroscopeTypeEnum;
+import org.nolanlab.codex.upload.model.Experiment;
+import org.nolanlab.codex.upload.model.ProcessingOptions;
+import org.nolanlab.codex.utils.logger;
+import org.nolanlab.codex.upload.scope.MicroscopeTypeEnum;
 import fiji.stacks.Hyperstack_rearranger;
 import ij.*;
 import ij.io.FileSaver;

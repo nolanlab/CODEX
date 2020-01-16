@@ -1,7 +1,7 @@
 package org.nolanlab.codex.segm;
 
-import org.nolanlab.codex.upload.TileObject;
-import org.nolanlab.codex.upload.logger;
+import org.nolanlab.codex.utils.TileObject;
+import org.nolanlab.codex.utils.logger;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;

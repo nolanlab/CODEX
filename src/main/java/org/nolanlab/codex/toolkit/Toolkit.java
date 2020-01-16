@@ -8,7 +8,7 @@ package org.nolanlab.codex.toolkit;
 import clustering.Cluster;
 import clustering.ClusterMember;
 import clustering.Datapoint;
-import org.nolanlab.codex.upload.Experiment;
+import org.nolanlab.codex.upload.model.Experiment;
 import dataIO.DatasetStub;
 import util.DefaultEntry;
 import util.IO;
