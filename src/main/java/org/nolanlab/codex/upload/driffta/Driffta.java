@@ -130,40 +130,6 @@ public class Driffta {
                 }
             }
 
-            /*
-            File deconvMap = new File(baseDir + File.separator + "deconvolutionMap.txt");
-            
-           
-            if (!deconvMap.exists() && !exp.deconvolution.equals("Microvolution")) {
-                log("Could not find the file " + deconvMap.getPath() + "\n"
-                        + "This file specifices the number of iterations of deconvolution for each cycle and channel. 0 iterations = no deconvolution. 25 is the expected default"
-                        + "\nExpected file format:\n"
-                        + "Cycle \t CH1 \t CH2 \t CH3 \t CH4 \t\n"
-                        + "1 \t 25 \t 25 \t 25 \t 25\n"
-                        + "2 \t 0 \t 25 \t 25 \t 25\n"
-                        + "3 \t 0 \t 25 \t 25 \t 25\n"
-                        + "4 ...");
-                log("Deconvolution is disabled");
-            } else {
-                log("reading " + deconvMap.getPath());
-                try {
-                    BufferedReader br = new BufferedReader(new FileReader(deconvMap));
-                    br.readLine();
-                    for (int i = 0; i < deconvIterations.length; i++) {
-                        String line = br.readLine();
-                        if (line == null) {
-                            throw new IllegalStateException("Error in deconvolutionMap.txt: file shorter than the number of cycles");
-                        }
-                        String[] s = line.split("\t");
-                        for (int j = 0; j < deconvIterations[i].length; j++) {
-                            deconvIterations[i][j] = Integer.parseInt(s[j + 1]);
-                        }
-                    }
-                } catch (IOException e) {
-                    //e.printStackTrace();
-                    throw new IllegalStateException(e);
-                }
-            }*/
             String tmpDestDir = TMP_SSD_DRIVE + File.separator + gen.nextSessionId();
 
             File f = new File(tmpDestDir);
@@ -171,124 +137,193 @@ public class Driffta {
 
             ImagePlus imp = null;
 
-            //com.sun.imageio.spi.FileImageInputStreamSpi stream = new FileImageInputStreamSpi();
             log("Opening files");
             final ImagePlus[] stack = new ImagePlus[exp.num_cycles * exp.num_z_planes * exp.channel_names.length];
             ExecutorService es = Executors.newWorkStealingPool(Math.min(32, Runtime.getRuntime().availableProcessors() * 2));
 
             HashSet<Callable<String>> alR = new HashSet<>();
 
-            for (int cycle = exp.cycle_lower_limit; cycle <= exp.cycle_upper_limit; cycle++) {
-                final int cycF = cycle;
-                final String sourceDir = baseDir + File.separator + exp.getDirName(cycle, region, baseDir);
-                for (int chIdx = 0; chIdx < exp.channel_names.length; chIdx++) {
-                    final int chIdxF = chIdx;
-                    final String ch = exp.channel_names[chIdx];
-                    for (int zSlice = 1; zSlice <= exp.num_z_planes; zSlice++) {
-                        final int lz = zSlice;
-                        final String sourceFileName = sourceDir + File.separator + exp.getSourceFileName(sourceDir, exp.microscope, tile, zSlice, chIdxF);
-                        final int idx = ((exp.num_z_planes * exp.channel_names.length) * (cycle - exp.cycle_lower_limit)) + (exp.channel_names.length * (zSlice - 1)) + chIdx;
-                        //log("Creating file opening job for cycle="+cycle+", chIdx="+chIdx + ", zSlice="+zSlice);
+            if(!exp.isTMA) {
+                for (int cycle = exp.cycle_lower_limit; cycle <= exp.cycle_upper_limit; cycle++) {
+                    final int cycF = cycle;
+                    final String sourceDir = baseDir + File.separator + exp.getDirName(cycle, region, baseDir, exp.isTMA, 0);
+                    for (int chIdx = 0; chIdx < exp.channel_names.length; chIdx++) {
+                        final int chIdxF = chIdx;
+                        final String ch = exp.channel_names[chIdx];
+                        for (int zSlice = 1; zSlice <= exp.num_z_planes; zSlice++) {
+                            final int lz = zSlice;
+                            final String sourceFileName = sourceDir + File.separator + exp.getSourceFileName(sourceDir, exp.microscope, tile, zSlice, chIdxF, exp.isTMA);
+                            final int idx = ((exp.num_z_planes * exp.channel_names.length) * (cycle - exp.cycle_lower_limit)) + (exp.channel_names.length * (zSlice - 1)) + chIdx;
+                            //log("Creating file opening job for cycle="+cycle+", chIdx="+chIdx + ", zSlice="+zSlice);
 
-                        if (!new File(sourceFileName).exists()) {
-                            if (!exp.getDirName(cycF, region , baseDir).startsWith("HandE")){
-                            log("Source file does not exist: " + sourceFileName);
-                            }
-                            continue;
-                        }
-
-                        final String destFileName = tmpDestDir + File.separator + "Cyc" + cycle + "_reg" + region + "_" + exp.getSourceFileName(sourceDir, exp.microscope, tile, zSlice, chIdxF);
-
-                        //final String cmd = "C:\\Users\\Nikolay\\IdeaProjects\\CODEX\\lib\\tiffcp.exe -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
-                        final String cmd = "./lib/tiffcp -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
-                        final String cmdLinux = "tiffcp -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
-
-                        if (new File(destFileName).exists()) {
-                            if (new File(destFileName).length() > 10000) {
-                                //log("File already exists, skipping: " + destFileName);
+                            if (!new File(sourceFileName).exists()) {
+                                if (!exp.getDirName(cycF, region, baseDir, exp.isTMA, 0).startsWith("HandE")) {
+                                    log("Source file does not exist: " + sourceFileName);
+                                }
                                 continue;
                             }
-                        }
 
-                        if(!MicroscopeTypeEnum.KEYENCE.equals(exp.microscope)){
-                        alR.add(new Callable<String>() {
-                            @Override
-                            public String call() throws IOException, InterruptedException {
-                                Opener o = new Opener();
-                                stack[idx] = o.openImage(sourceFileName);
+                            final String destFileName = tmpDestDir + File.separator + "Cyc" + cycle + "_reg" + region + "_" + exp.getSourceFileName(sourceDir, exp.microscope, tile, zSlice, chIdxF, exp.isTMA);
 
-                                if (stack[idx] != null) {
-                                    if (color || stack[idx].getStack().getSize() != 1) {
-                                        if (!exp.getDirName(cycF, region, baseDir).startsWith("HandE")) {
-                                            ZProjector zp = new ZProjector();
-                                            log("Flattening " + stack[idx].getTitle() + ", nslices" + stack[idx].getNSlices() + "ch=" + stack[idx].getNChannels() + "stacksize=" + stack[idx].getStack().getSize());
-                                            zp.setImage(stack[idx]);
-                                            zp.setMethod(ZProjector.MAX_METHOD);
-                                            zp.doProjection();
-                                            stack[idx] = zp.getProjection();
+                            //final String cmd = "C:\\Users\\Nikolay\\IdeaProjects\\CODEX\\lib\\tiffcp.exe -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
+                            final String cmd = "./lib/tiffcp -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
+                            final String cmdLinux = "tiffcp -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
+
+                            if (new File(destFileName).exists()) {
+                                if (new File(destFileName).length() > 10000) {
+                                    //log("File already exists, skipping: " + destFileName);
+                                    continue;
+                                }
+                            }
+
+                            if (!MicroscopeTypeEnum.KEYENCE.equals(exp.microscope)) {
+                                alR.add(() -> {
+                                    Opener o = new Opener();
+                                    stack[idx] = o.openImage(sourceFileName);
+
+                                    if (stack[idx] != null) {
+                                        if (color || stack[idx].getStack().getSize() != 1) {
+                                            if (!exp.getDirName(cycF, region, baseDir, exp.isTMA, 0).startsWith("HandE")) {
+                                                ZProjector zp = new ZProjector();
+                                                log("Flattening " + stack[idx].getTitle() + ", nslices" + stack[idx].getNSlices() + "ch=" + stack[idx].getNChannels() + "stacksize=" + stack[idx].getStack().getSize());
+                                                zp.setImage(stack[idx]);
+                                                zp.setMethod(ZProjector.MAX_METHOD);
+                                                zp.doProjection();
+                                                stack[idx] = zp.getProjection();
+                                            }
                                         }
-                                    }
-                                    //stack[idx].setTitle(channelNames[(cycF - 1) * exp.channel_names.length + chIdxF]);
-                                    return "Image opened: " + destFileName;
+                                        //stack[idx].setTitle(channelNames[(cycF - 1) * exp.channel_names.length + chIdxF]);
+                                        return "Image opened: " + destFileName;
                                     } else {
                                         return "Image opening failed: " + sourceFileName;
                                     }
-                                }
-                            });
-                        }
-                        else {
+                                });
+                            } else {
                                 alR.add(new Callable<String>() {
-                            @Override
-                            public String call() throws IOException, InterruptedException {
+                                    @Override
+                                    public String call() throws IOException, InterruptedException {
 
-                                //log("Opening file: " + sourceFileName);
-                                File f = new File(destFileName);
-                                do {
-                                    Process p = null;
-                                    if(SystemUtils.IS_OS_WINDOWS) {
-                                        p = Runtime.getRuntime().exec(cmd);
-                                    }
-                                    else if(SystemUtils.IS_OS_LINUX) {
-                                        log("Source: "+sourceFileName);
-                                        log("Destination: "+destFileName);
-                                        p = Runtime.getRuntime().exec(cmdLinux);
-                                        //log("Ran well");
-                                    }
-                                    if(p != null) {
-                                        p.waitFor();
-                                        //log(p.getOutputStream().toString());
-                                        //log(p.getErrorStream().toString());
-                                        //log("Ran here also");
-                                    }
-                                    if (!f.exists()) {
-                                        log("Copy process finished but the dest file does not exist: " + destFileName + " trying again.");
-                                    }
-                                } while (!f.exists());
+                                        //log("Opening file: " + sourceFileName);
+                                        File f = new File(destFileName);
+                                        do {
+                                            Process p = null;
+                                            if (SystemUtils.IS_OS_WINDOWS) {
+                                                p = Runtime.getRuntime().exec(cmd);
+                                            } else if (SystemUtils.IS_OS_LINUX) {
+                                                log("Source: " + sourceFileName);
+                                                log("Destination: " + destFileName);
+                                                p = Runtime.getRuntime().exec(cmdLinux);
+                                                //log("Ran well");
+                                            }
+                                            if (p != null) {
+                                                p.waitFor();
+                                                //log(p.getOutputStream().toString());
+                                                //log(p.getErrorStream().toString());
+                                                //log("Ran here also");
+                                            }
+                                            if (!f.exists()) {
+                                                log("Copy process finished but the dest file does not exist: " + destFileName + " trying again.");
+                                            }
+                                        } while (!f.exists());
 
-                                Opener o = new Opener();
-                                stack[idx] = o.openImage(destFileName);
-                                new File(destFileName).deleteOnExit();
+                                        Opener o = new Opener();
+                                        stack[idx] = o.openImage(destFileName);
+                                        new File(destFileName).deleteOnExit();
 
-                                if (stack[idx] != null) {
-                                    if (color || stack[idx].getStack().getSize() != 1) {
-                                        if (!exp.getDirName(cycF, region, baseDir).startsWith("HandE")) {
-                                            ZProjector zp = new ZProjector();
-                                            log("Flattening " + stack[idx].getTitle() + ", nslices" + stack[idx].getNSlices() + "ch=" + stack[idx].getNChannels() + "stacksize=" + stack[idx].getStack().getSize());
-                                            zp.setImage(stack[idx]);
-                                            zp.setMethod(ZProjector.MAX_METHOD);
-                                            zp.doProjection();
-                                            stack[idx] = zp.getProjection();
+                                        if (stack[idx] != null) {
+                                            if (color || stack[idx].getStack().getSize() != 1) {
+                                                if (!exp.getDirName(cycF, region, baseDir, exp.isTMA, 0).startsWith("HandE")) {
+                                                    ZProjector zp = new ZProjector();
+                                                    log("Flattening " + stack[idx].getTitle() + ", nslices" + stack[idx].getNSlices() + "ch=" + stack[idx].getNChannels() + "stacksize=" + stack[idx].getStack().getSize());
+                                                    zp.setImage(stack[idx]);
+                                                    zp.setMethod(ZProjector.MAX_METHOD);
+                                                    zp.doProjection();
+                                                    stack[idx] = zp.getProjection();
+                                                }
+                                            }
+                                            //stack[idx].setTitle(channelNames[(cycF - 1) * exp.channel_names.length + chIdxF]);
+                                            return "Image opened: " + destFileName;
+                                        } else {
+                                            return "Image opening failed: " + sourceFileName;
                                         }
                                     }
-                                    //stack[idx].setTitle(channelNames[(cycF - 1) * exp.channel_names.length + chIdxF]);
-                                    return "Image opened: " + destFileName;
-                                    } else {
-                                        return "Image opening failed: " + sourceFileName;
-                                    }
-                                }
-                            });
+                                });
+                            }
                         }
                     }
+                }
+            } else {
+                for (int cycle = exp.cycle_lower_limit; cycle <= exp.cycle_upper_limit; cycle++) {
+                    final int cycF = cycle;
+                        final String sourceDir = baseDir + File.separator + exp.getDirName(cycle, tile, baseDir, exp.isTMA, region);
+                        for (int chIdx = 0; chIdx < exp.channel_names.length; chIdx++) {
+                            final int chIdxF = chIdx;
+                            final String ch = exp.channel_names[chIdx];
+                            for (int zSlice = 1; zSlice <= exp.num_z_planes; zSlice++) {
+                                final String sourceFileName = sourceDir + File.separator + exp.getSourceFileName(sourceDir, exp.microscope, tile, zSlice, chIdxF, exp.isTMA);
+                                final int idx = ((exp.num_z_planes * exp.channel_names.length) * (cycle - exp.cycle_lower_limit)) + (exp.channel_names.length * (zSlice - 1)) + chIdx;
+
+                                if (!new File(sourceFileName).exists()) {
+                                    if (!exp.getDirName(cycF, tile, baseDir, exp.isTMA, region).startsWith("HandE")) {
+                                        log("Source file does not exist: " + sourceFileName);
+                                    }
+                                    continue;
+                                }
+
+                                final String destFileName = tmpDestDir + File.separator + "Cyc" + cycle + "_reg" + region + "_" + exp.getSourceFileName(sourceDir, exp.microscope, tile, zSlice, chIdxF, exp.isTMA);
+
+                                final String cmd = "./lib/tiffcp -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
+                                final String cmdLinux = "tiffcp -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
+
+                                if (new File(destFileName).exists()) {
+                                    if (new File(destFileName).length() > 10000) {
+                                        //log("File already exists, skipping: " + destFileName);
+                                        continue;
+                                    }
+                                }
+
+                                alR.add(() -> {
+                                    File f1 = new File(destFileName);
+                                    do {
+                                        Process p = null;
+                                        if (SystemUtils.IS_OS_WINDOWS) {
+                                            p = Runtime.getRuntime().exec(cmd);
+                                        } else if (SystemUtils.IS_OS_LINUX) {
+                                            log("Source: " + sourceFileName);
+                                            log("Destination: " + destFileName);
+                                            p = Runtime.getRuntime().exec(cmdLinux);
+                                        }
+                                        if (p != null) {
+                                            p.waitFor();
+                                        }
+                                        if (!f1.exists()) {
+                                            log("Copy process finished but the dest file does not exist: " + destFileName + " trying again.");
+                                        }
+                                    } while (!f1.exists());
+
+                                    Opener o = new Opener();
+                                    stack[idx] = o.openImage(destFileName);
+                                    new File(destFileName).deleteOnExit();
+
+                                    if (stack[idx] != null) {
+                                        if (color || stack[idx].getStack().getSize() != 1) {
+                                            if (!exp.getDirName(cycF, region, baseDir, exp.isTMA, 1).startsWith("HandE")) {
+                                                ZProjector zp = new ZProjector();
+                                                log("Flattening " + stack[idx].getTitle() + ", nslices" + stack[idx].getNSlices() + "ch=" + stack[idx].getNChannels() + "stacksize=" + stack[idx].getStack().getSize());
+                                                zp.setImage(stack[idx]);
+                                                zp.setMethod(ZProjector.MAX_METHOD);
+                                                zp.doProjection();
+                                                stack[idx] = zp.getProjection();
+                                            }
+                                        }
+
+                                        return "Image opened: " + destFileName;
+                                    } else {
+                                        return "Image opening failed: " + sourceFileName;
+                                    }
+                                });
+                            }
+                        }
                 }
             }
 
@@ -357,77 +392,6 @@ public class Driffta {
             }
             imp = new Concatenator().concatenate(stack, false);
 
-
-            /* else {
-                log("Enumerating cycles, copying files");
-                ExecutorService es = Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors());
-                for (int cycle = 1; cycle <= exp.num_cycles; cycle++) {
-                    String sourceDir = baseDir + File.separator + Experiment.getDirName(cycle, region);
-                    for (int chIdx = 0; chIdx < exp.channel_names.length; chIdx++) {
-                        String ch = exp.channel_names[chIdx];
-                        for (int zSlice = 1; zSlice < exp.num_z_planes; zSlice++) {
-                            String sourceFileName = sourceDir + File.separator + exp.getSourceFileName(sourceDir, exp.microscope, tile, zSlice, ch);
-                            String destFileName = tmpDestDir + File.separator + Experiment.getDestFileName(exp.tiling_mode, tile, zSlice, chIdx + 1, cycle, region, exp.region_width);
-                            File src = new File(sourceFileName);
-                            int k = 1;
-                            while (!src.exists() && zSlice - k >= 1) {
-                                log("source file doesn not exist:" + sourceFileName);
-                                sourceFileName = sourceDir + File.separator + exp.getSourceFileName(sourceDir, exp.microscope, tile, zSlice - k, ch);
-                                log("trying z-1:" + sourceFileName);
-                                src = new File(sourceFileName);
-                            }
-                            File fcp = new File("tiffcp.exe");
-                            final String cmd = fcp.exists() ? "tiffcp -c none \"" + sourceFileName + "\" \"" + destFileName + "\"" : "\"C:\\Program Files (x86)\\GnuWin32\\bin\\tiffcp\" -c none \"" + sourceFileName + "\" \"" + destFileName + "\"";
-
-                            if (new File(destFileName).exists()) {
-                                if (new File(destFileName).length() > 10000) {
-                                    //log("File already exists, skipping: " + destFileName);
-                                    continue;
-                                }
-                            }
-                            //log(cmd);
-                            es.execute(new Runnable() {
-                                public void run() {
-                                    try {
-                                        int k = 0;
-
-                                        do {
-                                            Process p = Runtime.getRuntime().exec(cmd);
-                                            p.waitFor();
-                                            File f = new File(destFileName);
-                                            if (!f.exists()) {
-                                                log("Copy process finished but the dest file does not exist: " + destFileName + " trying again:" + (k++));
-                                            }
-                                        } while (!f.exists());
-
-                                        if (color) {
-                                            final Opener o = new Opener();
-                                            ImagePlus ip = o.openTiff(destFileName, "");
-                                            ZProjector zp = new ZProjector(ip);
-                                            zp.setMethod(ZProjector.MAX_METHOD);
-                                            zp.doProjection();
-                                            ip = zp.getProjection();
-                                            FileSaver fs = new FileSaver(ip);
-                                            fs.saveAsTiff(destFileName);
-                                        }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
-                        }
-                    }
-                }
-
-                es.shutdown();
-                boolean finshed = es.awaitTermination(100000, TimeUnit.HOURS);
-                String destFileName = tmpDestDir + File.separator + Experiment.getDestFileName(exp.tiling_mode, tile, 1, 1, 1, region, exp.region_width);
-
-                log("Opening image sequence");
-                IJ.run("Image Sequence...", "open=[" + destFileName + "] sort");
-
-                imp = IJ.getImage();
-            }*/
             final double XYres = exp.per_pixel_XY_resolution;
             final double Zpitch = exp.z_pitch;
 
@@ -616,6 +580,9 @@ public class Driffta {
         while(in.hasNextLine()) {
             String line = in.nextLine().trim();
             String[] splitStr = line.split("\\t");
+            if(splitStr.length == 0) {
+                splitStr = line.split(",");
+            }
             lines.add(splitStr);
         }
 

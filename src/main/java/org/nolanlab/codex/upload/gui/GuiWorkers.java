@@ -60,6 +60,7 @@ public class GuiWorkers {
             }
         }
 
+        gui.setTMA(exp.isTMA);
         gui.getDeconvolutionCheckBox().setSelected(exp.deconvolution.toLowerCase().equals("none") ? false : true);
         gui.getDeconvolutionIterationsField().setText(exp.deconvolutionIterations != 0 ? String.valueOf(exp.deconvolutionIterations) : "25");
         gui.getDeconvolutionModelComboBox().setSelectedItem(exp.deconvolutionModel != null ? exp.deconvolutionModel : "Vectorial");
@@ -96,7 +97,11 @@ public class GuiWorkers {
 
         // Set imp fields
         gui.getNumCyclesField().setText(String.valueOf(exp.num_cycles));
-        gui.getNumRegionsField().setText(String.valueOf(exp.region_names.length));
+        if(!exp.isTMA) {
+            gui.getNumRegionsField().setText(String.valueOf(exp.region_names.length));
+        } else {
+            gui.getNumRegionsField().setText(String.valueOf(exp.regIdx.length));
+        }
         gui.getNumChannelsField().setText(String.valueOf(exp.channel_names.length));
 
         //Calculate tile overlap
@@ -105,22 +110,34 @@ public class GuiWorkers {
             outer: for (File cyc : dirList) {
                 if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
                     File [] cycList = cyc.listFiles();
-                    for(File file : cycList) {
-                        if(!file.isDirectory() && (file.getName().endsWith(".tif")||file.getName().endsWith(".tiff"))){
-                            ImagePlus imp = IJ.openImage(file.getAbsolutePath());
-                            gui.getTileOverlapXField().setText(String.valueOf(exp.tile_overlap_X * 100/imp.getWidth()));
-                            gui.getTileOverlapYField().setText(String.valueOf(exp.tile_overlap_Y * 100/imp.getHeight()));
-                            break outer;
+                    if(!gui.isTMA()) {
+                        for (File file : cycList) {
+                            if (!file.isDirectory() && (file.getName().endsWith(".tif") || file.getName().endsWith(".tiff"))) {
+                                ImagePlus imp = IJ.openImage(file.getAbsolutePath());
+                                gui.getTileOverlapXField().setText(String.valueOf(exp.tile_overlap_X * 100 / imp.getWidth()));
+                                gui.getTileOverlapYField().setText(String.valueOf(exp.tile_overlap_Y * 100 / imp.getHeight()));
+                                break outer;
+                            }
                         }
+                    } else {
+                        for (File xyFile : cycList) {
+                            if (xyFile.isDirectory() && xyFile.getName().toLowerCase().contains("xy")) {
+                                File[] tiffFiles = xyFile.listFiles(tif -> !tif.isDirectory() && (tif.getName().endsWith(".tif") || tif.getName().endsWith(".tiff")));
+                                ImagePlus imp = IJ.openImage(tiffFiles[0].getAbsolutePath());
+                                gui.getTileOverlapXField().setText(String.valueOf(exp.tile_overlap_X * 100 / imp.getWidth()));
+                                gui.getTileOverlapYField().setText(String.valueOf(exp.tile_overlap_Y * 100 / imp.getHeight()));
+                                break outer;
+                            }
+                        }
+
                     }
                 }
             }
         }
 
         gui.gethAndEStainCheckBox().setSelected(exp.HandEstain);
+        gui.getTmaCheckBox().setSelected(exp.isTMA);
         gui.getBackgroundSubtractionCheckBox().setSelected(exp.bgSub);
-//        optionalBgSub.setSelectedItem(Boolean.toString(exp.bgSub) == null ? "No" : Boolean.toString(exp.bgSub).equalsIgnoreCase("true") ? "Yes" : "No");
-//        optionalFragmentButton.setSelectedItem(Boolean.toString(exp.optionalFocusFragment) == null ? "No" : Boolean.toString(exp.optionalFocusFragment).equalsIgnoreCase("true") ? "Yes" : "No");
         gui.getOptionalFocusFragmentCheckBox().setSelected(exp.optionalFocusFragment);
         gui.getFocusingOffsetField().setText(String.valueOf(exp.focusing_offset));
 
@@ -186,24 +203,45 @@ public class GuiWorkers {
         boolean hasHandE = false;
 
         for (File f : dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().toLowerCase().startsWith("cyc"))) {
-            if (!containsBcf) {
-                containsBcf = f.listFiles(pathname -> pathname.getName().endsWith(".bcf")).length > 0;
+            File[] xyFolders = f.listFiles(pathname -> pathname.isDirectory() && pathname.getName().toLowerCase().startsWith("xy"));
+            if (xyFolders != null && xyFolders.length != 0) {
+                gui.setTMA(true);
+                guiHelper.log("Input folder structure is of TMA data.");
+            }
+            gui.getTmaCheckBox().setSelected(gui.isTMA());
+            if (!gui.isTMA()) {
+                if (!containsBcf) {
+                    containsBcf = f.listFiles(pathname -> pathname.getName().endsWith(".bcf")).length > 0;
+                }
+            } else {
+                if (!containsBcf) {
+                    containsBcf = xyFolders[0].listFiles(pathname -> pathname.getName().endsWith(".bcf")).length > 0;
+                }
             }
             if (containsBcf) {
                 gui.getMicroscopeTypeComboBox().setSelectedItem(MicroscopeTypeEnum.KEYENCE);
             }
+            break;
+        }
+
+        for (File f : dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().toLowerCase().startsWith("cyc"))) {
             String[] s = f.getName().split("_");
             int cyc = Integer.parseInt(s[0].substring(3));
-            int reg = Integer.parseInt(s[1].substring(3));
-
-            maxRegion = Math.max(reg, maxRegion);
             maxCycle = Math.max(cyc, maxCycle);
+            if(!gui.isTMA()) {
+                int reg = Integer.parseInt(s[1].substring(3));
+                maxRegion = Math.max(reg, maxRegion);
+
+            } else {
+                File[] xy = f.listFiles(t -> t.isDirectory() && t.getName().toLowerCase().startsWith("xy"));
+                maxRegion = xy.length;
+            }
         }
 
         int[][] occup_table = new int[maxCycle][maxRegion];
 
         for (File f : dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().toLowerCase().startsWith("cyc"))) {
-            if (!containsBcf) {
+            if (!containsBcf && !gui.isTMA()) {
                 containsBcf = f.listFiles(pathname -> pathname.getName().endsWith(".bcf")).length > 0;
             }
             String[] s = f.getName().split("_");
@@ -212,24 +250,30 @@ public class GuiWorkers {
             occup_table[cyc - 1][reg - 1]++;
         }
 
-        for (int cyc = 1; cyc <= occup_table.length; cyc++) {
-            for (int reg = 1; reg <= occup_table[cyc - 1].length; reg++) {
-                if (occup_table[cyc - 1][reg - 1] == 0) {
-                    err.append("Missing data: cycle=").append(String.valueOf(cyc)).append(", region=").append(String.valueOf(reg)).append("\n");
-                }
-                if (occup_table[cyc - 1][reg - 1] > 1) {
-                    err.append("Duplicate data: cycle=").append(String.valueOf(cyc)).append(", region=").append(String.valueOf(reg)).append(". Delete duplicate folders before proceeding\n");
+        if(!gui.isTMA()) {
+            for (int cyc = 1; cyc <= occup_table.length; cyc++) {
+                for (int reg = 1; reg <= occup_table[cyc - 1].length; reg++) {
+                    if (occup_table[cyc - 1][reg - 1] == 0) {
+                        err.append("Missing data: cycle=").append(cyc).append(", region=").append(reg).append("\n");
+                    }
+                    if (occup_table[cyc - 1][reg - 1] > 1) {
+                        err.append("Duplicate data: cycle=").append(cyc).append(", region=").append(reg).append(". Delete duplicate folders before proceeding\n");
+                    }
                 }
             }
         }
 
         File[] hef = dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().startsWith("HandE"));
 
-        hasHandE = (hef.length == maxRegion)&&hef.length> 0;
-
-        if (!hasHandE && hef.length > 0) {
-            err.append("The experiment has HandE folders, but their number is less than a number of regions");
+        if(!gui.isTMA()) {
+            hasHandE = (hef.length == maxRegion) && hef.length > 0;
+            if (!hasHandE && hef.length > 0) {
+                err.append("The experiment has HandE folders, but their number is less than a number of regions");
+            }
+        } else {
+            hasHandE = hef.length > 0;
         }
+
 
         if (hasHandE) {
             gui.gethAndEStainCheckBox().setSelected(true);
@@ -249,7 +293,9 @@ public class GuiWorkers {
             regNames += ";Region " + i;
         }
 
-        gui.getRegionNamesField().setText(regNames);
+        if(!gui.isTMA()) {
+            gui.getRegionNamesField().setText(regNames);
+        }
         gui.getNumRegionsField().setText(String.valueOf(maxRegion));
         gui.getNumCyclesField().setText(String.valueOf(maxCycle));
         //guessTiles(dir);
@@ -266,6 +312,10 @@ public class GuiWorkers {
         microscope.guessChannelNamesAndWavelength(dir, gui);
         microscope.guessCycleRange(dir, gui);
         microscope.guessTileOverlap(gui);
+
+        if(gui.isTMA()) {
+            microscope.guessWidthAndHeight(dir, gui);
+        }
 
         return err.length() == 0 ? "" : ("Following errors were found in the experiment:\n" + err.toString());
     }
@@ -284,7 +334,7 @@ public class GuiWorkers {
                 }
 
                 Experiment exp = Metadata.getExperiment(gui);
-                guiHelper.replaceTileOverlapInExp(dir, exp);
+                guiHelper.replaceTileOverlapInExp(dir, exp, gui);
 
 //                String experimentJS = exp.toJSON();
 
@@ -379,7 +429,7 @@ public class GuiWorkers {
                         }
                     }
                 } else {
-                    totalCount = exp.region_names.length * exp.region_width * exp.region_height;
+                    totalCount = exp.regIdx.length * exp.region_width * exp.region_height;
                 }
 
 //                prg.setMaximum(totalCount);
@@ -518,8 +568,7 @@ public class GuiWorkers {
         Thread th = new Thread(() -> {
             try {
                 File dir = new File(gui.getInputPathField().getText());
-                File outputDir = new File(gui.getOutputDirField().getText());
-                if(dir == null ||outputDir == null) {
+                if(dir == null) {
                     JOptionPane.showMessageDialog(null, "Please select input experiment location and output location before running a preview to display pre-processed stitched image!");
                 }
                 else {
@@ -527,35 +576,53 @@ public class GuiWorkers {
                     guiHelper.log("Starting to create pre-processed stitched image for the selected cyc, reg, ch, z...");
 
                     Experiment exp = Metadata.getExperiment(gui);
-                    workerHelper.replaceTileOverlapInExp(dir, exp);
-                    if (workerHelper.areEmptyFields(gui)) {
-                        int cyc = Integer.parseInt(gui.getPreviewCycleField().getText());
-                        int reg = Integer.parseInt(gui.getPreviewRegionField().getText());
-                        int ch = Integer.parseInt(gui.getPreviewChannelField().getText());
-                        int z = Integer.parseInt(gui.getPreviewZPlaneField().getText());
+                    guiHelper.replaceTileOverlapInExp(dir, exp, gui);
 
+                    int cyc = Integer.parseInt(gui.getPreviewCycleField().getText());
+                    int reg = Integer.parseInt(gui.getPreviewRegionField().getText());
+                    int ch = Integer.parseInt(gui.getPreviewChannelField().getText());
+                    int z = Integer.parseInt(gui.getPreviewZPlaneField().getText());
+
+                    if (workerHelper.areEmptyFields(gui)) {
                         if(workerHelper.areValidFields(exp, cyc, reg, ch, z, gui)) {
                             String zSlice = "";
                             if (z > 0 && z < 10) {
-                                zSlice = "00" + gui.getPreviewZPlaneField().getText().toString();
+                                zSlice = "00" + z;
                             } else {
-                                zSlice = "0" + gui.getPreviewZPlaneField().getText().toString();
+                                zSlice = "0" + z;
                             }
 
-                            File[] cycFolders = dir.listFiles(cy -> cy.getName().toLowerCase().equals("cyc" + cyc + "_reg" + reg));
                             StackCombiner stackCombiner = new StackCombiner();
                             String finalZSlice = zSlice;
-
-                            File[] tifFiles = cycFolders[0].listFiles(t -> t.getName().toLowerCase().endsWith(".tif") && t.getName().toLowerCase().contains("_z" + finalZSlice)
-                                    && t.getName().toLowerCase().contains("_ch" + ch));
+                            File[] cycFolders;
+                            File[] tifFiles;
+                            if(!gui.isTMA()) {
+                                cycFolders = dir.listFiles(cy -> cy.getName().toLowerCase().equals("cyc" + cyc + "_reg" + reg));
+                                tifFiles = cycFolders[0].listFiles(t -> t.getName().toLowerCase().endsWith(".tif") && t.getName().toLowerCase().contains("_z" + finalZSlice)
+                                        && t.getName().toLowerCase().contains("_ch" + ch));
+                            } else {
+                                String regStr = "";
+                                if (reg > 0 && reg < 10) {
+                                    regStr = "0" + reg;
+                                }
+                                String finalRegStr = regStr;
+                                cycFolders = dir.listFiles(cy -> cy.getName().toLowerCase().equals("cyc" + cyc + "_reg1" ));
+                                File[] xyFolders = cycFolders[0].listFiles(xy -> xy.getName().toLowerCase().contains("xy" + finalRegStr));
+                                tifFiles = xyFolders[0].listFiles(t -> t.getName().toLowerCase().endsWith(".tif") && t.getName().toLowerCase().contains("_z" + finalZSlice)
+                                        && t.getName().toLowerCase().contains("_ch" + ch));
+                            }
 
                             int maxX = Integer.parseInt(gui.getRegionWidthField().getText());
                             int maxY = Integer.parseInt(gui.getRegionHeightField().getText());
 
                             ImageStack[][] grid = new ImageStack[maxX][maxY];
-
+                            int[] coord;
                             for (int i = 0; i < tifFiles.length; i++) {
-                                int[] coord = workerHelper.extractXYFromFile(tifFiles[i], exp, reg);
+                                if(!gui.isTMA()) {
+                                    coord = workerHelper.extractXYFromFile(tifFiles[i], exp, reg);
+                                } else {
+                                    coord = new int[] {1, 1};
+                                }
                                 ImagePlus tmp = IJ.openImage(tifFiles[i].getAbsolutePath());
                                 tmp = new ImagePlus(tmp.getTitle(), tmp.getImageStack().crop((int) Math.floor(exp.tile_overlap_X / 2), (int) Math.floor(exp.tile_overlap_Y / 2), 0, tmp.getWidth() - (int) Math.ceil(exp.tile_overlap_X), tmp.getHeight() - (int) Math.ceil(exp.tile_overlap_Y), tmp.getStackSize()));
                                 ImageStack is = tmp.getImageStack();

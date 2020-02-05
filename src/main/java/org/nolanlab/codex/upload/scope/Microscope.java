@@ -23,4 +23,5 @@ public interface Microscope {
     public boolean isTilesAProductOfRegionXAndY(File dir, NewGUI gui);
     public void guessTileOverlap(NewGUI gui);
     public int getMaxCycNumberFromFolder(File dir);
+    public void guessWidthAndHeight(File dir, NewGUI gui);
 }

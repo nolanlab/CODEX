@@ -24,11 +24,19 @@ public class Metadata {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String formattedDate = sdf.format(date);
 
-        String[] regIds = gui.getRegionNamesField().getText().split(";");
-        int[] reg = new int[regIds.length];
+        String[] regIds;
+        int[] reg;
+        if(!gui.isTMA()) {
+            regIds = gui.getRegionNamesField().getText().split(";");
+            reg = new int[regIds.length];
+        } else {
+            reg = new int[Integer.parseInt(gui.getNumRegionsField().getText())];
+        }
+
         for (int i = 0; i < reg.length; i++) {
             reg[i] = i + 1;
         }
+
 
         String[] wavelenS = gui.getWavelengthsField().getText().split(";");
         int[] wavelen = new int[wavelenS.length];
@@ -48,27 +56,21 @@ public class Metadata {
 
         File[] subdir = dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().startsWith("Cyc"));
 
-        String projName = "p";
-
         if (gui.getMicroscopeTypeComboBox().getSelectedItem().toString().startsWith("Keyence")) {
             if (subdir.length == 0) {
                 System.out.println("Directory does not contain a single folder starting with 'Cyc...'. Please try again!");
                 throw new IllegalStateException("Directory" + dir.getAbsolutePath() + " does not contain a single folder starting with 'Cyc...'");
             }
-
-            File[] bcf = subdir[0].listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File pathname) {
-                    return pathname.getName().endsWith(".bcf");
-                }
-            });
-
+            File[] bcf;
+            if(!gui.isTMA()) {
+                bcf = subdir[0].listFiles(pathname -> pathname.getName().endsWith(".bcf"));
+            } else {
+                File[] xy = subdir[0].listFiles(pathname -> pathname.getName().toLowerCase().startsWith("xy"));
+                bcf = xy[0].listFiles(pathname -> pathname.getName().endsWith(".bcf"));
+            }
             if (bcf.length == 0) {
                 throw new IllegalStateException("Microscope is set to Keyence but there is no .bcf file in the directory ");
             }
-
-            projName = bcf[0].getName().substring(0, bcf[0].getName().indexOf('.'));
-
         }
 
         String microscopeType = gui.getMicroscopeTypeComboBox().getSelectedItem() != null ? gui.getMicroscopeTypeComboBox().getSelectedItem().toString() : "";
@@ -226,6 +228,7 @@ public class Metadata {
                 gui.getObjectiveTypeComboBox().getSelectedItem().toString(),
                 gui.gethAndEStainCheckBox().isSelected(),
                 gui.getBackgroundSubtractionCheckBox().isSelected(),
+                gui.getTmaCheckBox().isSelected(),
                 gui.getProjectNameField().getText(),
                 gui.getOptionalFocusFragmentCheckBox().isSelected(),
                 Integer.parseInt(gui.getFocusingOffsetField().getText()),

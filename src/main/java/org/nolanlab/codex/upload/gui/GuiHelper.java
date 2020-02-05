@@ -87,15 +87,27 @@ public class GuiHelper {
         }
     }
 
-    public void replaceTileOverlapInExp(File dir, Experiment exp) {
+    public void replaceTileOverlapInExp(File dir, Experiment exp, NewGUI gui) {
         if(dir != null) {
             for (File cyc : dir.listFiles()) {
-                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
-                    File[] cycFiles = cyc.listFiles(tif->tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif"));
-                    ImagePlus imp = IJ.openImage(cycFiles[0].getAbsolutePath());
-                    exp.tile_overlap_X  = (int)((double)(exp.tile_overlap_X *imp.getWidth()/100));
-                    exp.tile_overlap_Y = (int)((double)(exp.tile_overlap_Y*imp.getHeight()/100));
-                    break;
+                if(!gui.isTMA()) {
+                    if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
+                        File[] cycFiles = cyc.listFiles(tif -> tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif"));
+                        ImagePlus imp = IJ.openImage(cycFiles[0].getAbsolutePath());
+                        exp.tile_overlap_X = (int) ((double) (exp.tile_overlap_X * imp.getWidth() / 100));
+                        exp.tile_overlap_Y = (int) ((double) (exp.tile_overlap_Y * imp.getHeight() / 100));
+                        break;
+                    }
+                } else {
+                    if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
+                        File[] xyFiles = cyc.listFiles(xy -> xy != null && xy.isDirectory() && xy.getName().toLowerCase().startsWith("xy"));
+                        File[] tifFiles = xyFiles[0].listFiles(tif -> tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif"));
+                        ImagePlus imp = IJ.openImage(tifFiles[0].getAbsolutePath());
+                        exp.tile_overlap_X = (int) ((double) (exp.tile_overlap_X * imp.getWidth() / 100));
+                        exp.tile_overlap_Y = (int) ((double) (exp.tile_overlap_Y * imp.getHeight() / 100));
+                        break;
+                    }
+
                 }
             }
         }

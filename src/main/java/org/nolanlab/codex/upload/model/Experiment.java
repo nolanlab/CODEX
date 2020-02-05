@@ -67,6 +67,7 @@ public class Experiment {
     public boolean bgSub;
     public String[] processTiles;
     public String[] processRegions;
+    public boolean isTMA;
 
     public static transient HashMap<String, String> projectNameCache = new HashMap<>();
     public static transient final MicroscopeTypeEnum[] microscopeTypes = new MicroscopeTypeEnum[]{KEYENCE, ZEISS, LEICA};
@@ -80,7 +81,7 @@ public class Experiment {
                       int cycle_lower_limit, int cycle_upper_limit, int[] regIdx,
                       String[] region_names, String tiling_mode, int region_width,
                       int region_height, int tile_overlap_X, int tile_overlap_Y,
-                      String objectiveType, boolean HandEstain, boolean bgSub, String projName,
+                      String objectiveType, boolean HandEstain, boolean bgSub, boolean isTMA, String projName,
                       boolean optionalFocusFragment, int focusing_offset, String[] processTiles, String[] processRegions) {
         this.name = name;
         this.date = date;
@@ -125,6 +126,7 @@ public class Experiment {
         }
         this.HandEstain = HandEstain;
         this.bgSub = bgSub;
+        this.isTMA = isTMA;
         this.projName = projName;
         this.optionalFocusFragment = optionalFocusFragment;
         this.focusing_offset = focusing_offset;
@@ -132,18 +134,28 @@ public class Experiment {
         this.processRegions = processRegions;
     }
 
-    public String getDirName(int cycle, int region, String baseDir) {
-
-        String name = null;
-
+    public String getDirName(int cycle, int region, String baseDir, boolean isTMA, int xy) {
+        String name ;
         switch (microscope) {
             case KEYENCE:
-                name = "Cyc" + cycle + "_reg" + region;
-
-                if (cycle == this.num_cycles && this.HandEstain) {
-                    name = getHandEDirName(region);
+                if(!isTMA) {
+                    name = "Cyc" + cycle + "_reg" + region;
+                    if (cycle == this.num_cycles && this.HandEstain) {
+                        name = getHandEDirName(region);
+                    }
+                    break;
+                } else {
+                    name = "Cyc" + cycle + "_reg" + region + File.separator + "XY";
+                    if(cycle == this.num_cycles && this.HandEstain) {
+                        name = getHandEDirName(region) + File.separator + "XY";
+                    }
+                    if(xy < 10) {
+                        name += "0" + xy;
+                    } else {
+                        name += xy;
+                    }
+                    break;
                 }
-                break;
             case ZEISS:
                 if (region > 1) {
                     throw new UnsupportedOperationException("The processing of Zeiss data supports only 1 region at the moment  ");
@@ -285,7 +297,7 @@ public class Experiment {
     }
 
 
-    public String getSourceFileName(final String sourceDir, final MicroscopeTypeEnum microscope, final int tile, final int zSlice, final int channel) {
+    public String getSourceFileName(final String sourceDir, final MicroscopeTypeEnum microscope, final int tile, final int zSlice, final int channel, final boolean isTMA) {
         switch (microscope) {
             case KEYENCE:
                 String pname = projectNameCache.get(sourceDir);
