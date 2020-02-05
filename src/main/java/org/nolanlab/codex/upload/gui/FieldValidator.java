@@ -14,7 +14,7 @@ public class FieldValidator {
                 }
                 return true;
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Not a valid integer: " + e.getMessage());
+                JOptionPane.showMessageDialog(null, tf.getName() + " cannot accept value " + e.getMessage() + ". Enter a valid integer.");
                 return false;
             }
         }
@@ -31,7 +31,7 @@ public class FieldValidator {
                 }
                 return true;
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Not a valid floating-point number: " + e.getMessage());
+                JOptionPane.showMessageDialog(null, tf.getName() + " cannot accept value " + e.getMessage() + ". Enter a valid decimal value.");
                 return false;
 
             }

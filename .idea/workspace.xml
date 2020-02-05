@@ -2,110 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6dbd53b7-1df8-49c3-9f00-43904c514362" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/FieldValidator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/Keyence.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Keyence.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/Microscope.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Microscope.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/MicroscopeFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/MicroscopeFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/MicroscopeTypeEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/MicroscopeTypeEnum.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/Zeiss.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Zeiss.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/clustering/frmCluster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/clustering/frmCluster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/ConcatenateResults.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/ConcatenateResults.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/SegmMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/segm/SegmMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/toolkit/Toolkit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/toolkit/Toolkit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/EncryptUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/utils/EncryptUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/Experiment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Experiment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/ExperimentView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/legacy/ExperimentView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/ProcessingOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/ProcessingOptions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/ProcessingOptionsView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/legacy/ProcessingOptionsView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/TextAreaOutputStream.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/TextAreaOutputStream.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/TileObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/utils/TileObject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/BestFocus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/BestFocus.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/MakeMontage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/MakeMontage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/frmMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/legacy/frmMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiActionListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiActionListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/FieldValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/FieldValidator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiHelper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.form" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/WorkerHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/WorkerHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/logger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/utils/logger.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/legacy/ExperimentView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/legacy/ExperimentView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Experiment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Experiment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Metadata.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Metadata.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/utils/util.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Keyence.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Keyence.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Microscope.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Microscope.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Zeiss.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Zeiss.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/akoya/codex/upload/ProcessorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/akoya/codex/upload/ProcessorTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/Keyence.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/Microscope.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/MicroscopeFactory.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/MicroscopeTypeEnum.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/Zeiss.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/clustering/frmCluster.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/clustering/frmCluster.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/segm/ConcatenateResults.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/segm/ConcatenateResults.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/segm/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/segm/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/segm/SegmMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/segm/SegmMain.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/toolkit/Toolkit.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/toolkit/Toolkit.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/EncryptUtils.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/Experiment$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/Experiment.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$10.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$11.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$12.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$13.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$14.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$15.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$16.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$17.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$18.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$19.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$20.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$21.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$22.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$23.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$4.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$5.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$6.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$7.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$8.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView$9.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ExperimentView.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ProcessingOptions.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ProcessingOptionsView$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ProcessingOptionsView$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ProcessingOptionsView$3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ProcessingOptionsView$4.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ProcessingOptionsView$5.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ProcessingOptionsView$6.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/ProcessingOptionsView.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/TextAreaOutputStream.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/TileObject.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/BestFocus.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/BestFocus.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta$2.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/MakeMontage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/MakeMontage.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$10.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$4.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$5.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$6.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$7$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$7.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$8.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain$9.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/frmMain.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/logger.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/util.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/org/nolanlab/codex/ProcessorTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/org/nolanlab/codex/ProcessorTest.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -175,7 +88,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.CodexNewUI">
+  <component name="RunManager" selected="Application.NewGUI">
     <configuration default="true" type="Applet">
       <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
       <method v="2">
@@ -230,9 +143,9 @@
     <configuration name="Driffta" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.nolanlab.codex.upload.driffta.Driffta" />
       <module name="CODEX" />
-      <option name="PROGRAM_PARAMETERS" value="&quot;C:\exp2Test&quot; &quot;C:\exp2TestOldProcessed&quot; 1 1" />
+      <option name="PROGRAM_PARAMETERS" value="&quot;E:\NolanLabTestData\TMA-Test\SmallerFiles&quot; &quot;E:\NolanLabTestData\TMA-Test\output&quot; 1 1" />
       <option name="VM_PARAMETERS" value="-Xmx64G" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/target" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/target" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="com.akoya.codex.upload.driffta.*" />
@@ -488,7 +401,13 @@
       <workItem from="1576104543862" duration="620000" />
       <workItem from="1576166013554" duration="55871000" />
       <workItem from="1578341830383" duration="53316000" />
-      <workItem from="1579043851935" duration="6130000" />
+      <workItem from="1579043851935" duration="9786000" />
+      <workItem from="1579215899343" duration="1456000" />
+      <workItem from="1579899208129" duration="3698000" />
+      <workItem from="1580330043066" duration="20945000" />
+      <workItem from="1580756997030" duration="10316000" />
+      <workItem from="1580773067799" duration="3073000" />
+      <workItem from="1580784083007" duration="12642000" />
     </task>
     <servers />
   </component>
@@ -695,88 +614,38 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>90</line>
-          <option name="timeStamp" value="840" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>721</line>
+          <line>688</line>
           <option name="timeStamp" value="842" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>744</line>
-          <option name="timeStamp" value="845" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>745</line>
-          <option name="timeStamp" value="846" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>746</line>
-          <option name="timeStamp" value="847" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>748</line>
-          <option name="timeStamp" value="848" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>752</line>
-          <option name="timeStamp" value="850" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>680</line>
+          <line>647</line>
           <option name="timeStamp" value="853" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>663</line>
+          <line>630</line>
           <option name="timeStamp" value="854" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>691</line>
+          <line>658</line>
           <option name="timeStamp" value="855" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>701</line>
+          <line>668</line>
           <option name="timeStamp" value="856" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>693</line>
+          <line>660</line>
           <option name="timeStamp" value="857" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>700</line>
+          <line>667</line>
           <option name="timeStamp" value="858" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>217</line>
-          <option name="timeStamp" value="862" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>491</line>
-          <option name="timeStamp" value="870" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>489</line>
-          <option name="timeStamp" value="904" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>456</line>
-          <option name="timeStamp" value="907" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/MakeMontage.java</url>
@@ -825,13 +694,28 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java</url>
-          <line>381</line>
-          <option name="timeStamp" value="1040" />
+          <line>335</line>
+          <option name="timeStamp" value="1126" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java</url>
-          <line>357</line>
-          <option name="timeStamp" value="1041" />
+          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/WorkerHelper.java</url>
+          <line>66</line>
+          <option name="timeStamp" value="1141" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
+          <line>255</line>
+          <option name="timeStamp" value="1145" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
+          <line>285</line>
+          <option name="timeStamp" value="1146" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
+          <line>257</line>
+          <option name="timeStamp" value="1151" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

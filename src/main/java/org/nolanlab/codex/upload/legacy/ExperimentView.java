@@ -1444,6 +1444,7 @@ public class ExperimentView extends JPanel {
                 val23.getSelectedItem().toString(),
                 rb_HandE_yes.isSelected(),
                 "Yes".equalsIgnoreCase(optionalBgSub.getSelectedItem().toString()),
+                false,
                 projName,
                 "Yes".equalsIgnoreCase(optionalFragmentButton.getSelectedItem().toString()),
                 Integer.parseInt(focussingOffset.getValue().toString()),

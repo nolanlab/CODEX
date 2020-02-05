@@ -150,7 +150,9 @@ public class NewGUI {
     private JLabel cycleRangeLabel;
     private JLabel regionNamesLabel;
     private JLabel channelNamesLabel;
+    private JCheckBox tmaCheckBox;
 
+    private boolean isTMA = false;
 
     private TextAreaOutputStream taOutputStream;
     private ArrayList<Process> allProcess = new ArrayList<>();
@@ -159,6 +161,14 @@ public class NewGUI {
     private JSpinner spinRAM = new JSpinner();
     private JTextField configField = new JTextField(5);
     private static GuiHelper guiHelper = new GuiHelper();
+
+    public boolean isTMA() {
+        return isTMA;
+    }
+
+    public void setTMA(boolean TMA) {
+        isTMA = TMA;
+    }
 
     public JPanel getMainPanel() {
         return mainPanel;
@@ -202,6 +212,10 @@ public class NewGUI {
 
     public JCheckBox gethAndEStainCheckBox() {
         return hAndEStainCheckBox;
+    }
+
+    public JCheckBox getTmaCheckBox() {
+        return tmaCheckBox;
     }
 
     public JCheckBox getBackgroundSubtractionCheckBox() {
@@ -467,39 +481,63 @@ public class NewGUI {
 
     private void addFieldValidations() {
         // Essentials
+        regionWidthField.setName("Region Width");
         regionWidthField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        regionHeightField.setName("Region Height");
         regionHeightField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        tileOverlapXField.setName("Tile Overlap X");
         tileOverlapXField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        tileOverlapYField.setName("Tile Overlap Y");
         tileOverlapYField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
 
         // Imaging params
+        magnificationField.setName("Magnification");
         magnificationField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        apertureField.setName("Aperture");
         apertureField.setInputVerifier(FieldValidator.DOUBLE_VERIFIER);
+        xyResolutionField.setName("XY Resolution");
         xyResolutionField.setInputVerifier(FieldValidator.DOUBLE_VERIFIER);
+        zPitchField.setName("Z Pitch");
         zPitchField.setInputVerifier(FieldValidator.DOUBLE_VERIFIER);
 
         // Auto-detected params
+        numRegionsField.setName("Number of Regions");
         numRegionsField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        numCyclesField.setName("Number of Cycles");
         numCyclesField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        numPlanesField.setName("Number of Planes");
         numPlanesField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        numChannelsField.setName("Number of Channels");
         numChannelsField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
 
         // Deconvolution params
+        deconvolutionIterationsField.setName("Deconvolution Iterations");
         deconvolutionIterationsField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
 
         // Optional params
+        tileWidthField.setName("Tile Width");
         tileWidthField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        tileHeightField.setName("Tile Height");
         tileHeightField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        driftReferenceCycleField.setName("Drift Reference Cycle");
         driftReferenceCycleField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        driftReferenceChannelField.setName("Drift Reference Channel");
         driftReferenceChannelField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        bestFocusCycleField.setName("Best Focus Cycle");
         bestFocusCycleField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        bestFocusChannelField.setName("Best Focus Channel");
         bestFocusChannelField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        focusingOffsetField.setName("Focusing Offset");
         focusingOffsetField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
 
         // Region preview params
+        previewRegionField.setName("Preview Region");
         previewRegionField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        previewRegionField.setName("Preview Cycle");
         previewCycleField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        previewRegionField.setName("Preview Channel");
         previewChannelField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+        previewRegionField.setName("Preview Z-plane");
         previewZPlaneField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
     }
 
@@ -796,13 +834,13 @@ public class NewGUI {
         logoLabel.setText("");
         essentialsPanel.add(logoLabel, new GridConstraints(2, 6, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(240, 80), new Dimension(240, 80), null, 0, false));
         final JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayoutManager(4, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel2.setLayout(new GridLayoutManager(5, 1, new Insets(0, 0, 0, 0), -1, -1));
         essentialsPanel.add(panel2, new GridConstraints(2, 4, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         imgSeqCheckBox = new JCheckBox();
         imgSeqCheckBox.setEnabled(true);
         imgSeqCheckBox.setSelected(false);
         imgSeqCheckBox.setText("<html>Export as Image Sequence<br>(For compatibility with MAV)</html>");
-        panel2.add(imgSeqCheckBox, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel2.add(imgSeqCheckBox, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         deconvolutionCheckBox = new JCheckBox();
         deconvolutionCheckBox.setEnabled(true);
         deconvolutionCheckBox.setSelected(false);
@@ -817,6 +855,11 @@ public class NewGUI {
         backgroundSubtractionCheckBox.setSelected(false);
         backgroundSubtractionCheckBox.setText("Background Subtraction");
         panel2.add(backgroundSubtractionCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        tmaCheckBox = new JCheckBox();
+        tmaCheckBox.setEnabled(false);
+        tmaCheckBox.setSelected(false);
+        tmaCheckBox.setText("Multipoint");
+        panel2.add(tmaCheckBox, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         projectNameLabel = new JLabel();
         projectNameLabel.setText("Project Name");
         essentialsPanel.add(projectNameLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
@@ -1150,7 +1193,7 @@ public class NewGUI {
         previewPanel = new JPanel();
         previewPanel.setLayout(new GridLayoutManager(5, 4, new Insets(5, 10, 10, 10), -1, -1));
         advancedRightColumnPanel.add(previewPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        previewPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Region Preview", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, Font.BOLD, -1, previewPanel.getFont())));
+        previewPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "<html>Region Preview<br>(Not supported for HandE cycle)</html>", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, Font.BOLD, -1, previewPanel.getFont())));
         previewRegionLabel = new JLabel();
         previewRegionLabel.setText("Region");
         previewPanel.add(previewRegionLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -1192,7 +1235,7 @@ public class NewGUI {
         Font stepSelectionPanelFont = this.$$$getFont$$$(null, -1, -1, stepSelectionPanel.getFont());
         if (stepSelectionPanelFont != null) stepSelectionPanel.setFont(stepSelectionPanelFont);
         advancedLeftColumnPanel.add(stepSelectionPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        stepSelectionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Selective Processing", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, Font.BOLD, -1, stepSelectionPanel.getFont())));
+        stepSelectionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "<html>Selective Processing<br>(Not supported for TMA)</html>", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, Font.BOLD, -1, stepSelectionPanel.getFont())));
         processRegionsLabel = new JLabel();
         processRegionsLabel.setText("Regions");
         stepSelectionPanel.add(processRegionsLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));

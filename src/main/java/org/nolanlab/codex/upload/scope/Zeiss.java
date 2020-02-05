@@ -131,6 +131,16 @@ public class Zeiss implements Microscope  {
         return cycNumbers == null || cycNumbers.isEmpty() ? 0 : cycNumbers.get(0);
     }
 
+    /*
+    Method to set region height and region width to 1 when TMA data is loaded
+    */
+    public void guessWidthAndHeight(File dir, NewGUI gui) {
+        if(gui.isTMA()) {
+            gui.getRegionWidthField().setText("1");
+            gui.getRegionHeightField().setText("1");
+        }
+    }
+
     public boolean isTilesAProductOfRegionXAndY(File dir, NewGUI gui) {
         if (dir != null) {
             for (File cyc : dir.listFiles()) {

@@ -23,17 +23,35 @@ public class Keyence implements Microscope {
             outer: for (File cyc : dir.listFiles()) {
                 if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
                     File[] cycFiles = cyc.listFiles();
-                    Arrays.sort(cycFiles, Collections.reverseOrder());
-                    for (File tif : cycFiles) {
-                        if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
-                            int lastZIndex = tif.getName().lastIndexOf("Z");
-                            String zNumber = tif.getName().substring(lastZIndex+1, lastZIndex+4);
-                            if (zNumber != null) {
-                                int zIndex = Integer.parseInt(zNumber);
-                                zNumber = String.valueOf(zIndex);
+                    if(!gui.isTMA()) {
+                        Arrays.sort(cycFiles, Collections.reverseOrder());
+                        for (File tif : cycFiles) {
+                            if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
+                                int lastZIndex = tif.getName().lastIndexOf("Z");
+                                String zNumber = tif.getName().substring(lastZIndex + 1, lastZIndex + 4);
+                                if (zNumber != null) {
+                                    int zIndex = Integer.parseInt(zNumber);
+                                    zNumber = String.valueOf(zIndex);
+                                }
+                                gui.getNumPlanesField().setText(zNumber);
+                                break outer;
                             }
-                            gui.getNumPlanesField().setText(zNumber);
-                            break outer;
+                        }
+                    } else {
+                        File[] xyFiles = cyc.listFiles();
+                        File[] tifFiles = xyFiles[0].listFiles(t -> !t.isDirectory() && t.getName().toLowerCase().endsWith(".tif"));
+                        Arrays.sort(tifFiles, Collections.reverseOrder());
+                        for(File tif : tifFiles) {
+                            if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
+                                int lastZIndex = tif.getName().lastIndexOf("Z");
+                                String zNumber = tif.getName().substring(lastZIndex + 1, lastZIndex + 4);
+                                if (zNumber != null) {
+                                    int zIndex = Integer.parseInt(zNumber);
+                                    zNumber = String.valueOf(zIndex);
+                                }
+                                gui.getNumPlanesField().setText(zNumber);
+                                break outer;
+                            }
                         }
                     }
                 }
@@ -46,51 +64,100 @@ public class Keyence implements Microscope {
             outer: for (File cyc : dir.listFiles()) {
                 if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
                     File[] cycFiles = cyc.listFiles();
-                    Arrays.sort(cycFiles, Collections.reverseOrder());
-                    LinkedHashMap<String, Boolean> chVsBool = new LinkedHashMap<String, Boolean>();
-                    chVsBool.put("CH1", false);
-                    chVsBool.put("CH2", false);
-                    chVsBool.put("CH3", false);
-                    chVsBool.put("CH4", false);
-                    for (File tif : cycFiles) {
-                        if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
-                            int last_Index = tif.getName().lastIndexOf("_");
-                            String chNumber = tif.getName().substring(last_Index+1, last_Index+4);
-                            if (chNumber != null) {
-                                if(chVsBool.containsKey(chNumber)){
-                                    chVsBool.put(chNumber, true);
+                    if (!gui.isTMA()) {
+                        Arrays.sort(cycFiles, Collections.reverseOrder());
+                        LinkedHashMap<String, Boolean> chVsBool = new LinkedHashMap<String, Boolean>();
+                        chVsBool.put("CH1", false);
+                        chVsBool.put("CH2", false);
+                        chVsBool.put("CH3", false);
+                        chVsBool.put("CH4", false);
+                        for (File tif : cycFiles) {
+                            if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
+                                int last_Index = tif.getName().lastIndexOf("_");
+                                String chNumber = tif.getName().substring(last_Index + 1, last_Index + 4);
+                                if (chNumber != null) {
+                                    if (chVsBool.containsKey(chNumber)) {
+                                        chVsBool.put(chNumber, true);
+                                    }
                                 }
                             }
                         }
-                    }
-                    LinkedHashMap<String, String> chVsWavelength = new LinkedHashMap<String, String>();
-                    chVsWavelength.put("CH1","425");
-                    chVsWavelength.put("CH2","525");
-                    chVsWavelength.put("CH3","595");
-                    chVsWavelength.put("CH4","670");
+                        LinkedHashMap<String, String> chVsWavelength = new LinkedHashMap<String, String>();
+                        chVsWavelength.put("CH1", "425");
+                        chVsWavelength.put("CH2", "525");
+                        chVsWavelength.put("CH3", "595");
+                        chVsWavelength.put("CH4", "670");
 
-                    String ch="";
-                    String waveL="";
+                        String ch = "";
+                        String waveL = "";
 
-                    boolean first = true;
-                    for (String key: chVsBool.keySet()) {
-                        if (!first && chVsBool.get(key)) {
-                            ch += ";"+key;
-                            waveL += ";"+chVsWavelength.get(key);
-                        }
-                        else {
-                            if(chVsBool.get(key)) {
-                                first = false;
-                                ch += key;
-                                waveL += chVsWavelength.get(key);
+                        boolean first = true;
+                        for (String key : chVsBool.keySet()) {
+                            if (!first && chVsBool.get(key)) {
+                                ch += ";" + key;
+                                waveL += ";" + chVsWavelength.get(key);
+                            } else {
+                                if (chVsBool.get(key)) {
+                                    first = false;
+                                    ch += key;
+                                    waveL += chVsWavelength.get(key);
+                                }
                             }
                         }
+                        gui.getNumChannelsField().setText(String.valueOf(ch.split(";").length));
+                        gui.getChannelNamesField().setText(ch);
+                        gui.getWavelengthsField().setText(waveL);
+                        //break outer loop
+                        break outer;
+                    } else {
+                        File[] xyFiles = cyc.listFiles();
+                        File[] tifFiles = xyFiles[0].listFiles(t -> !t.isDirectory() && t.getName().toLowerCase().endsWith(".tif"));
+                        Arrays.sort(tifFiles, Collections.reverseOrder());
+
+                        LinkedHashMap<String, Boolean> chVsBool = new LinkedHashMap<String, Boolean>();
+                        chVsBool.put("CH1", false);
+                        chVsBool.put("CH2", false);
+                        chVsBool.put("CH3", false);
+                        chVsBool.put("CH4", false);
+                        for (File tif : tifFiles) {
+                            if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
+                                int last_Index = tif.getName().lastIndexOf("_");
+                                String chNumber = tif.getName().substring(last_Index + 1, last_Index + 4);
+                                if (chNumber != null) {
+                                    if (chVsBool.containsKey(chNumber)) {
+                                        chVsBool.put(chNumber, true);
+                                    }
+                                }
+                            }
+                        }
+                        LinkedHashMap<String, String> chVsWavelength = new LinkedHashMap<String, String>();
+                        chVsWavelength.put("CH1", "425");
+                        chVsWavelength.put("CH2", "525");
+                        chVsWavelength.put("CH3", "595");
+                        chVsWavelength.put("CH4", "670");
+
+                        String ch = "";
+                        String waveL = "";
+
+                        boolean first = true;
+                        for (String key : chVsBool.keySet()) {
+                            if (!first && chVsBool.get(key)) {
+                                ch += ";" + key;
+                                waveL += ";" + chVsWavelength.get(key);
+                            } else {
+                                if (chVsBool.get(key)) {
+                                    first = false;
+                                    ch += key;
+                                    waveL += chVsWavelength.get(key);
+                                }
+                            }
+                        }
+                        gui.getNumChannelsField().setText(String.valueOf(ch.split(";").length));
+                        gui.getChannelNamesField().setText(ch);
+                        gui.getWavelengthsField().setText(waveL);
+                        //break outer loop
+                        break outer;
                     }
-                    gui.getNumChannelsField().setText(String.valueOf(ch.split(";").length));
-                    gui.getChannelNamesField().setText(ch);
-                    gui.getWavelengthsField().setText(waveL);
-                    //break outer loop
-                    break outer;
                 }
             }
         }
@@ -173,29 +240,44 @@ public class Keyence implements Microscope {
         return cycNumbers == null || cycNumbers.isEmpty() ? 0 : cycNumbers.get(0);
     }
 
+    /*
+    Method to set region height and region width to 1 when TMA data is loaded
+     */
+    public void guessWidthAndHeight(File dir, NewGUI gui) {
+        if(gui.isTMA()) {
+            gui.getRegionWidthField().setText("1");
+            gui.getRegionHeightField().setText("1");
+        }
+    }
+
     public boolean isTilesAProductOfRegionXAndY(File dir, NewGUI gui) {
         if (dir != null) {
-            outer: for (File cyc : dir.listFiles()) {
-                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
-                    File[] cycFiles = cyc.listFiles();
-                    Arrays.sort(cycFiles, Collections.reverseOrder());
-                    for (File tif : cycFiles) {
-                        if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
-                            int lastZIndex = tif.getName().lastIndexOf("Z");
-                            String regXYNumber = tif.getName().substring(lastZIndex - 5, lastZIndex - 1);
-                            if (regXYNumber != null) {
-                                int regXYIndex = Integer.parseInt(regXYNumber);
-                                if (regXYIndex == Integer.parseInt(gui.getRegionWidthField().getText()) * Integer.parseInt(gui.getRegionHeightField().getText())) {
-                                    return true;
-                                } else {
-                                    return false;
+            if(!gui.isTMA()) {
+                outer:
+                for (File cyc : dir.listFiles()) {
+                    if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
+                        File[] cycFiles = cyc.listFiles();
+                        Arrays.sort(cycFiles, Collections.reverseOrder());
+                        for (File tif : cycFiles) {
+                            if (tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif")) {
+                                int lastZIndex = tif.getName().lastIndexOf("Z");
+                                String regXYNumber = tif.getName().substring(lastZIndex - 5, lastZIndex - 1);
+                                if (regXYNumber != null) {
+                                    int regXYIndex = Integer.parseInt(regXYNumber);
+                                    if (regXYIndex == Integer.parseInt(gui.getRegionWidthField().getText()) * Integer.parseInt(gui.getRegionHeightField().getText())) {
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
                                 }
+                                break outer;
                             }
-                            break outer;
                         }
-                    }
 
+                    }
                 }
+            } else {
+                return true;
             }
         }
         return false;
