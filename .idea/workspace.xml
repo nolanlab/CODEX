@@ -3,22 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6dbd53b7-1df8-49c3-9f00-43904c514362" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/FieldValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/FieldValidator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.form" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/NewGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/legacy/ExperimentView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/legacy/ExperimentView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Experiment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Experiment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Metadata.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Metadata.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Keyence.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Keyence.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Microscope.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Microscope.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Zeiss.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/scope/Zeiss.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -54,6 +39,13 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
   <component name="ProjectId" id="1SGACfxfwbtl1cNLTDE0QjaUzMH" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -88,7 +80,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.NewGUI">
+  <component name="RunManager" selected="Application.CodexNewUI">
     <configuration default="true" type="Applet">
       <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
       <method v="2">
@@ -407,7 +399,8 @@
       <workItem from="1580330043066" duration="20945000" />
       <workItem from="1580756997030" duration="10316000" />
       <workItem from="1580773067799" duration="3073000" />
-      <workItem from="1580784083007" duration="12642000" />
+      <workItem from="1580784083007" duration="13072000" />
+      <workItem from="1581104554732" duration="997000" />
     </task>
     <servers />
   </component>

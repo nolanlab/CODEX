@@ -25,7 +25,7 @@
         <dependency>
             <groupId>microvolution</groupId>
             <artifactId>microvolution</artifactId>
-            <version>win_2019.07</version>
+            <version>akoya_2019.03</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

@@ -15,7 +15,7 @@
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:15.0" level="project" />
     <orderEntry type="library" name="Maven: microvolution:microvolution:win_2019.03" level="project" />
     <orderEntry type="library" name="Maven: org.nolanlab:sandbox:1.0" level="project" />
-    <orderEntry type="library" name="Maven: microvolution:microvolution:win_2019.07" level="project" />
+    <orderEntry type="library" name="Maven: microvolution:microvolution:akoya_2019.03" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.7" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:1.0" level="project" />
     <orderEntry type="library" name="Maven: sc.fiji:Fiji_Plugins:3.1.0" level="project" />
