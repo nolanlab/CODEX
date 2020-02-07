@@ -6,6 +6,7 @@ If you are planning to clone/fork this repository, make sure to download the non
 
 # Code dependencies for CODEX
 *Non-public maven dependencies can be found here:* https://1drv.ms/u/s!AmLT3VlVj2P_lf09PpFz6KxhKNboOw
+You need to modify the batch file inside according to the location where JAVA_HOME is set in your development machine. 
 
 # Prerequisites
 * Processing computer
