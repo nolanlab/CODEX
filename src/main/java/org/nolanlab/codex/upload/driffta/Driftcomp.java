@@ -44,7 +44,7 @@ public class Driftcomp {
 
             final int idx = i;
             es.execute(() -> {
-                System.out.println("Driftcompensating cycle: " + idx);
+                System.out.println("Driftcompensating cycle: " + (idx + 1));
                 int[] shift = computeShift(stacks[zeroBasedReferenceCycle][zeroBasedDriftCompChannel], stacks[idx][zeroBasedDriftCompChannel], idx);
 
                 for (int ch = 0; ch < stacks[idx].length; ch++) {
@@ -64,13 +64,26 @@ public class Driftcomp {
     }
     
     private static int[] computeShift(ImagePlus imp1, ImagePlus imp2, int idx) {
+        boolean oneZflag = false;
         PhaseCorrelation phc = new PhaseCorrelation(ImagePlusAdapter.wrap(imp1), ImagePlusAdapter.wrap(imp2), 1, false);
+        if(imp1.getNSlices() == 1 && imp2.getNSlices() == 1) {
+            oneZflag = true;
+        }
 
         phc.setNumThreads(Runtime.getRuntime().availableProcessors());
         phc.setComputeFFTinParalell(true);
         phc.process();
         int[] p = phc.getShift().getPosition();
-        Driffta.log("Cycle: " + idx + " Phase correlation: " + Arrays.toString(p));
+        // Add one blank element for imp that have only one z slice.
+        if(oneZflag) {
+            int[] temp = new int[p.length + 1];
+            for (int i = 0; i < p.length; i++){
+                temp[i] = p[i];
+            }
+            temp[p.length-1] = 0;
+            p = temp;
+        }
+        Driffta.log("Cycle: " + (idx + 1) + " Phase correlation: " + Arrays.toString(p));
         return p;
     }
     

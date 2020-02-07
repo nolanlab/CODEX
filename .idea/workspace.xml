@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="6dbd53b7-1df8-49c3-9f00-43904c514362" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driftcomp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driftcomp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driftcomp.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driftcomp.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -135,7 +136,7 @@
     <configuration name="Driffta" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.nolanlab.codex.upload.driffta.Driffta" />
       <module name="CODEX" />
-      <option name="PROGRAM_PARAMETERS" value="&quot;E:\NolanLabTestData\TMA-Test\SmallerFiles&quot; &quot;E:\NolanLabTestData\TMA-Test\output&quot; 1 1" />
+      <option name="PROGRAM_PARAMETERS" value="&quot;D:\TEST\INPUT\exp2Test&quot; &quot;D:\TEST\OUTPUT\exp2TestProcessed&quot; 1 1" />
       <option name="VM_PARAMETERS" value="-Xmx64G" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/target" />
       <extension name="coverage">
@@ -400,7 +401,7 @@
       <workItem from="1580756997030" duration="10316000" />
       <workItem from="1580773067799" duration="3073000" />
       <workItem from="1580784083007" duration="13072000" />
-      <workItem from="1581104554732" duration="997000" />
+      <workItem from="1581104554732" duration="6341000" />
     </task>
     <servers />
   </component>
@@ -709,6 +710,16 @@
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
           <line>257</line>
           <option name="timeStamp" value="1151" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
+          <line>420</line>
+          <option name="timeStamp" value="1153" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driftcomp.java</url>
+          <line>47</line>
+          <option name="timeStamp" value="1159" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
