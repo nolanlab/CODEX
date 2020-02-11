@@ -92,8 +92,8 @@ public class GuiWorkers {
 
         gui.getRegionWidthField().setText(String.valueOf(exp.region_width));
         gui.getRegionHeightField().setText(String.valueOf(exp.region_height));
-        gui.getTileHeightField().setText(String.valueOf(exp.tile_height));
-        gui.getTileWidthField().setText(String.valueOf(exp.tile_width));
+//        gui.getTileHeightField().setText(String.valueOf(exp.tile_height));
+//        gui.getTileWidthField().setText(String.valueOf(exp.tile_width));
 
         // Set imp fields
         gui.getNumCyclesField().setText(String.valueOf(exp.num_cycles));

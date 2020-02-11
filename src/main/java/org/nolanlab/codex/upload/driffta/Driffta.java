@@ -422,15 +422,15 @@ public class Driffta {
 
             DriftcompInterlockDispatcher.releaseLock();
 
-            log("Cropping");
-
             int Y = Integer.parseInt(Experiment.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width).split("Y")[1].split("\\.")[0]);
             int X = Integer.parseInt(Experiment.getDestStackFileName(exp.tiling_mode, tile, region, exp.region_width).split("X")[1].split("_")[0]);
 
             if (po.isUseBleachMinimizingCrop()) {
+                log("Cropping with Bleach minimizing enabled...");
                 hyp = (Y % 2 == 1) ? new ImagePlus(hyp.getTitle(), hyp.getImageStack().crop(X == 1 ? 0 : exp.tile_overlap_X, Y == 1 ? 0 : exp.tile_overlap_Y, 0, hyp.getWidth() - (X == 1 ? 0 : exp.tile_overlap_X), hyp.getHeight() - (Y == 1 ? 0 : exp.tile_overlap_Y), hyp.getStackSize()))
                         : new ImagePlus(hyp.getTitle(), hyp.getImageStack().crop(0, exp.tile_overlap_Y, 0, hyp.getWidth() - (X == exp.region_width ? 0 : exp.tile_overlap_X), hyp.getHeight() - exp.tile_overlap_Y, hyp.getStackSize()));
             } else {
+                log("Cropping");
                 hyp = new ImagePlus(hyp.getTitle(), hyp.getImageStack().crop((int) Math.floor(exp.tile_overlap_X / 2), (int) Math.floor(exp.tile_overlap_Y / 2), 0, hyp.getWidth() - (int) Math.ceil(exp.tile_overlap_X), hyp.getHeight() - (int) Math.ceil(exp.tile_overlap_Y), hyp.getStackSize()));
             }
 

@@ -92,8 +92,8 @@ public class NewGUI {
     private JTextField numCyclesField;
     private JTextField numPlanesField;
     private JTextField numChannelsField;
-    private JTextField tileWidthField;
-    private JTextField tileHeightField;
+//    private JTextField tileWidthField;
+//    private JTextField tileHeightField;
     private JPanel processRightColumnPanel;
     private JTextField driftReferenceCycleField;
     private JTextField driftReferenceChannelField;
@@ -145,8 +145,6 @@ public class NewGUI {
     private JTextField processRegionsField;
     private JTextField processTilesField;
     private JButton openLogsButton;
-    private JLabel tileWidthLabel;
-    private JLabel tileHeightLabel;
     private JLabel cycleRangeLabel;
     private JLabel regionNamesLabel;
     private JLabel channelNamesLabel;
@@ -318,13 +316,13 @@ public class NewGUI {
         return numChannelsField;
     }
 
-    public JTextField getTileWidthField() {
-        return tileWidthField;
-    }
-
-    public JTextField getTileHeightField() {
-        return tileHeightField;
-    }
+//    public JTextField getTileWidthField() {
+//        return tileWidthField;
+//    }
+//
+//    public JTextField getTileHeightField() {
+//        return tileHeightField;
+//    }
 
     public JTextField getDriftReferenceCycleField() {
         return driftReferenceCycleField;
@@ -515,10 +513,10 @@ public class NewGUI {
         deconvolutionIterationsField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
 
         // Optional params
-        tileWidthField.setName("Tile Width");
-        tileWidthField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
-        tileHeightField.setName("Tile Height");
-        tileHeightField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+//        tileWidthField.setName("Tile Width");
+//        tileWidthField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
+//        tileHeightField.setName("Tile Height");
+//        tileHeightField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
         driftReferenceCycleField.setName("Drift Reference Cycle");
         driftReferenceCycleField.setInputVerifier(FieldValidator.INTEGER_VERIFIER);
         driftReferenceChannelField.setName("Drift Reference Channel");
@@ -1084,61 +1082,51 @@ public class NewGUI {
         final Spacer spacer29 = new Spacer();
         processRightColumnPanel.add(spacer29, new GridConstraints(0, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
         processingOptionsPanel = new JPanel();
-        processingOptionsPanel.setLayout(new GridLayoutManager(10, 3, new Insets(5, 10, 10, 10), -1, -1));
+        processingOptionsPanel.setLayout(new GridLayoutManager(8, 3, new Insets(5, 10, 10, 10), -1, -1));
         processRightColumnPanel.add(processingOptionsPanel, new GridConstraints(2, 0, 1, 3, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         processingOptionsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Optional Parameters", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, Font.BOLD, -1, processingOptionsPanel.getFont())));
         driftReferenceCycleLabel = new JLabel();
         driftReferenceCycleLabel.setText("Drift Reference Cycle");
-        processingOptionsPanel.add(driftReferenceCycleLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        processingOptionsPanel.add(driftReferenceCycleLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer30 = new Spacer();
-        processingOptionsPanel.add(spacer30, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
+        processingOptionsPanel.add(spacer30, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
         focusingOffsetLabel = new JLabel();
         focusingOffsetLabel.setText("Focusing Offset");
-        processingOptionsPanel.add(focusingOffsetLabel, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        processingOptionsPanel.add(focusingOffsetLabel, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         bestFocusCycleLabel = new JLabel();
         bestFocusCycleLabel.setText("Best Focus Cycle");
-        processingOptionsPanel.add(bestFocusCycleLabel, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        processingOptionsPanel.add(bestFocusCycleLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         bestFocusChannelLabel = new JLabel();
         bestFocusChannelLabel.setText("Best Focus Channel");
-        processingOptionsPanel.add(bestFocusChannelLabel, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        processingOptionsPanel.add(bestFocusChannelLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         driftReferenceCycleField = new JTextField();
         driftReferenceCycleField.setText("1");
-        processingOptionsPanel.add(driftReferenceCycleField, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        processingOptionsPanel.add(driftReferenceCycleField, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         driftReferenceChannelField = new JTextField();
         driftReferenceChannelField.setText("1");
-        processingOptionsPanel.add(driftReferenceChannelField, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        processingOptionsPanel.add(driftReferenceChannelField, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         driftReferenceChannelLabel = new JLabel();
         driftReferenceChannelLabel.setText("Drift Reference Channel");
-        processingOptionsPanel.add(driftReferenceChannelLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        processingOptionsPanel.add(driftReferenceChannelLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         bestFocusCycleField = new JTextField();
         bestFocusCycleField.setText("1");
-        processingOptionsPanel.add(bestFocusCycleField, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        processingOptionsPanel.add(bestFocusCycleField, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         bestFocusChannelField = new JTextField();
         bestFocusChannelField.setText("1");
-        processingOptionsPanel.add(bestFocusChannelField, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        processingOptionsPanel.add(bestFocusChannelField, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         focusingOffsetField = new JTextField();
         focusingOffsetField.setText("0");
-        processingOptionsPanel.add(focusingOffsetField, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        tileWidthLabel = new JLabel();
-        tileWidthLabel.setText("Tile Width");
-        processingOptionsPanel.add(tileWidthLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        tileHeightLabel = new JLabel();
-        tileHeightLabel.setText("Tile Height");
-        processingOptionsPanel.add(tileHeightLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        tileWidthField = new JTextField();
-        processingOptionsPanel.add(tileWidthField, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        tileHeightField = new JTextField();
-        processingOptionsPanel.add(tileHeightField, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        processingOptionsPanel.add(focusingOffsetField, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         optionalFocusFragmentCheckBox = new JCheckBox();
         optionalFocusFragmentCheckBox.setEnabled(true);
         optionalFocusFragmentCheckBox.setSelected(false);
         optionalFocusFragmentCheckBox.setText("Focusing Fragment");
         optionalFocusFragmentCheckBox.setVerticalAlignment(0);
-        processingOptionsPanel.add(optionalFocusFragmentCheckBox, new GridConstraints(8, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        processingOptionsPanel.add(optionalFocusFragmentCheckBox, new GridConstraints(6, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer31 = new Spacer();
-        processingOptionsPanel.add(spacer31, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
+        processingOptionsPanel.add(spacer31, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
         final Spacer spacer32 = new Spacer();
-        processingOptionsPanel.add(spacer32, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
+        processingOptionsPanel.add(spacer32, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 10), null, 0, false));
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(5, 3, new Insets(5, 10, 10, 10), -1, -1));
         processRightColumnPanel.add(panel3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
