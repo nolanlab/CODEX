@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6dbd53b7-1df8-49c3-9f00-43904c514362" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driftcomp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driftcomp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driftcomp.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driftcomp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -81,7 +80,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.CodexNewUI">
+  <component name="RunManager" selected="Application.Driffta">
     <configuration default="true" type="Applet">
       <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
       <method v="2">
@@ -136,7 +135,7 @@
     <configuration name="Driffta" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.nolanlab.codex.upload.driffta.Driffta" />
       <module name="CODEX" />
-      <option name="PROGRAM_PARAMETERS" value="&quot;D:\TEST\INPUT\exp2Test&quot; &quot;D:\TEST\OUTPUT\exp2TestProcessed&quot; 1 1" />
+      <option name="PROGRAM_PARAMETERS" value="&quot;D:\TEST\INPUT\exp2Test1Z&quot; &quot;D:\TEST\OUTPUT\exp2Test1ZProcessed&quot; 1 1" />
       <option name="VM_PARAMETERS" value="-Xmx64G" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/target" />
       <extension name="coverage">
@@ -371,8 +370,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.NewGUI" />
         <item itemvalue="Application.Driffta" />
+        <item itemvalue="Application.NewGUI" />
         <item itemvalue="Application.SegmMain" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Application.frmCluster" />
@@ -402,6 +401,10 @@
       <workItem from="1580773067799" duration="3073000" />
       <workItem from="1580784083007" duration="13072000" />
       <workItem from="1581104554732" duration="6341000" />
+      <workItem from="1581463698842" duration="6890000" />
+      <workItem from="1581494719280" duration="675000" />
+      <workItem from="1581495790777" duration="410000" />
+      <workItem from="1581496433563" duration="1560000" />
     </task>
     <servers />
   </component>
@@ -688,7 +691,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/GuiWorkers.java</url>
-          <line>335</line>
+          <line>336</line>
           <option name="timeStamp" value="1126" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -697,29 +700,19 @@
           <option name="timeStamp" value="1141" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>255</line>
-          <option name="timeStamp" value="1145" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>285</line>
-          <option name="timeStamp" value="1146" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>257</line>
-          <option name="timeStamp" value="1151" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>420</line>
-          <option name="timeStamp" value="1153" />
+          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driftcomp.java</url>
+          <line>75</line>
+          <option name="timeStamp" value="1168" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driftcomp.java</url>
-          <line>47</line>
-          <option name="timeStamp" value="1159" />
+          <line>82</line>
+          <option name="timeStamp" value="1169" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driftcomp.java</url>
+          <line>85</line>
+          <option name="timeStamp" value="1170" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

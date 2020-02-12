@@ -9,7 +9,7 @@ public class FieldValidator {
             JTextField tf = (JTextField) input;
             try {
                 int val = Integer.parseInt(tf.getText());
-                if (val < 1) {
+                if (val < 0) {
                     throw new NumberFormatException("The number must be 1 or greater");
                 }
                 return true;

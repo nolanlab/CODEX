@@ -80,7 +80,7 @@ public class Driftcomp {
             for (int i = 0; i < p.length; i++){
                 temp[i] = p[i];
             }
-            temp[p.length-1] = 0;
+            temp[temp.length-1] = 0;
             p = temp;
         }
         Driffta.log("Cycle: " + (idx + 1) + " Phase correlation: " + Arrays.toString(p));
