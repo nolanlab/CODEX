@@ -311,8 +311,9 @@ public class GuiWorkers {
         microscope.guessZSlices(dir, gui);
         microscope.guessChannelNamesAndWavelength(dir, gui);
         microscope.guessCycleRange(dir, gui);
-        microscope.guessTileOverlap(gui);
-
+        if(!gui.isTMA()) {
+            microscope.guessTileOverlap(gui);
+        }
         if(gui.isTMA()) {
             microscope.guessWidthAndHeight(dir, gui);
         }
