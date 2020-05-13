@@ -255,7 +255,7 @@ public class Driffta {
             } else {
                 for (int cycle = exp.cycle_lower_limit; cycle <= exp.cycle_upper_limit; cycle++) {
                     final int cycF = cycle;
-                        final String sourceDir = baseDir + File.separator + exp.getDirName(cycle, tile, baseDir, exp.isTMA, region);
+                        final String sourceDir = baseDir + File.separator + exp.getDirName(cycle, 1, baseDir, exp.isTMA, region);
                         for (int chIdx = 0; chIdx < exp.channel_names.length; chIdx++) {
                             final int chIdxF = chIdx;
                             final String ch = exp.channel_names[chIdx];
