@@ -107,7 +107,6 @@ public class GuiHelper {
                         exp.tile_overlap_Y = (int) ((double) (exp.tile_overlap_Y * imp.getHeight() / 100));
                         break;
                     }
-
                 }
             }
         }
