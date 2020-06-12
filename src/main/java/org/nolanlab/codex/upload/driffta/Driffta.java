@@ -580,7 +580,7 @@ public class Driffta {
         while(in.hasNextLine()) {
             String line = in.nextLine().trim();
             String[] splitStr = line.split("\\t");
-            if(splitStr.length == 0) {
+            if(splitStr.length == 1) {
                 splitStr = line.split(",");
             }
             lines.add(splitStr);
@@ -631,7 +631,7 @@ public class Driffta {
         LinkedHashMap<Integer, List<Integer>> chVsCyc = new LinkedHashMap<>();
         for(int i=0; i<channelNames.length; i++) {
             int channels_count = exp.channel_names.length;
-            if(channelNames[i].contains("blank")) {
+            if(channelNames[i] != null & channelNames[i].toLowerCase().contains("blank")) {
                 logger.print("identified blank channel #"+i+", "+channelNames[i]);
                 int ch = (i%channels_count) + 1;
                 //String ch = exp.channel_names[(i%channels_count)];
@@ -703,8 +703,6 @@ public class Driffta {
                 }
                 if(expVsMs.containsKey(exposureTimes[i][j])) {
                     exposureTimes[i][j] = String.valueOf(expVsMs.get(exposureTimes[i][j]));
-                }else {
-                    throw new IllegalArgumentException("unknown exposure time: " + exposureTimes[i][j]);
                 }
             }
         }
