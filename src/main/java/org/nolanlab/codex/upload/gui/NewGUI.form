@@ -861,7 +861,9 @@
                             <constraints>
                               <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <columns value="10"/>
+                            </properties>
                           </component>
                           <component id="24996" class="javax.swing.JTextField" binding="channelNamesField">
                             <constraints>

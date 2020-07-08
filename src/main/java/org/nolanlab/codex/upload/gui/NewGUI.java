@@ -1068,6 +1068,7 @@ public class NewGUI {
         channelNamesLabel.setText("Channel Names");
         autoDetectedPanel.add(channelNamesLabel, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         regionNamesField = new JTextField();
+        regionNamesField.setColumns(10);
         autoDetectedPanel.add(regionNamesField, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         channelNamesField = new JTextField();
         channelNamesField.setText("");
