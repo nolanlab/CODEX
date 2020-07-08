@@ -297,7 +297,7 @@ public class Experiment {
     }
 
 
-    public String getSourceFileName(final String sourceDir, final MicroscopeTypeEnum microscope, final int tile, final int zSlice, final int channel, final boolean isTMA) {
+    public String getSourceFileName(final String sourceDir, final MicroscopeTypeEnum microscope, final int tile, final int zSlice, final int channel) {
         switch (microscope) {
             case KEYENCE:
                 String pname = projectNameCache.get(sourceDir);
