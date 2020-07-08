@@ -186,7 +186,8 @@ public class Driffta {
 
                                 if (stack[idx] != null) {
                                     if (color || stack[idx].getStack().getSize() != 1) {
-                                        if (!exp.getDirName(cycF, region, baseDir, exp.isTMA, 0).startsWith("HandE")) {
+                                        if (!exp.getDirName(cycF, region, baseDir, exp.isTMA, 0).startsWith("HandE") ||
+                                                !exp.getDirName(cycF, 1, baseDir, exp.isTMA, region).startsWith("HandE")) {
                                             ZProjector zp = new ZProjector();
                                             log("Flattening " + stack[idx].getTitle() + ", nslices" + stack[idx].getNSlices() + "ch=" + stack[idx].getNChannels() + "stacksize=" + stack[idx].getStack().getSize());
                                             zp.setImage(stack[idx]);
@@ -232,7 +233,8 @@ public class Driffta {
 
                                 if (stack[idx] != null) {
                                     if (color || stack[idx].getStack().getSize() != 1) {
-                                        if (!exp.getDirName(cycF, region, baseDir, exp.isTMA, 0).startsWith("HandE")) {
+                                        if (!exp.getDirName(cycF, region, baseDir, exp.isTMA, 0).startsWith("HandE") ||
+                                                !exp.getDirName(cycF, 1, baseDir, exp.isTMA, region).startsWith("HandE")) {
                                             ZProjector zp = new ZProjector();
                                             log("Flattening " + stack[idx].getTitle() + ", nslices" + stack[idx].getNSlices() + "ch=" + stack[idx].getNChannels() + "stacksize=" + stack[idx].getStack().getSize());
                                             zp.setImage(stack[idx]);
