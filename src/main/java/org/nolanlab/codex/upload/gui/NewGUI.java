@@ -151,6 +151,7 @@ public class NewGUI {
     private JCheckBox tmaCheckBox;
 
     private boolean isTMA = false;
+    private boolean onlyHandE = false;
 
     private TextAreaOutputStream taOutputStream;
     private ArrayList<Process> allProcess = new ArrayList<>();
@@ -166,6 +167,14 @@ public class NewGUI {
 
     public void setTMA(boolean TMA) {
         isTMA = TMA;
+    }
+
+    public boolean isOnlyHandE() {
+        return onlyHandE;
+    }
+
+    public void setOnlyHandE(boolean onlyHandE) {
+        this.onlyHandE = onlyHandE;
     }
 
     public JPanel getMainPanel() {

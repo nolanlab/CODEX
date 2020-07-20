@@ -202,7 +202,18 @@ public class GuiWorkers {
         boolean containsBcf = false;
         boolean hasHandE = false;
 
-        for (File f : dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().toLowerCase().startsWith("cyc"))) {
+        File[] sub = dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().toLowerCase().startsWith("cyc"));
+        if(sub.length == 0) {
+            sub = dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().toLowerCase().startsWith("hande"));
+            if(sub.length == 0) {
+                guiHelper.log("Input folder neither contains the Cyc folders nor the HandE folder. Try again!");
+                throw new IllegalStateException("Input folder neither contains the Cyc folders nor the HandE folder. Try again!");
+            } else {
+                gui.setOnlyHandE(true);
+                guiHelper.log("Input experiment folder contains only the HandE folder. Manually set the number of channels and channel names field in process tab.");
+            }
+        }
+        for (File f : sub) {
             File[] xyFolders = f.listFiles(pathname -> pathname.isDirectory() && pathname.getName().toLowerCase().startsWith("xy"));
             if (xyFolders != null && xyFolders.length != 0) {
                 gui.setTMA(true);
@@ -223,10 +234,14 @@ public class GuiWorkers {
             }
             break;
         }
-
-        for (File f : dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().toLowerCase().startsWith("cyc"))) {
+        for (File f : sub) {
             String[] s = f.getName().split("_");
-            int cyc = Integer.parseInt(s[0].substring(3));
+            int cyc = 0;
+            if(gui.isOnlyHandE()) {
+                cyc = 1;
+            } else {
+                cyc = Integer.parseInt(s[0].substring(3));
+            }
             maxCycle = Math.max(cyc, maxCycle);
             if(!gui.isTMA()) {
                 int reg = Integer.parseInt(s[1].substring(3));
@@ -237,15 +252,18 @@ public class GuiWorkers {
                 maxRegion = xy.length;
             }
         }
-
         int[][] occup_table = new int[maxCycle][maxRegion];
-
-        for (File f : dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().toLowerCase().startsWith("cyc"))) {
+        for (File f : sub) {
             if (!containsBcf && !gui.isTMA()) {
                 containsBcf = f.listFiles(pathname -> pathname.getName().endsWith(".bcf")).length > 0;
             }
             String[] s = f.getName().split("_");
-            int cyc = Integer.parseInt(s[0].substring(3));
+            int cyc = 0;
+            if(gui.isOnlyHandE()) {
+                cyc = 1;
+            } else {
+                cyc = Integer.parseInt(s[0].substring(3));
+            }
             int reg = Integer.parseInt(s[1].substring(3));
             occup_table[cyc - 1][reg - 1]++;
         }
@@ -277,7 +295,9 @@ public class GuiWorkers {
 
         if (hasHandE) {
             gui.gethAndEStainCheckBox().setSelected(true);
-            maxCycle++;
+            if(!gui.isOnlyHandE()) {
+                maxCycle++;
+            }
         }
 
         gui.gethAndEStainCheckBox().setSelected(hasHandE);

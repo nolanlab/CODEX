@@ -58,8 +58,11 @@ public class Metadata {
 
         if (gui.getMicroscopeTypeComboBox().getSelectedItem().toString().startsWith("Keyence")) {
             if (subdir.length == 0) {
-                System.out.println("Directory does not contain a single folder starting with 'Cyc...'. Please try again!");
-                throw new IllegalStateException("Directory" + dir.getAbsolutePath() + " does not contain a single folder starting with 'Cyc...'");
+                subdir = dir.listFiles(pathname -> pathname.isDirectory() && pathname.getName().startsWith("HandE"));
+                if (subdir.length == 0) {
+                    System.out.println("Directory does not contain a single folder starting with 'Cyc...' or 'HandE...'. Please try again!");
+                    throw new IllegalStateException("Directory" + dir.getAbsolutePath() + " does not contain a single folder starting with 'Cyc...' or 'HandE...");
+                }
             }
             File[] bcf;
             if(!gui.isTMA()) {
