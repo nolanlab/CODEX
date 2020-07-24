@@ -159,6 +159,10 @@ public class Keyence implements Microscope {
                         //break outer loop
                         break outer;
                     }
+                } else if (cyc != null && cyc.isDirectory() && gui.isOnlyHandE() && cyc.getName().toLowerCase().startsWith("hande")) {
+                    gui.getNumChannelsField().setText("4");
+                    gui.getChannelNamesField().setText("CH1;CH2;CH3;CH4");
+                    gui.getWavelengthsField().setText("425;525;595;670");
                 }
             }
         }

@@ -108,7 +108,10 @@ public class GuiWorkers {
         if(dir != null) {
             File [] dirList = dir.listFiles();
             outer: for (File cyc : dirList) {
-                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
+                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc") || cyc.getName().toLowerCase().startsWith("hande")) {
+                    if(cyc.getName().toLowerCase().startsWith("hande")) {
+                        gui.setOnlyHandE(true);
+                    }
                     File [] cycList = cyc.listFiles();
                     if(!gui.isTMA()) {
                         for (File file : cycList) {
@@ -210,7 +213,7 @@ public class GuiWorkers {
                 throw new IllegalStateException("Input folder neither contains the Cyc folders nor the HandE folder. Try again!");
             } else {
                 gui.setOnlyHandE(true);
-                guiHelper.log("Input experiment folder contains only the HandE folder. Manually set the number of channels and channel names field in process tab.");
+                guiHelper.log("Input experiment folder contains only the HandE folder. Thus, the number of channels is defaulted to 4.");
             }
         }
         for (File f : sub) {
