@@ -21,7 +21,8 @@ public class Keyence implements Microscope {
     public void guessZSlices(File dir, NewGUI gui) {
         if(dir != null) {
             outer: for (File cyc : dir.listFiles()) {
-                if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
+                if (cyc != null && cyc.isDirectory() && (cyc.getName().toLowerCase().startsWith("cyc") ||
+                        (gui.isOnlyHandE() && cyc.getName().toLowerCase().startsWith("hande")))) {
                     File[] cycFiles = cyc.listFiles();
                     if(!gui.isTMA()) {
                         Arrays.sort(cycFiles, Collections.reverseOrder());
@@ -158,6 +159,10 @@ public class Keyence implements Microscope {
                         //break outer loop
                         break outer;
                     }
+                } else if (cyc != null && cyc.isDirectory() && gui.isOnlyHandE() && cyc.getName().toLowerCase().startsWith("hande")) {
+                    gui.getNumChannelsField().setText("4");
+                    gui.getChannelNamesField().setText("CH1;CH2;CH3;CH4");
+                    gui.getWavelengthsField().setText("425;525;595;670");
                 }
             }
         }
@@ -255,7 +260,8 @@ public class Keyence implements Microscope {
             if(!gui.isTMA()) {
                 outer:
                 for (File cyc : dir.listFiles()) {
-                    if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
+                    if (cyc != null && cyc.isDirectory() && (cyc.getName().toLowerCase().startsWith("cyc") ||
+                            (gui.isOnlyHandE() && cyc.getName().toLowerCase().startsWith("hande")))) {
                         File[] cycFiles = cyc.listFiles();
                         Arrays.sort(cycFiles, Collections.reverseOrder());
                         for (File tif : cycFiles) {
@@ -273,7 +279,6 @@ public class Keyence implements Microscope {
                                 break outer;
                             }
                         }
-
                     }
                 }
             } else {

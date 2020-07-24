@@ -303,7 +303,7 @@ public class Driffta {
                     ic.convertToGray16();
 
                     int k = 1;
-                    for (int i = numCh - 3; i < numCh; i++) {
+                    for (int i = 1; i < numCh; i++) {
                         idx = ((exp.num_z_planes * exp.channel_names.length) * (cycle - 1)) + (exp.channel_names.length * (zSlice - 1)) + i;
                         ImagePlus he_S = new ImagePlus("HandE_" + colorNames[i - 1], he.getStack().getProcessor(k++).duplicate());
                         stack[idx] = he_S;

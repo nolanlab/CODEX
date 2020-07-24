@@ -91,7 +91,8 @@ public class GuiHelper {
         if(dir != null) {
             for (File cyc : dir.listFiles()) {
                 if(!gui.isTMA()) {
-                    if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
+                    if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc") ||
+                            (gui.isOnlyHandE() && cyc.getName().toLowerCase().startsWith("hande"))) {
                         File[] cycFiles = cyc.listFiles(tif -> tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif"));
                         ImagePlus imp = IJ.openImage(cycFiles[0].getAbsolutePath());
                         exp.tile_overlap_X = (int) ((double) (exp.tile_overlap_X * imp.getWidth() / 100));
@@ -99,7 +100,8 @@ public class GuiHelper {
                         break;
                     }
                 } else {
-                    if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")) {
+                    if (cyc != null && cyc.isDirectory() && cyc.getName().toLowerCase().startsWith("cyc")||
+                            (gui.isOnlyHandE() && cyc.getName().toLowerCase().startsWith("hande"))) {
                         File[] xyFiles = cyc.listFiles(xy -> xy != null && xy.isDirectory() && xy.getName().toLowerCase().startsWith("xy"));
                         File[] tifFiles = xyFiles[0].listFiles(tif -> tif != null && !tif.isDirectory() && tif.getName().endsWith(".tif"));
                         ImagePlus imp = IJ.openImage(tifFiles[0].getAbsolutePath());
