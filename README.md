@@ -20,7 +20,14 @@ If you are planning to clone/fork this repository, make sure to download the non
 * From the CODEXToolkit folder: use CODEXUploader.exe to run and process the raw experiments and use CODEXSegm.exe to segment the processed data
 
 # CODEXUploader - Process a raw experiment from microscope
-* Once you have the raw experiment folder data acquired from microscope, use CODEXUploader.exe to process your experiment.
+* Once you have the raw experiment folder data acquired from microscope, use CODEXUploader.exe to process your experiment. If you have a multicycle and multi region data, make sure your raw experiment data contains folders of the following format:
+ - Cyc1_reg1
+   - <<name>>.bcf
+   - <<name>>_00001_Z001_CH1.tif
+   - ...
+ - Cyc2_reg1
+ ...
+and so on. Also, make sure that HandE folders are named as HandE_reg1, HandE_reg2.. and so on. This is mandatory to use with uploader, otherwise it would not work as expected. So if you have a different name format, rename it to the above format for processing
 * From the uploader windows, select the inout raw experiment folder. It should auto-populate almost all the fields. Verify them.
 * Input the tile overlap percentage for X and Y values and choose where you want to save the processed data from the field called as "Temporary storage location"
 * If you would like the processed output to be stored in regular format, select **"Export as Tiff". This format is NOT Compatible with CodexMAV.**
