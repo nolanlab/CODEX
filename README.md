@@ -22,8 +22,8 @@ If you are planning to clone/fork this repository, make sure to download the non
 # CODEXUploader - Process a raw experiment from microscope
 * Once you have the raw experiment folder data acquired from microscope, use CODEXUploader.exe to process your experiment. If you have a multicycle and multi region data, make sure your raw experiment data contains folders of the following format:
  - Cyc1_reg1
-   - <name>.bcf
-   - <name>_00001_Z001_CH1.tif
+   - filename.bcf
+   - filename_00001_Z001_CH1.tif
    - ...
  - Cyc2_reg1
  ...
