@@ -16,7 +16,7 @@ import java.net.URL;
 
 /**
  *
- * @author Nikolay Samusik
+ * @author Nikolay Samusik and Vishal
  */
 public class ProcessingOptions {
 

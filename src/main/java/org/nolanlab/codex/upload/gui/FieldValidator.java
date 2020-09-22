@@ -2,6 +2,10 @@ package org.nolanlab.codex.upload.gui;
 
 import javax.swing.*;
 
+/**
+ *
+ * @author Vishal
+ */
 public class FieldValidator {
     public static final InputVerifier INTEGER_VERIFIER = new InputVerifier() {
         @Override
