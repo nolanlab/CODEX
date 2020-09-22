@@ -3,12 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6dbd53b7-1df8-49c3-9f00-43904c514362" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/FieldValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/FieldValidator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/WorkerHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/gui/WorkerHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Experiment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/Experiment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/ProcessingOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/model/ProcessingOptions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/nolanlab/codex/upload/driffta/Driffta.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -422,7 +417,7 @@
       <workItem from="1599338469231" duration="4794000" />
       <workItem from="1599608632622" duration="236000" />
       <workItem from="1599683318031" duration="14083000" />
-      <workItem from="1600389175684" duration="4256000" />
+      <workItem from="1600389175684" duration="4600000" />
     </task>
     <servers />
   </component>
@@ -721,16 +716,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
           <line>301</line>
           <option name="timeStamp" value="1189" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>322</line>
-          <option name="timeStamp" value="1197" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/nolanlab/codex/upload/driffta/Driffta.java</url>
-          <line>75</line>
-          <option name="timeStamp" value="1198" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
