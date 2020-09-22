@@ -5,6 +5,7 @@
  */
 package org.nolanlab.codex.upload.driffta;
 
+import ij.process.ImageProcessor;
 import org.nolanlab.codex.upload.model.Experiment;
 import org.nolanlab.codex.upload.model.ProcessingOptions;
 import org.nolanlab.codex.utils.logger;
@@ -32,7 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * @author Nikolay
+ * @author Nikolay and Vishal
  */
 public class Driffta {
 
@@ -299,6 +300,7 @@ public class Driffta {
                     String[] colorNames = new String[]{"R", "G", "B"};
 
                     ImageConverter ic = new ImageConverter(he);
+                    ImageConverter.setDoScaling(false);
                     ic.convertToRGBStack();
                     ic.convertToGray16();
 
@@ -307,9 +309,8 @@ public class Driffta {
                         idx = ((exp.num_z_planes * exp.channel_names.length) * (cycle - 1)) + (exp.channel_names.length * (zSlice - 1)) + i;
                         ImagePlus he_S = new ImagePlus("HandE_" + colorNames[i - 1], he.getStack().getProcessor(k++).duplicate());
                         stack[idx] = he_S;
-                        stack[idx].getProcessor().multiply(250);
+//                        stack[idx].getProcessor().multiply(250);
                     }
-
                     int driftCh = exp.drift_comp_channel;
                     ImagePlus he_R = new ImagePlus("HandE_R_inv", he.getStack().getProcessor(1).duplicate());
                     he_R.getProcessor().invert();
@@ -731,7 +732,7 @@ public class Driffta {
         expVsMs.put("1/8.5s", 1000 * 1/8.5);
         expVsMs.put("1/7.5s", 1000 * 1/7.5);
         expVsMs.put("1/6s", (double)1000 * 1/6);
-        expVsMs.put("1/5s", (double)1000 * 1/4);
+        expVsMs.put("1/5s", (double)1000 * 1/5);
         expVsMs.put("1/4s", (double)1000 * 1/4);
         expVsMs.put("1/3.5s", 1000 * 1/3.5);
         expVsMs.put("1/3s", (double)1000 * 1/3);

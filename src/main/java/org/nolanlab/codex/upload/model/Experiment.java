@@ -23,7 +23,7 @@ import static org.nolanlab.codex.upload.scope.MicroscopeTypeEnum.LEICA;
 import static org.nolanlab.codex.upload.scope.MicroscopeTypeEnum.ZEISS;
 /**
  *
- * @author Nikolay
+ * @author Nikolay and Vishal
  */
 public class Experiment {
 
