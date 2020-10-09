@@ -32,7 +32,8 @@ and so on. Also, make sure that HandE folders are named as HandE_reg1, HandE_reg
 * From the uploader windows, select the inout raw experiment folder. It should auto-populate almost all the fields. Verify them.
 * Input the tile overlap percentage for X and Y values and choose where you want to save the processed data from the field called as "Temporary storage location"
 * If you would like the processed output to be stored in regular format, select **"Export as Tiff". This format is NOT Compatible with CodexMAV.**
-* If you would like the processed output to be stored in Image Sequence format, select **"Export as Image Sequence"**. When doing so, **make sure the "Temporary storage location"/output folder is set as "processed_experimentName" inside the raw experiment folder. This is the format that is compatible with the use of CodexMAV, a Fiji plugin developed at Akoya Biosciences Inc. that is used for visualizing and analysing the processed data. If the folder structure is different, CodexMAV would not be supported! This is critical. UPDATE: CodexMAV latest versions do not support the image sequence format produced after processing with the Nolan lab uploader. It is unstable, so DO NOT USE IT! So kindly use regular tiff image format, if you are using all of Nolab lab's pipeline. If you want to use CodexMAV for analysis, talk to suppport team at Akoya.**
+* If you would like the processed output to be stored in Image Sequence format, select **"Export as Image Sequence"**. When doing so, **make sure the "Temporary storage location"/output folder is set as "processed_experimentName" inside the raw experiment folder. This is the format that is compatible with the use of CodexMAV, a Fiji plugin developed at Akoya Biosciences Inc. that is used for visualizing and analysing the processed data. If the folder structure is different, CodexMAV would not be supported! This is critical. ** 
+* **UPDATE: CodexMAV latest versions do not support the image sequence format produced after processing with the Nolan lab uploader. It is unstable, so DO NOT USE IT! So kindly use regular tiff image format, if you are using all of Nolab lab's pipeline. If you want to use CodexMAV for analysis, talk to suppport team at Akoya.**
 * Hit the "Start" button to start processing your experiment
 * Uploader takes care of performing the drift compensation, deconvolution(microvolution with license) and stitching all the tiles to create a stitched(or montage) image per region
 
@@ -40,7 +41,7 @@ and so on. Also, make sure that HandE folders are named as HandE_reg1, HandE_reg
 * Once the experiment is processed successfully without any issues, use CODEXSegm.exe to run segmentation 
 * Irrespective of microscope types, the input for segmentation is either going to be of processed tiff format or image sequence format based on how it was processed using the uploader. The user would have specified this when they processed the data in the previous step. By default, it is regular tiff. The only important thing required to run segmentation is, the location of the processed folder once the uploader finishes processing the experiment.
 * From the initial segmentation window, choose the processed experiment folder and if the processed data is in image sequence format, enter the configuration name for the segmentation run. This is useful when you try to analyze the data in CodexMAV. If the processed data is in regular tif file format, ignore the configuration name field, also regular tif file format cannot be used to analyze with CodexMAV. This is Vital! If you want to perform analysis with CodexMAV, contact Akoya for support! 
-UPDATE - As mentioned above, CodexMAV is unstable with image sequence produced from Nolan lab uploader. DO NOT USE IT!
+**UPDATE - As mentioned above, CodexMAV is unstable with image sequence produced from Nolan lab uploader. DO NOT USE IT!**
 * Make sure all the parameters you set are right and hit the "Start" button
 * Once segmentation is completed, you will see that the FCS files were created successfully
 
@@ -62,13 +63,3 @@ UPDATE - As mentioned above, CodexMAV is unstable with image sequence produced f
   * To run segmentation, use the java command:                                                                                            
   `java -cp CODEX-1.0-jar-with-dependencies.jar org.nolanlab.codex.segm.SegmMain`                                                        
   Check the command window for any exceptions being thrown during the error and send a screenshot of this information
-
-
-
-
-
-
-
-
-
-
