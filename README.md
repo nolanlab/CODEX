@@ -22,12 +22,12 @@ If you are planning to clone/fork this repository, make sure to download the non
 # CODEXUploader - Process a raw experiment from microscope
 * Once you have the raw experiment folder data acquired from microscope, use CODEXUploader.exe to process your experiment. Currently supported microscope types are Keyence and Zeiss.
 * For example, if you have a multicycle and multi region data produced from Keyence microscope, make sure your raw experiment data contains folders of the following format:
- - Cyc1_reg1
-   - filename.bcf
-   - filename_00001_Z001_CH1.tif
-   - ...
- - Cyc2_reg1
- ...
+   - Cyc1_reg1
+     - filename.bcf
+     - filename_00001_Z001_CH1.tif
+     - ...
+   - Cyc2_reg1
+   ...
 and so on. Also, make sure that HandE folders are named as HandE_reg1, HandE_reg2.. and so on. This is mandatory to use with uploader, otherwise it would not work as expected. So if you have a different name format, rename it to the above format for processing
 * From the uploader windows, select the inout raw experiment folder. It should auto-populate almost all the fields. Verify them.
 * Input the tile overlap percentage for X and Y values and choose where you want to save the processed data from the field called as "Temporary storage location"
