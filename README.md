@@ -28,10 +28,21 @@ If you are planning to clone/fork this repository, make sure to download the non
      - ...
    - Cyc2_reg1
    ...
-and so on. Also, make sure that HandE folders are named as HandE_reg1, HandE_reg2.. and so on. This is mandatory to use with uploader, otherwise it would not work as expected. So if you have a different name format, rename it to the above format for processing
+and so on. Also, make sure that HandE folders are named as HandE_reg1, HandE_reg2.. and so on. This is mandatory to use with uploader, otherwise it would not work as expected. So if you have a different name format, rename it to the above format for processing. Check the image below for folder structure of the experiment: 
+![alt text](https://github.com/nolanlab/CODEX/blob/master/readme-images/Folder_structure_naming.png).
+
+Check the below structure to take a look at the file naming convention for individual cycle folders:
+![alt text](https://github.com/nolanlab/CODEX/blob/master/readme-images/File_structure_naming.png).
+
 * From the uploader windows, select the inout raw experiment folder. It should auto-populate almost all the fields. Verify them.
 * Input the tile overlap percentage for X and Y values and choose where you want to save the processed data from the field called as "Temporary storage location"
 * If you would like the processed output to be stored in regular format, select **"Export as Tiff". This format is NOT Compatible with CodexMAV.**
+* Please make sure you have channelNames and exposure_times file if you want to process the images with background subtraction enabled. This is mandatory, otherwise background subtraction will not work as expected. If you have a HandE cycle, make sure to add exposure times line for this one too. Check the images below for channelNames and exposure_times file samples: 
+channelNames: 
+![alt text](https://github.com/nolanlab/CODEX/blob/master/readme-images/channelnames.png).
+
+exposure_times: 
+![alt text](https://github.com/nolanlab/CODEX/blob/master/readme-images/exposure_times.png).
 
 **UPDATE - CodexMAV is unstable with this format, so do not use it!**
 * If you would like the processed output to be stored in Image Sequence format, select **"Export as Image Sequence"**. When doing so, **make sure the "Temporary storage location"/output folder is set as "processed_experimentName" inside the raw experiment folder. This is the format that is compatible with the use of CodexMAV, a Fiji plugin developed at Akoya Biosciences Inc. that is used for visualizing and analysing the processed data. If the folder structure is different, CodexMAV would not be supported! This is critical.** 
@@ -40,7 +51,12 @@ and so on. Also, make sure that HandE folders are named as HandE_reg1, HandE_reg
 * Uploader takes care of performing the drift compensation, deconvolution(microvolution with license) and stitching all the tiles to create a stitched(or montage) image per region
 
 # CODEXSegm - Run segmentation for a processed data
-* Once the experiment is processed successfully without any issues, use CODEXSegm.exe to run segmentation 
+* Once the experiment is processed successfully without any issues, use CODEXSegm.exe to run segmentation. After processing is complete, the processed data looks something like this: 
+
+![alt text](https://github.com/nolanlab/CODEX/blob/master/readme-images/processe_structure.png)
+
+The above folder structure should be the input to perform segmentation.
+ 
 * Irrespective of microscope types, the input for segmentation is either going to be of processed tiff format or image sequence format based on how it was processed using the uploader. The user would have specified this when they processed the data in the previous step. By default, it is regular tiff. The only important thing required to run segmentation is, the location of the processed folder once the uploader finishes processing the experiment.
 * From the initial segmentation window, choose the processed experiment folder and if the processed data is in image sequence format, enter the configuration name for the segmentation run. This is useful when you try to analyze the data in CodexMAV. If the processed data is in regular tif file format, ignore the configuration name field, also regular tif file format cannot be used to analyze with CodexMAV. This is Vital! If you want to perform analysis with CodexMAV, contact Akoya for support! 
 
