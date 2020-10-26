@@ -37,6 +37,8 @@ Check the below structure to take a look at the file naming convention for indiv
 * From the uploader windows, select the inout raw experiment folder. It should auto-populate almost all the fields. Verify them.
 * Input the tile overlap percentage for X and Y values and choose where you want to save the processed data from the field called as "Temporary storage location"
 * If you would like the processed output to be stored in regular format, select **"Export as Tiff". This format is NOT Compatible with CodexMAV.**
+**UPDATE - CodexMAV is unstable with this format, so do not use it!**
+
 * Please make sure you have channelNames and exposure_times file if you want to process the images with background subtraction enabled. This is mandatory, otherwise background subtraction will not work as expected. If you have a HandE cycle, make sure to add exposure times line for this one too. Check the images below for channelNames and exposure_times file samples: 
 channelNames: 
 ![alt text](https://github.com/nolanlab/CODEX/blob/master/readme-images/channelnames.png).
@@ -44,7 +46,6 @@ channelNames:
 exposure_times: 
 ![alt text](https://github.com/nolanlab/CODEX/blob/master/readme-images/exposure_times.png).
 
-**UPDATE - CodexMAV is unstable with this format, so do not use it!**
 * If you would like the processed output to be stored in Image Sequence format, select **"Export as Image Sequence"**. When doing so, **make sure the "Temporary storage location"/output folder is set as "processed_experimentName" inside the raw experiment folder. This is the format that is compatible with the use of CodexMAV, a Fiji plugin developed at Akoya Biosciences Inc. that is used for visualizing and analysing the processed data. If the folder structure is different, CodexMAV would not be supported! This is critical.** 
 *  **UPDATE: CodexMAV latest versions do not support the image sequence format produced after processing with the Nolan lab uploader. It is unstable, so DO NOT USE IT! So kindly use regular tiff image format, if you are using all of Nolab lab's pipeline. If you want to use CodexMAV for analysis, talk to suppport team at Akoya.**
 * Hit the "Start" button to start processing your experiment
