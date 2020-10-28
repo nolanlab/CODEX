@@ -56,6 +56,11 @@ exposure_times:
 
 ![alt text](https://github.com/nolanlab/CODEX/blob/master/readme-images/processe_structure.png)
 
+* As you can see, the uploader creates the following: 
+   * bestFocus Folder - within this folder there will be stitched folder containing montages of all regions at half resolution named as reg001_montage.tif and so on, and indidividual tiles from the best best focus z plane at full resolution.
+   * Each tile that has all cycle, channels and z-slices that was processed by uploader.
+   * channelNames.txt and Experiment.json gets copied from the input or raw folder.
+
 The above folder structure should be the input to perform segmentation.
  
 * Irrespective of microscope types, the input for segmentation is either going to be of processed tiff format or image sequence format based on how it was processed using the uploader. The user would have specified this when they processed the data in the previous step. By default, it is regular tiff. The only important thing required to run segmentation is, the location of the processed folder once the uploader finishes processing the experiment.
